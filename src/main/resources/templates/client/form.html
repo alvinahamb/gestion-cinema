@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Client - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/client/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>👤 Gestion des Clients</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${client == null or client.idClient == null}">Ajouter un Client</h1>
+            <h1 th:if="${client != null and client.idClient != null}">Modifier un Client</h1>
+            <form th:action="@{/clients/save}" method="post">
+                <input type="hidden" name="idClient" th:value="${client != null and client.idClient != null ? client.idClient : ''}"/>
+                <div class="form-group">
+                    <label for="nom">Nom *</label>
+                    <input type="text" id="nom" name="nom" th:value="${client != null ? client.nom : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="prenom">Prénom *</label>
+                    <input type="text" id="prenom" name="prenom" th:value="${client != null ? client.prenom : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="dateNaissance">Date de Naissance</label>
+                    <input type="date" id="dateNaissance" name="dateNaissance" th:value="${client != null and client.dateNaissance != null ? client.dateNaissance : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" th:value="${client != null ? client.email : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" th:value="${client != null ? client.telephone : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/clients" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+</head>

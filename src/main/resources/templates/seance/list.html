@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Séances - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/seance/list.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>⏰ Gestion des Séances</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Séances</h1>
+            <a href="/seances/nouveau" class="btn">+ Ajouter une Séance</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Heure Début</th>
+                        <th>Tarif</th>
+                        <th>Sous-titres</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${seances == null or seances.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucune séance trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="seance : ${seances}">
+                        <td th:text="${seance.idSeance}"></td>
+                        <td th:text="${seance.dateSeance}"></td>
+                        <td th:text="${seance.heureDebut}"></td>
+                        <td th:text="${seance.tarif}"></td>
+                        <td th:text="${seance.avecSousTitre ? 'Oui' : 'Non'}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/seances/edit/{id}(id=${seance.idSeance})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/seances/delete/{id}(id=${seance.idSeance})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+</head>

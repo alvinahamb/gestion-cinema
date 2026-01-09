@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Méthode Paiement - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/methode-paiement/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💳 Gestion des Méthodes de Paiement</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${methodePaiement == null or methodePaiement.idMethodePaiement == null}">Ajouter une Méthode de Paiement</h1>
+            <h1 th:if="${methodePaiement != null and methodePaiement.idMethodePaiement != null}">Modifier une Méthode de Paiement</h1>
+            <form th:action="@{/methodes-paiement/save}" method="post">
+                <input type="hidden" name="idMethodePaiement" th:value="${methodePaiement != null and methodePaiement.idMethodePaiement != null ? methodePaiement.idMethodePaiement : ''}"/>
+                <div class="form-group">
+                    <label for="libelle">Libellé *</label>
+                    <input type="text" id="libelle" name="libelle" th:value="${methodePaiement != null ? methodePaiement.libelle : ''}" required/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/methodes-paiement" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+</head>

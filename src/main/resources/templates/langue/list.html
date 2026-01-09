@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langues - Gestion Cinéma</title>
+    <link rel="stylesheet" href="/css/langue/list.css">
+    
+</head>
+<body>
+    <div class="navbar">
+        <h2>🗣️ Gestion des Langues</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Langues</h1>
+            <a href="/langues/nouveau" class="btn">+ Ajouter une Langue</a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Code</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${langues == null or langues.isEmpty()}">
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <p>Aucune langue trouvée</p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:each="langue : ${langues}">
+                        <td th:text="${langue.idLangue}"></td>
+                        <td th:text="${langue.nom}"></td>
+                        <td th:text="${langue.code}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/langues/edit/{id}(id=${langue.idLangue})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/langues/delete/{id}(id=${langue.idLangue})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+</head>

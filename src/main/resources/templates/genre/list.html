@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genres - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/genre/list.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 Gestion des Genres</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Genres</h1>
+            <a href="/genres/nouveau" class="btn">+ Ajouter un Genre</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Libellé</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${genres == null or genres.isEmpty()}">
+                        <td colspan="3"><div class="empty-state"><p>Aucun genre trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="genre : ${genres}">
+                        <td th:text="${genre.idGenre}"></td>
+                        <td th:text="${genre.libelle}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/genres/edit/{id}(id=${genre.idGenre})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/genres/delete/{id}(id=${genre.idGenre})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+</head>

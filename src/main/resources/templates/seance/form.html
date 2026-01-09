@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Séance - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/seance/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>⏰ Gestion des Séances</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${seance == null or seance.idSeance == null}">Ajouter une Séance</h1>
+            <h1 th:if="${seance != null and seance.idSeance != null}">Modifier une Séance</h1>
+            <form th:action="@{/seances/save}" method="post">
+                <input type="hidden" name="idSeance" th:value="${seance != null and seance.idSeance != null ? seance.idSeance : ''}"/>
+                <div class="form-group">
+                    <label for="dateSeance">Date de la Séance *</label>
+                    <input type="date" id="dateSeance" name="dateSeance" th:value="${seance != null and seance.dateSeance != null ? seance.dateSeance : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="heureDebut">Heure de Début *</label>
+                    <input type="time" id="heureDebut" name="heureDebut" th:value="${seance != null ? seance.heureDebut : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="heureFin">Heure de Fin</label>
+                    <input type="time" id="heureFin" name="heureFin" th:value="${seance != null ? seance.heureFin : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="tarif">Tarif (€) *</label>
+                    <input type="number" id="tarif" name="tarif" step="0.01" th:value="${seance != null ? seance.tarif : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="avecSousTitre">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="avecSousTitre" name="avecSousTitre" th:checked="${seance != null and seance.avecSousTitre}"/>
+                            <span>Avec sous-titres</span>
+                        </div>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/seances" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+</head>

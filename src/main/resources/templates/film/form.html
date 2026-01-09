@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Film - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/film/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎥 Gestion des Films</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${film == null or film.idFilm == null}">Ajouter un Film</h1>
+            <h1 th:if="${film != null and film.idFilm != null}">Modifier un Film</h1>
+            <form th:action="@{/films/save}" method="post">
+                <input type="hidden" name="idFilm" th:value="${film != null and film.idFilm != null ? film.idFilm : ''}"/>
+                <div class="form-group">
+                    <label for="titre">Titre *</label>
+                    <input type="text" id="titre" name="titre" th:value="${film != null ? film.titre : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="synopsis">Synopsis</label>
+                    <textarea id="synopsis" name="synopsis" rows="4" th:text="${film != null ? film.synopsis : ''}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="duree">Durée (minutes)</label>
+                    <input type="number" id="duree" name="duree" th:value="${film != null ? film.duree : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="idLangue">Langue</label>
+                    <select id="idLangue" name="langue.idLangue">
+                        <option value="">-- Sélectionner une langue --</option>
+                        <option th:each="langue : ${langues}" th:value="${langue.idLangue}" th:selected="${film != null and film.langue != null and film.langue.idLangue == langue.idLangue}" th:text="${langue.nom}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idPays">Pays</label>
+                    <select id="idPays" name="pays.idPays">
+                        <option value="">-- Sélectionner un pays --</option>
+                        <option th:each="pays : ${pays}" th:value="${pays.idPays}" th:selected="${film != null and film.pays != null and film.pays.idPays == pays.idPays}" th:text="${pays.nom}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateSortie">Date de Sortie</label>
+                    <input type="date" id="dateSortie" name="dateSortie" th:value="${film != null and film.dateSortie != null ? film.dateSortie : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="classificationAge">Classification d'Âge</label>
+                    <input type="number" id="classificationAge" name="classificationAge" th:value="${film != null ? film.classificationAge : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/films" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+</head>

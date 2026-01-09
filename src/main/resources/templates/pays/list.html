@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pays - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/pays/list.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🌍 Gestion des Pays</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Pays</h1>
+            <a href="/pays/nouveau" class="btn">+ Ajouter un Pays</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${pays == null or pays.isEmpty()}">
+                        <td colspan="3"><div class="empty-state"><p>Aucun pays trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="p : ${pays}">
+                        <td th:text="${p.idPays}"></td>
+                        <td th:text="${p.nom}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/pays/edit/{id}(id=${p.idPays})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/pays/delete/{id}(id=${p.idPays})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+</head>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Salle - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/salle/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 Gestion des Salles</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${salle == null or salle.idSalle == null}">Ajouter une Salle</h1>
+            <h1 th:if="${salle != null and salle.idSalle != null}">Modifier une Salle</h1>
+            <form th:action="@{/salles/save}" method="post">
+                <input type="hidden" name="idSalle" th:value="${salle != null and salle.idSalle != null ? salle.idSalle : ''}"/>
+                <div class="form-group">
+                    <label for="nomSalle">Nom de la Salle *</label>
+                    <input type="text" id="nomSalle" name="nomSalle" th:value="${salle != null ? salle.nomSalle : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="capacite">Capacité (nombre de places) *</label>
+                    <input type="number" id="capacite" name="capacite" th:value="${salle != null ? salle.capacite : ''}" required/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/salles" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+</head>

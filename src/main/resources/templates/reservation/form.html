@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Réservation - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/reservation/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎫 Gestion des Réservations</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${reservation == null or reservation.idReservation == null}">Ajouter une Réservation</h1>
+            <h1 th:if="${reservation != null and reservation.idReservation != null}">Modifier une Réservation</h1>
+            <form th:action="@{/reservations/save}" method="post">
+                <input type="hidden" name="idReservation" th:value="${reservation != null and reservation.idReservation != null ? reservation.idReservation : ''}"/>
+                <div class="form-group">
+                    <label for="dateReservation">Date de Réservation *</label>
+                    <input type="date" id="dateReservation" name="dateReservation" th:value="${reservation != null and reservation.dateReservation != null ? reservation.dateReservation : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="total">Total (€) *</label>
+                    <input type="number" id="total" name="total" step="0.01" th:value="${reservation != null ? reservation.total : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="datePaiementEffectue">Date de Paiement Effectué</label>
+                    <input type="date" id="datePaiementEffectue" name="datePaiementEffectue" th:value="${reservation != null and reservation.datePaiementEffectue != null ? reservation.datePaiementEffectue : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="datePaiementPrevu">Date de Paiement Prévue</label>
+                    <input type="date" id="datePaiementPrevu" name="datePaiementPrevu" th:value="${reservation != null and reservation.datePaiementPrevu != null ? reservation.datePaiementPrevu : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/reservations" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+</head>

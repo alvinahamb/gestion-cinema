@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservations - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/reservation/list.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎫 Gestion des Réservations</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Réservations</h1>
+            <a href="/reservations/nouveau" class="btn">+ Ajouter une Réservation</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Client</th>
+                        <th>Date Réservation</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${reservations == null or reservations.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucune réservation trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="reservation : ${reservations}">
+                        <td th:text="${reservation.idReservation}"></td>
+                        <td th:text="${reservation.client.nom} + ' ' + ${reservation.client.prenom}"></td>
+                        <td th:text="${reservation.dateReservation}"></td>
+                        <td th:text="${reservation.total}"></td>
+                        <td th:text="${reservation.statusLibelle}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/reservations/edit/{id}(id=${reservation.idReservation})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/reservations/delete/{id}(id=${reservation.idReservation})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

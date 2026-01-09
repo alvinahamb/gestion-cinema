@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/client/list.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>👤 Gestion des Clients</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Clients</h1>
+            <a href="/clients/nouveau" class="btn">+ Ajouter un Client</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${clients == null or clients.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucun client trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="client : ${clients}">
+                        <td th:text="${client.idClient}"></td>
+                        <td th:text="${client.nom}"></td>
+                        <td th:text="${client.prenom}"></td>
+                        <td th:text="${client.email}"></td>
+                        <td th:text="${client.telephone}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/clients/edit/{id}(id=${client.idClient})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/clients/delete/{id}(id=${client.idClient})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+</head>

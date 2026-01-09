@@ -1,0 +1,126 @@
+/* CSS pour la liste des pays */
+@import url('../shared-list-form.css');
+
+/* Styles spécifiques à la liste des pays */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+tr:hover {
+    background: #f8f9fa;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 30px;
+    color: #999;
+}
+
+.empty-state svg,
+.empty-state i {
+    font-size: 3em;
+    color: #ddd;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.empty-state a {
+    color: #ffa726;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.empty-state a:hover {
+    text-decoration: underline;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-edit,
+.btn-danger {
+    padding: 8px 14px;
+    font-size: 0.85em;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-edit {
+    background: #28a745;
+}
+
+.btn-edit:hover {
+    background: #218838;
+}
+
+.btn-danger {
+    background: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    th, td {
+        padding: 12px 10px;
+        font-size: 0.9em;
+    }
+    
+    .actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .btn-edit, .btn-danger {
+        width: 100%;
+        justify-content: center;
+    }
+}

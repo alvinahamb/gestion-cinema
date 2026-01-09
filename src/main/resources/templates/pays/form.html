@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Pays - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/pays/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🌍 Gestion des Pays</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${pays == null or pays.idPays == null}">Ajouter un Pays</h1>
+            <h1 th:if="${pays != null and pays.idPays != null}">Modifier un Pays</h1>
+            <form th:action="@{/pays/save}" method="post">
+                <input type="hidden" name="idPays" th:value="${pays != null and pays.idPays != null ? pays.idPays : ''}"/>
+                <div class="form-group">
+                    <label for="nom">Nom du Pays *</label>
+                    <input type="text" id="nom" name="nom" th:value="${pays != null ? pays.nom : ''}" required/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/pays" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+</head>
