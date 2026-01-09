@@ -3,51 +3,57 @@ package com.example.demo.controller;
 import com.example.demo.dto.ReservationDTO;
 import com.example.demo.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/reservations")
+@Controller
+@RequestMapping("/reservations")
 public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
     @GetMapping
-    public ResponseEntity<List<ReservationDTO>> getAllReservations() {
+    public String listReservations(Model model) {
         List<ReservationDTO> reservations = reservationService.getAllReservations();
-        return ResponseEntity.ok(reservations);
+        model.addAttribute("reservations", reservations);
+        return "reservation/list";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ReservationDTO> getReservationById(@PathVariable Integer id) {
+    @GetMapping("/nouveau")
+    public String newReservation(Model model) {
+        model.addAttribute("reservation", null);
+        return "reservation/form";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editReservation(@PathVariable Integer id, Model model) {
         Optional<ReservationDTO> reservation = reservationService.getReservationById(id);
-        return reservation.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<ReservationDTO> createReservation(@RequestBody ReservationDTO reservationDTO) {
-        ReservationDTO createdReservation = reservationService.createReservation(reservationDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ReservationDTO> updateReservation(@PathVariable Integer id, @RequestBody ReservationDTO reservationDTO) {
-        ReservationDTO updatedReservation = reservationService.updateReservation(id, reservationDTO);
-        if (updatedReservation != null) {
-            return ResponseEntity.ok(updatedReservation);
+        if (reservation.isPresent()) {
+            model.addAttribute("reservation", reservation.get());
+            return "reservation/form";
         }
-        return ResponseEntity.notFound().build();
+        return "redirect:/reservations";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReservation(@PathVariable Integer id) {
-        if (reservationService.deleteReservation(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @PostMapping("/save")
+    public String saveReservation(@ModelAttribute ReservationDTO reservationDTO) {
+        reservationService.createReservation(reservationDTO);
+        return "redirect:/reservations";
+    }
+
+    @PostMapping("/update")
+    public String updateReservation(@RequestParam Integer id, @ModelAttribute ReservationDTO reservationDTO) {
+        reservationService.updateReservation(id, reservationDTO);
+        return "redirect:/reservations";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteReservation(@PathVariable Integer id) {
+        reservationService.deleteReservation(id);
+        return "redirect:/reservations";
     }
 }

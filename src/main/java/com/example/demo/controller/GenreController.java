@@ -3,51 +3,57 @@ package com.example.demo.controller;
 import com.example.demo.dto.GenreDTO;
 import com.example.demo.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/genres")
+@Controller
+@RequestMapping("/genres")
 public class GenreController {
     @Autowired
     private GenreService genreService;
 
     @GetMapping
-    public ResponseEntity<List<GenreDTO>> getAllGenres() {
+    public String listGenres(Model model) {
         List<GenreDTO> genres = genreService.getAllGenres();
-        return ResponseEntity.ok(genres);
+        model.addAttribute("genres", genres);
+        return "genre/list";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GenreDTO> getGenreById(@PathVariable Integer id) {
+    @GetMapping("/nouveau")
+    public String newGenre(Model model) {
+        model.addAttribute("genre", null);
+        return "genre/form";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editGenre(@PathVariable Integer id, Model model) {
         Optional<GenreDTO> genre = genreService.getGenreById(id);
-        return genre.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<GenreDTO> createGenre(@RequestBody GenreDTO genreDTO) {
-        GenreDTO createdGenre = genreService.createGenre(genreDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdGenre);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<GenreDTO> updateGenre(@PathVariable Integer id, @RequestBody GenreDTO genreDTO) {
-        GenreDTO updatedGenre = genreService.updateGenre(id, genreDTO);
-        if (updatedGenre != null) {
-            return ResponseEntity.ok(updatedGenre);
+        if (genre.isPresent()) {
+            model.addAttribute("genre", genre.get());
+            return "genre/form";
         }
-        return ResponseEntity.notFound().build();
+        return "redirect:/genres";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGenre(@PathVariable Integer id) {
-        if (genreService.deleteGenre(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @PostMapping("/save")
+    public String saveGenre(@ModelAttribute GenreDTO genreDTO) {
+        genreService.createGenre(genreDTO);
+        return "redirect:/genres";
+    }
+
+    @PostMapping("/update")
+    public String updateGenre(@RequestParam Integer id, @ModelAttribute GenreDTO genreDTO) {
+        genreService.updateGenre(id, genreDTO);
+        return "redirect:/genres";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteGenre(@PathVariable Integer id) {
+        genreService.deleteGenre(id);
+        return "redirect:/genres";
     }
 }

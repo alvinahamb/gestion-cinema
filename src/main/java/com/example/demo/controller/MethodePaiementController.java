@@ -3,51 +3,57 @@ package com.example.demo.controller;
 import com.example.demo.dto.MethodePaiementDTO;
 import com.example.demo.service.MethodePaiementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/methodes-paiement")
+@Controller
+@RequestMapping("/methodes-paiement")
 public class MethodePaiementController {
     @Autowired
     private MethodePaiementService methodePaiementService;
 
     @GetMapping
-    public ResponseEntity<List<MethodePaiementDTO>> getAllMethodesPaiement() {
+    public String listMethodesPaiement(Model model) {
         List<MethodePaiementDTO> methodesPaiement = methodePaiementService.getAllMethodesPaiement();
-        return ResponseEntity.ok(methodesPaiement);
+        model.addAttribute("methodesPaiement", methodesPaiement);
+        return "methode-paiement/list";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<MethodePaiementDTO> getMethodePaiementById(@PathVariable Integer id) {
+    @GetMapping("/nouveau")
+    public String newMethodePaiement(Model model) {
+        model.addAttribute("methodePaiement", null);
+        return "methode-paiement/form";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editMethodePaiement(@PathVariable Integer id, Model model) {
         Optional<MethodePaiementDTO> methodePaiement = methodePaiementService.getMethodePaiementById(id);
-        return methodePaiement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<MethodePaiementDTO> createMethodePaiement(@RequestBody MethodePaiementDTO methodePaiementDTO) {
-        MethodePaiementDTO createdMethodePaiement = methodePaiementService.createMethodePaiement(methodePaiementDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdMethodePaiement);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<MethodePaiementDTO> updateMethodePaiement(@PathVariable Integer id, @RequestBody MethodePaiementDTO methodePaiementDTO) {
-        MethodePaiementDTO updatedMethodePaiement = methodePaiementService.updateMethodePaiement(id, methodePaiementDTO);
-        if (updatedMethodePaiement != null) {
-            return ResponseEntity.ok(updatedMethodePaiement);
+        if (methodePaiement.isPresent()) {
+            model.addAttribute("methodePaiement", methodePaiement.get());
+            return "methode-paiement/form";
         }
-        return ResponseEntity.notFound().build();
+        return "redirect:/methodes-paiement";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMethodePaiement(@PathVariable Integer id) {
-        if (methodePaiementService.deleteMethodePaiement(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @PostMapping("/save")
+    public String saveMethodePaiement(@ModelAttribute MethodePaiementDTO methodePaiementDTO) {
+        methodePaiementService.createMethodePaiement(methodePaiementDTO);
+        return "redirect:/methodes-paiement";
+    }
+
+    @PostMapping("/update")
+    public String updateMethodePaiement(@RequestParam Integer id, @ModelAttribute MethodePaiementDTO methodePaiementDTO) {
+        methodePaiementService.updateMethodePaiement(id, methodePaiementDTO);
+        return "redirect:/methodes-paiement";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteMethodePaiement(@PathVariable Integer id) {
+        methodePaiementService.deleteMethodePaiement(id);
+        return "redirect:/methodes-paiement";
     }
 }

@@ -3,51 +3,57 @@ package com.example.demo.controller;
 import com.example.demo.dto.ClientDTO;
 import com.example.demo.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/clients")
+@Controller
+@RequestMapping("/clients")
 public class ClientController {
     @Autowired
     private ClientService clientService;
 
     @GetMapping
-    public ResponseEntity<List<ClientDTO>> getAllClients() {
+    public String listClients(Model model) {
         List<ClientDTO> clients = clientService.getAllClients();
-        return ResponseEntity.ok(clients);
+        model.addAttribute("clients", clients);
+        return "client/list";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ClientDTO> getClientById(@PathVariable Integer id) {
+    @GetMapping("/nouveau")
+    public String newClient(Model model) {
+        model.addAttribute("client", null);
+        return "client/form";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editClient(@PathVariable Integer id, Model model) {
         Optional<ClientDTO> client = clientService.getClientById(id);
-        return client.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<ClientDTO> createClient(@RequestBody ClientDTO clientDTO) {
-        ClientDTO createdClient = clientService.createClient(clientDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdClient);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ClientDTO> updateClient(@PathVariable Integer id, @RequestBody ClientDTO clientDTO) {
-        ClientDTO updatedClient = clientService.updateClient(id, clientDTO);
-        if (updatedClient != null) {
-            return ResponseEntity.ok(updatedClient);
+        if (client.isPresent()) {
+            model.addAttribute("client", client.get());
+            return "client/form";
         }
-        return ResponseEntity.notFound().build();
+        return "redirect:/clients";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Integer id) {
-        if (clientService.deleteClient(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @PostMapping("/save")
+    public String saveClient(@ModelAttribute ClientDTO clientDTO) {
+        clientService.createClient(clientDTO);
+        return "redirect:/clients";
+    }
+
+    @PostMapping("/update")
+    public String updateClient(@RequestParam Integer id, @ModelAttribute ClientDTO clientDTO) {
+        clientService.updateClient(id, clientDTO);
+        return "redirect:/clients";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteClient(@PathVariable Integer id) {
+        clientService.deleteClient(id);
+        return "redirect:/clients";
     }
 }

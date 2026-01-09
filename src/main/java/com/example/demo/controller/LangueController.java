@@ -3,51 +3,57 @@ package com.example.demo.controller;
 import com.example.demo.dto.LangueDTO;
 import com.example.demo.service.LangueService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/langues")
+@Controller
+@RequestMapping("/langues")
 public class LangueController {
     @Autowired
     private LangueService languageService;
 
     @GetMapping
-    public ResponseEntity<List<LangueDTO>> getAllLangues() {
+    public String listLangues(Model model) {
         List<LangueDTO> langues = languageService.getAllLangues();
-        return ResponseEntity.ok(langues);
+        model.addAttribute("langues", langues);
+        return "langue/list";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<LangueDTO> getLangueById(@PathVariable Integer id) {
+    @GetMapping("/nouveau")
+    public String newLangue(Model model) {
+        model.addAttribute("langue", null);
+        return "langue/form";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editLangue(@PathVariable Integer id, Model model) {
         Optional<LangueDTO> langue = languageService.getLangueById(id);
-        return langue.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<LangueDTO> createLangue(@RequestBody LangueDTO languageDTO) {
-        LangueDTO createdLanguage = languageService.createLangue(languageDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdLanguage);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<LangueDTO> updateLangue(@PathVariable Integer id, @RequestBody LangueDTO languageDTO) {
-        LangueDTO updatedLanguage = languageService.updateLangue(id, languageDTO);
-        if (updatedLanguage != null) {
-            return ResponseEntity.ok(updatedLanguage);
+        if (langue.isPresent()) {
+            model.addAttribute("langue", langue.get());
+            return "langue/form";
         }
-        return ResponseEntity.notFound().build();
+        return "redirect:/langues";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLangue(@PathVariable Integer id) {
-        if (languageService.deleteLangue(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @PostMapping("/save")
+    public String saveLangue(@ModelAttribute LangueDTO languageDTO) {
+        languageService.createLangue(languageDTO);
+        return "redirect:/langues";
+    }
+
+    @PostMapping("/update")
+    public String updateLangue(@RequestParam Integer id, @ModelAttribute LangueDTO languageDTO) {
+        languageService.updateLangue(id, languageDTO);
+        return "redirect:/langues";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteLangue(@PathVariable Integer id) {
+        languageService.deleteLangue(id);
+        return "redirect:/langues";
     }
 }

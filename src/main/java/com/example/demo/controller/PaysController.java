@@ -3,51 +3,57 @@ package com.example.demo.controller;
 import com.example.demo.dto.PaysDTO;
 import com.example.demo.service.PaysService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/pays")
+@Controller
+@RequestMapping("/pays")
 public class PaysController {
     @Autowired
     private PaysService paysService;
 
     @GetMapping
-    public ResponseEntity<List<PaysDTO>> getAllPays() {
+    public String listPays(Model model) {
         List<PaysDTO> pays = paysService.getAllPays();
-        return ResponseEntity.ok(pays);
+        model.addAttribute("pays", pays);
+        return "pays/list";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PaysDTO> getPaysById(@PathVariable Integer id) {
+    @GetMapping("/nouveau")
+    public String newPays(Model model) {
+        model.addAttribute("pay", null);
+        return "pays/form";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editPays(@PathVariable Integer id, Model model) {
         Optional<PaysDTO> pays = paysService.getPaysById(id);
-        return pays.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<PaysDTO> createPays(@RequestBody PaysDTO paysDTO) {
-        PaysDTO createdPays = paysService.createPays(paysDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPays);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<PaysDTO> updatePays(@PathVariable Integer id, @RequestBody PaysDTO paysDTO) {
-        PaysDTO updatedPays = paysService.updatePays(id, paysDTO);
-        if (updatedPays != null) {
-            return ResponseEntity.ok(updatedPays);
+        if (pays.isPresent()) {
+            model.addAttribute("pay", pays.get());
+            return "pays/form";
         }
-        return ResponseEntity.notFound().build();
+        return "redirect:/pays";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePays(@PathVariable Integer id) {
-        if (paysService.deletePays(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @PostMapping("/save")
+    public String savePays(@ModelAttribute PaysDTO paysDTO) {
+        paysService.createPays(paysDTO);
+        return "redirect:/pays";
+    }
+
+    @PostMapping("/update")
+    public String updatePays(@RequestParam Integer id, @ModelAttribute PaysDTO paysDTO) {
+        paysService.updatePays(id, paysDTO);
+        return "redirect:/pays";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deletePays(@PathVariable Integer id) {
+        paysService.deletePays(id);
+        return "redirect:/pays";
     }
 }
