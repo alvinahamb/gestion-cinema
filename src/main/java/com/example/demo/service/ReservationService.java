@@ -38,8 +38,7 @@ public class ReservationService {
             Reservation reservation = existingReservation.get();
             reservation.setDateReservation(reservationDTO.getDateReservation());
             reservation.setTotal(reservationDTO.getTotal());
-            reservation.setDatePaiementPrevu(reservationDTO.getDatePaiementPrevu());
-            reservation.setDatePaiementEffectue(reservationDTO.getDatePaiementEffectue());
+            reservation.setRemise(reservationDTO.getRemise());
             
             Reservation updatedReservation = reservationRepository.save(reservation);
             return convertToDTO(updatedReservation);
@@ -71,9 +70,7 @@ public class ReservationService {
                                  reservation.getSeance() != null ? reservation.getSeance().getIdSeance() : null,
                                  reservation.getDateReservation(),
                                  reservation.getTotal(),
-                                 reservation.getDatePaiementPrevu(),
-                                 reservation.getDatePaiementEffectue(),
-                                 reservation.getMethodePaiement() != null ? reservation.getMethodePaiement().getIdMethodePaiement() : null,
+                                 reservation.getRemise(),
                                  reservation.getStatusReservation() != null ? reservation.getStatusReservation().getIdStatus() : null,
                                  statusLibelle);
     }
@@ -82,8 +79,7 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setDateReservation(reservationDTO.getDateReservation());
         reservation.setTotal(reservationDTO.getTotal());
-        reservation.setDatePaiementPrevu(reservationDTO.getDatePaiementPrevu());
-        reservation.setDatePaiementEffectue(reservationDTO.getDatePaiementEffectue());
+        reservation.setRemise(reservationDTO.getRemise());
         return reservation;
     }
 }

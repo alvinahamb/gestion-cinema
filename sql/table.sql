@@ -30,24 +30,34 @@ CREATE TABLE IF NOT EXISTS client (
     telephone VARCHAR(20)
 );
 
+CREATE TABLE IF NOT EXISTS status (
+    id_status SERIAL PRIMARY KEY,
+    libelle VARCHAR(100) NOT NULL,
+    code VARCHAR(100) NOT NULL,
+    ordre INT NOT NULL
+);
 -- Tables principales
 CREATE TABLE IF NOT EXISTS salle (
     id_salle SERIAL PRIMARY KEY,
     nom_salle VARCHAR(100) NOT NULL,
-    capacite INT NOT NULL
+    capacite INT NOT NULL,
+    ligne INT NOT NULL,
+    colonne INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS type_place (
+    id_type_place SERIAL PRIMARY KEY,
+    libelle VARCHAR(100) NOT NULL,
+    description TEXT
 );
 
 CREATE TABLE IF NOT EXISTS place (
     id_place SERIAL PRIMARY KEY,
     id_salle INT,
+    id_type_place INT,
     numero_ligne INT NOT NULL,
     numero_colonne INT NOT NULL,
     FOREIGN KEY (id_salle) REFERENCES salle(id_salle)
-);
-
-CREATE TABLE IF NOT EXISTS status_film (
-    id_status SERIAL PRIMARY KEY,
-    libelle VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS film (
@@ -55,21 +65,19 @@ CREATE TABLE IF NOT EXISTS film (
     titre VARCHAR(200) NOT NULL,
     synopsis TEXT,
     duree INT NOT NULL,
-    id_langue INT,
+    id_langue_original INT,
     id_pays INT,
     date_sortie DATE,
     date_ajout DATE DEFAULT CURRENT_DATE,
     classification_age INT,
-    id_status INT,
-    FOREIGN KEY (id_status) REFERENCES status_film(id_status),
-    FOREIGN KEY (id_langue) REFERENCES langue(id_langue),
+    FOREIGN KEY (id_langue_original) REFERENCES langue(id_langue),
     FOREIGN KEY (id_pays) REFERENCES pays(id_pays)
 );
 
 CREATE TABLE IF NOT EXISTS film_genre (
+    id SERIAL PRIMARY KEY,
     id_film INT,
     id_genre INT,
-    PRIMARY KEY (id_film, id_genre),
     FOREIGN KEY (id_film) REFERENCES film(id_film),
     FOREIGN KEY (id_genre) REFERENCES genre(id_genre)
 );
@@ -83,34 +91,28 @@ CREATE TABLE IF NOT EXISTS film_version (
     FOREIGN KEY (id_langue) REFERENCES langue(id_langue)
 );
 
-CREATE TABLE IF NOT EXISTS film_status_historique (
-    id SERIAL PRIMARY KEY,
-    id_film INT,
-    id_status INT,
-    date_modification DATE  DEFAULT CURRENT_DATE,
-    FOREIGN KEY (id_film) REFERENCES film(id_film),
-    FOREIGN KEY (id_status) REFERENCES status_film(id_status)
-);
-
-CREATE TABLE IF NOT EXISTS status_seance (
-    id_status SERIAL PRIMARY KEY,
-    libelle VARCHAR(100) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS seance (
     id_seance SERIAL PRIMARY KEY,
     id_film_version INT,
     id_salle INT,
-    heure_debut TIMESTAMP,
-    heure_fin TIMESTAMP,
+    heure_debut TIME(0),
     avec_sous_titre BOOLEAN,
-    date_seance DATE  DEFAULT CURRENT_DATE,
+    date_seance DATE DEFAULT CURRENT_DATE,
     tarif DECIMAL(5,2),
     id_status INT,
     FOREIGN KEY (id_film_version) REFERENCES film_version(id),
     FOREIGN KEY (id_salle) REFERENCES salle(id_salle),
-    FOREIGN KEY (id_status) REFERENCES status_seance(id_status)
+    FOREIGN KEY (id_status) REFERENCES status(id_status)
 );
+
+CREATE TABLE IF NOT EXISTS tarif_seance_place (
+    id SERIAL PRIMARY KEY,
+    id_seance INT,
+    id_type_place INT,
+    tarif DECIMAL(5,2),
+    FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
+    FOREIGN KEY (id_type_place) REFERENCES type_place(id_type_place)
+)
 
 CREATE TABLE IF NOT EXISTS seance_status_historique (
     id SERIAL PRIMARY KEY,
@@ -118,95 +120,80 @@ CREATE TABLE IF NOT EXISTS seance_status_historique (
     id_status INT,
     date_modification DATE  DEFAULT CURRENT_DATE,
     FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
-    FOREIGN KEY (id_status) REFERENCES status_seance(id_status)
+    FOREIGN KEY (id_status) REFERENCES status(id_status)
 ); 
-
-CREATE TABLE IF NOT EXISTS status_reservation (
-    id_status SERIAL PRIMARY KEY,
-    libelle VARCHAR(100) NOT NULL
-);
 
 CREATE TABLE IF NOT EXISTS reservation (
     id_reservation SERIAL PRIMARY KEY,
-    id_client INT,
-    id_seance INT,
-    date_reservation DATE  DEFAULT CURRENT_DATE,
-    total DECIMAL(7,2),
-    date_paiement_prevu DATE,
-    date_paiement_effectue DATE,
-    id_methode_paiement INT,
+    id_client INT NOT NULL,
+    id_seance INT NOT NULL,
+    date_reservation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total DECIMAL(7,2) NOT NULL,
+    remise DECIMAL(5,2),
     id_status INT,
+    FOREIGN KEY (id_status) REFERENCES status(id_status),
     FOREIGN KEY (id_client) REFERENCES client(id_client),
-    FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
-    FOREIGN KEY (id_status) REFERENCES status_reservation(id_status),
-    FOREIGN KEY (id_methode_paiement) REFERENCES methode_paiement(id_methode_paiement)
-);
-
-CREATE TABLE IF NOT EXISTS reservation_detail (
-    id SERIAL PRIMARY KEY,
-    id_reservation INT,
-    id_seance INT,
-    id_place INT,
-    prix DECIMAL(7,2),
-    FOREIGN KEY (id_reservation) REFERENCES reservation(id_reservation),
-    FOREIGN KEY (id_place) REFERENCES place(id_place),
     FOREIGN KEY (id_seance) REFERENCES seance(id_seance)
 );
 
-CREATE TABLE IF NOT EXISTS reservation_status_historique (
+CREATE TABLE IF NOT EXISTS reservation_place (
     id SERIAL PRIMARY KEY,
-    id_reservation INT,
-    id_status INT,
-    date_modification DATE  DEFAULT CURRENT_DATE,
-    FOREIGN KEY (id_reservation) REFERENCES reservation(id_reservation),
-    FOREIGN KEY (id_status) REFERENCES status_reservation(id_status)
-);
-
-CREATE TABLE IF NOT EXISTS achat (
-    id_achat SERIAL PRIMARY KEY,
-    id_client INT,
-    id_seance INT,
-    date_achat DATE  DEFAULT CURRENT_DATE,
-    total DECIMAL(7,2),
-    id_methode_paiement INT,
-    FOREIGN KEY (id_client) REFERENCES client(id_client),
-    FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
-    FOREIGN KEY (id_methode_paiement) REFERENCES methode_paiement(id_methode_paiement)
-);
-
-CREATE TABLE IF NOT EXISTS achat_detail (
-    id_achat_detail SERIAL PRIMARY KEY,
-    id_achat INT,
-    id_seance INT,
-    id_place INT,
+    id_reservation INT NOT NULL,
+    id_place INT NOT NULL,
     prix DECIMAL(7,2),
-    FOREIGN KEY (id_achat) REFERENCES achat(id_achat),
-    FOREIGN KEY (id_place) REFERENCES place(id_place),
-    FOREIGN KEY (id_seance) REFERENCES seance(id_seance)
-);
-
-CREATE TABLE IF NOT EXISTS type_operation (
-    id_type SERIAL PRIMARY KEY,
-    libelle VARCHAR(100) NOT NULL
+    FOREIGN KEY (id_reservation) REFERENCES reservation(id_reservation),
+    FOREIGN KEY (id_place) REFERENCES place(id_place)
 );
 
 CREATE TABLE IF NOT EXISTS paiement (
     id_paiement SERIAL PRIMARY KEY,
-    id_operation INT,
-    id_type_operation INT,
+    id_reservation INT,
+    montant DECIMAL(7,2),
+    creer_le DATE  DEFAULT CURRENT_DATE,
+    id_status INT,
+    date_paiement_prevu DATE,
+    FOREIGN KEY (id_reservation) REFERENCES reservation(id_reservation),
+    FOREIGN KEY (id_status) REFERENCES status(id_status)
+);
+
+CREATE TABLE IF NOT EXISTS paiement_detail (
+    id SERIAL PRIMARY KEY,
+    id_paiement INT,
     id_methode_paiement INT,
     montant DECIMAL(7,2),
     date_paiement DATE  DEFAULT CURRENT_DATE,
-    FOREIGN KEY (id_type_operation) REFERENCES type_operation(id_type),
-    FOREIGN KEY (id_methode_paiement) REFERENCES methode_paiement(id_methode_paiement)
+    FOREIGN KEY (id_methode_paiement) REFERENCES methode_paiement(id_methode_paiement),
+    FOREIGN KEY (id_paiement) REFERENCES paiement(id_paiement)
 );
 
-CREATE TABLE IF NOT EXISTS caisse (
-    id_caisse SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS paiement_status_historique (
+    id SERIAL PRIMARY KEY,
     id_paiement INT,
-    entree DECIMAL(7,2),
-    sortie DECIMAL(7,2),
-    montant DECIMAL(7,2),
-    date_enregistrement DATE DEFAULT CURRENT_DATE,
-    FOREIGN KEY (id_paiement) REFERENCES paiement(id_paiement)
+    id_status INT,
+    date_modification DATE  DEFAULT CURRENT_DATE,
+    FOREIGN KEY (id_paiement) REFERENCES paiement(id_paiement),
+    FOREIGN KEY (id_status) REFERENCES status(id_status)
+);
+
+
+CREATE TABLE IF NOT EXISTS ticket (
+    id_ticket SERIAL PRIMARY KEY,
+    id_reservation INT,
+    id_client INT,
+    id_seance INT,
+    date_achat DATE DEFAULT CURRENT_DATE,
+    total DECIMAL(7,2),
+    remise DECIMAL(5,2),
+    FOREIGN KEY (id_client) REFERENCES client(id_client),
+    FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
+    FOREIGN KEY (id_reservation) REFERENCES reservation(id_reservation)
+);
+
+CREATE TABLE IF NOT EXISTS ticket_place(
+    id SERIAL PRIMARY KEY,
+    id_ticket INT,
+    id_place INT,
+    prix DECIMAL(7,2),
+    FOREIGN KEY (id_ticket) REFERENCES ticket(id_ticket),
+    FOREIGN KEY (id_place) REFERENCES place(id_place)
 );

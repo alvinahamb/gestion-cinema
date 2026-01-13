@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
 @Entity
@@ -19,17 +19,11 @@ public class Reservation {
     @JoinColumn(name = "id_seance")
     private Seance seance;
     
-    private LocalDate dateReservation;
+    private LocalDateTime dateReservation;
     
     private BigDecimal total;
     
-    private LocalDate datePaiementPrevu;
-    
-    private LocalDate datePaiementEffectue;
-    
-    @ManyToOne
-    @JoinColumn(name = "id_methode_paiement")
-    private MethodePaiement methodePaiement;
+    private BigDecimal remise;
     
     @ManyToOne
     @JoinColumn(name = "id_status")
@@ -37,16 +31,13 @@ public class Reservation {
 
     public Reservation() {}
 
-    public Reservation(Client client, Seance seance, LocalDate dateReservation, BigDecimal total,
-                      LocalDate datePaiementPrevu, LocalDate datePaiementEffectue, 
-                      MethodePaiement methodePaiement, StatusReservation statusReservation) {
+    public Reservation(Client client, Seance seance, LocalDateTime dateReservation, BigDecimal total,
+                      BigDecimal remise, StatusReservation statusReservation) {
         this.client = client;
         this.seance = seance;
         this.dateReservation = dateReservation;
         this.total = total;
-        this.datePaiementPrevu = datePaiementPrevu;
-        this.datePaiementEffectue = datePaiementEffectue;
-        this.methodePaiement = methodePaiement;
+        this.remise = remise;
         this.statusReservation = statusReservation;
     }
 
@@ -74,11 +65,11 @@ public class Reservation {
         this.seance = seance;
     }
 
-    public LocalDate getDateReservation() {
+    public LocalDateTime getDateReservation() {
         return dateReservation;
     }
 
-    public void setDateReservation(LocalDate dateReservation) {
+    public void setDateReservation(LocalDateTime dateReservation) {
         this.dateReservation = dateReservation;
     }
 
@@ -90,28 +81,12 @@ public class Reservation {
         this.total = total;
     }
 
-    public LocalDate getDatePaiementPrevu() {
-        return datePaiementPrevu;
+    public BigDecimal getRemise() {
+        return remise;
     }
 
-    public void setDatePaiementPrevu(LocalDate datePaiementPrevu) {
-        this.datePaiementPrevu = datePaiementPrevu;
-    }
-
-    public LocalDate getDatePaiementEffectue() {
-        return datePaiementEffectue;
-    }
-
-    public void setDatePaiementEffectue(LocalDate datePaiementEffectue) {
-        this.datePaiementEffectue = datePaiementEffectue;
-    }
-
-    public MethodePaiement getMethodePaiement() {
-        return methodePaiement;
-    }
-
-    public void setMethodePaiement(MethodePaiement methodePaiement) {
-        this.methodePaiement = methodePaiement;
+    public void setRemise(BigDecimal remise) {
+        this.remise = remise;
     }
 
     public StatusReservation getStatusReservation() {
@@ -122,3 +97,4 @@ public class Reservation {
         this.statusReservation = statusReservation;
     }
 }
+

@@ -1,33 +1,29 @@
 package com.example.demo.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
 public class ReservationDTO {
     private Integer idReservation;
     private ClientDTO client;
     private Integer idSeance;
-    private LocalDate dateReservation;
+    private LocalDateTime dateReservation;
     private BigDecimal total;
-    private LocalDate datePaiementPrevu;
-    private LocalDate datePaiementEffectue;
-    private Integer idMethodePaiement;
+    private BigDecimal remise;
     private Integer idStatus;
     private String statusLibelle;
 
     public ReservationDTO() {}
 
     public ReservationDTO(Integer idReservation, ClientDTO client, Integer idSeance, 
-                         LocalDate dateReservation, BigDecimal total, LocalDate datePaiementPrevu,
-                         LocalDate datePaiementEffectue, Integer idMethodePaiement, Integer idStatus, String statusLibelle) {
+                         LocalDateTime dateReservation, BigDecimal total, BigDecimal remise,
+                         Integer idStatus, String statusLibelle) {
         this.idReservation = idReservation;
         this.client = client;
         this.idSeance = idSeance;
         this.dateReservation = dateReservation;
         this.total = total;
-        this.datePaiementPrevu = datePaiementPrevu;
-        this.datePaiementEffectue = datePaiementEffectue;
-        this.idMethodePaiement = idMethodePaiement;
+        this.remise = remise;
         this.idStatus = idStatus;
         this.statusLibelle = statusLibelle;
     }
@@ -56,11 +52,11 @@ public class ReservationDTO {
         this.idSeance = idSeance;
     }
 
-    public LocalDate getDateReservation() {
+    public LocalDateTime getDateReservation() {
         return dateReservation;
     }
 
-    public void setDateReservation(LocalDate dateReservation) {
+    public void setDateReservation(LocalDateTime dateReservation) {
         this.dateReservation = dateReservation;
     }
 
@@ -72,28 +68,12 @@ public class ReservationDTO {
         this.total = total;
     }
 
-    public LocalDate getDatePaiementPrevu() {
-        return datePaiementPrevu;
+    public BigDecimal getRemise() {
+        return remise;
     }
 
-    public void setDatePaiementPrevu(LocalDate datePaiementPrevu) {
-        this.datePaiementPrevu = datePaiementPrevu;
-    }
-
-    public LocalDate getDatePaiementEffectue() {
-        return datePaiementEffectue;
-    }
-
-    public void setDatePaiementEffectue(LocalDate datePaiementEffectue) {
-        this.datePaiementEffectue = datePaiementEffectue;
-    }
-
-    public Integer getIdMethodePaiement() {
-        return idMethodePaiement;
-    }
-
-    public void setIdMethodePaiement(Integer idMethodePaiement) {
-        this.idMethodePaiement = idMethodePaiement;
+    public void setRemise(BigDecimal remise) {
+        this.remise = remise;
     }
 
     public Integer getIdStatus() {

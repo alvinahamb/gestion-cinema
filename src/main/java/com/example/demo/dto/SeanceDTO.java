@@ -1,14 +1,14 @@
 package com.example.demo.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.math.BigDecimal;
 
 public class SeanceDTO {
     private Integer idSeance;
     private Integer idFilmVersion;
     private Integer idSalle;
-    private String heureDebut;
-    private String heureFin;
+    private LocalTime heureDebut;
     private Boolean avecSousTitre;
     private LocalDate dateSeance;
     private BigDecimal tarif;
@@ -16,13 +16,12 @@ public class SeanceDTO {
 
     public SeanceDTO() {}
 
-    public SeanceDTO(Integer idSeance, Integer idFilmVersion, Integer idSalle, String heureDebut,
-                    String heureFin, Boolean avecSousTitre, LocalDate dateSeance, BigDecimal tarif, Integer idStatus) {
+    public SeanceDTO(Integer idSeance, Integer idFilmVersion, Integer idSalle, LocalTime heureDebut,
+                    Boolean avecSousTitre, LocalDate dateSeance, BigDecimal tarif, Integer idStatus) {
         this.idSeance = idSeance;
         this.idFilmVersion = idFilmVersion;
         this.idSalle = idSalle;
         this.heureDebut = heureDebut;
-        this.heureFin = heureFin;
         this.avecSousTitre = avecSousTitre;
         this.dateSeance = dateSeance;
         this.tarif = tarif;
@@ -53,20 +52,12 @@ public class SeanceDTO {
         this.idSalle = idSalle;
     }
 
-    public String getHeureDebut() {
+    public LocalTime getHeureDebut() {
         return heureDebut;
     }
 
-    public void setHeureDebut(String heureDebut) {
+    public void setHeureDebut(LocalTime heureDebut) {
         this.heureDebut = heureDebut;
-    }
-
-    public String getHeureFin() {
-        return heureFin;
-    }
-
-    public void setHeureFin(String heureFin) {
-        this.heureFin = heureFin;
     }
 
     public Boolean getAvecSousTitre() {

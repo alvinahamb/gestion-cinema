@@ -4,7 +4,6 @@ import com.example.demo.dto.FilmDTO;
 import com.example.demo.entity.Film;
 import com.example.demo.entity.Langue;
 import com.example.demo.entity.Pays;
-import com.example.demo.entity.StatusFilm;
 import com.example.demo.repository.FilmRepository;
 import com.example.demo.repository.LangueRepository;
 import com.example.demo.repository.PaysRepository;
@@ -50,9 +49,9 @@ public class FilmService {
             film.setSynopsis(filmDTO.getSynopsis());
             film.setDuree(filmDTO.getDuree());
             
-            if (filmDTO.getIdLangue() != null) {
-                Optional<Langue> langue = languageRepository.findById(filmDTO.getIdLangue());
-                langue.ifPresent(film::setLangue);
+            if (filmDTO.getIdLangueOriginal() != null) {
+                Optional<Langue> langue = languageRepository.findById(filmDTO.getIdLangueOriginal());
+                langue.ifPresent(film::setLangueOriginal);
             }
             
             if (filmDTO.getIdPays() != null) {
@@ -81,10 +80,9 @@ public class FilmService {
     private FilmDTO convertToDTO(Film film) {
         return new FilmDTO(film.getIdFilm(), film.getTitre(), film.getSynopsis(), 
                           film.getDuree(), 
-                          film.getLangue() != null ? film.getLangue().getIdLangue() : null,
+                          film.getLangueOriginal() != null ? film.getLangueOriginal().getIdLangue() : null,
                           film.getPays() != null ? film.getPays().getIdPays() : null,
-                          film.getDateSortie(), film.getDateAjout(), film.getClassificationAge(),
-                          film.getStatusFilm() != null ? film.getStatusFilm().getIdStatus() : null);
+                          film.getDateSortie(), film.getDateAjout(), film.getClassificationAge());
     }
 
     private Film convertToEntity(FilmDTO filmDTO) {
@@ -93,9 +91,9 @@ public class FilmService {
         film.setSynopsis(filmDTO.getSynopsis());
         film.setDuree(filmDTO.getDuree());
         
-        if (filmDTO.getIdLangue() != null) {
-            Optional<Langue> langue = languageRepository.findById(filmDTO.getIdLangue());
-            langue.ifPresent(film::setLangue);
+        if (filmDTO.getIdLangueOriginal() != null) {
+            Optional<Langue> langue = languageRepository.findById(filmDTO.getIdLangueOriginal());
+            langue.ifPresent(film::setLangueOriginal);
         }
         
         if (filmDTO.getIdPays() != null) {

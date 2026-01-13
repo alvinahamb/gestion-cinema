@@ -7,27 +7,25 @@ public class FilmDTO {
     private String titre;
     private String synopsis;
     private Integer duree;
-    private Integer idLangue;
+    private Integer idLangueOriginal;
     private Integer idPays;
     private LocalDate dateSortie;
     private LocalDate dateAjout;
     private Integer classificationAge;
-    private Integer idStatus;
 
     public FilmDTO() {}
 
-    public FilmDTO(Integer idFilm, String titre, String synopsis, Integer duree, Integer idLangue, 
-                   Integer idPays, LocalDate dateSortie, LocalDate dateAjout, Integer classificationAge, Integer idStatus) {
+    public FilmDTO(Integer idFilm, String titre, String synopsis, Integer duree, Integer idLangueOriginal, 
+                   Integer idPays, LocalDate dateSortie, LocalDate dateAjout, Integer classificationAge) {
         this.idFilm = idFilm;
         this.titre = titre;
         this.synopsis = synopsis;
         this.duree = duree;
-        this.idLangue = idLangue;
+        this.idLangueOriginal = idLangueOriginal;
         this.idPays = idPays;
         this.dateSortie = dateSortie;
         this.dateAjout = dateAjout;
         this.classificationAge = classificationAge;
-        this.idStatus = idStatus;
     }
 
     public Integer getIdFilm() {
@@ -62,12 +60,12 @@ public class FilmDTO {
         this.duree = duree;
     }
 
-    public Integer getIdLangue() {
-        return idLangue;
+    public Integer getIdLangueOriginal() {
+        return idLangueOriginal;
     }
 
-    public void setIdLangue(Integer idLangue) {
-        this.idLangue = idLangue;
+    public void setIdLangueOriginal(Integer idLangueOriginal) {
+        this.idLangueOriginal = idLangueOriginal;
     }
 
     public Integer getIdPays() {
@@ -100,13 +98,5 @@ public class FilmDTO {
 
     public void setClassificationAge(Integer classificationAge) {
         this.classificationAge = classificationAge;
-    }
-
-    public Integer getIdStatus() {
-        return idStatus;
-    }
-
-    public void setIdStatus(Integer idStatus) {
-        this.idStatus = idStatus;
     }
 }

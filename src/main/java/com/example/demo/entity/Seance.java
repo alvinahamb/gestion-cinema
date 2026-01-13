@@ -2,7 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.math.BigDecimal;
 
 @Entity
@@ -20,9 +20,7 @@ public class Seance {
     @JoinColumn(name = "id_salle")
     private Salle salle;
     
-    private LocalDateTime heureDebut;
-    
-    private LocalDateTime heureFin;
+    private LocalTime heureDebut;
     
     private Boolean avecSousTitre;
     
@@ -36,13 +34,12 @@ public class Seance {
 
     public Seance() {}
 
-    public Seance(FilmVersion filmVersion, Salle salle, LocalDateTime heureDebut, 
-                  LocalDateTime heureFin, Boolean avecSousTitre, LocalDate dateSeance, 
+    public Seance(FilmVersion filmVersion, Salle salle, LocalTime heureDebut, 
+                  Boolean avecSousTitre, LocalDate dateSeance, 
                   BigDecimal tarif, StatusSeance statusSeance) {
         this.filmVersion = filmVersion;
         this.salle = salle;
         this.heureDebut = heureDebut;
-        this.heureFin = heureFin;
         this.avecSousTitre = avecSousTitre;
         this.dateSeance = dateSeance;
         this.tarif = tarif;
@@ -73,20 +70,12 @@ public class Seance {
         this.salle = salle;
     }
 
-    public LocalDateTime getHeureDebut() {
+    public LocalTime getHeureDebut() {
         return heureDebut;
     }
 
-    public void setHeureDebut(LocalDateTime heureDebut) {
+    public void setHeureDebut(LocalTime heureDebut) {
         this.heureDebut = heureDebut;
-    }
-
-    public LocalDateTime getHeureFin() {
-        return heureFin;
-    }
-
-    public void setHeureFin(LocalDateTime heureFin) {
-        this.heureFin = heureFin;
     }
 
     public Boolean getAvecSousTitre() {

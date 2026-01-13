@@ -5,7 +5,7 @@ import com.example.demo.entity.Seance;
 import com.example.demo.repository.SeanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -37,8 +37,7 @@ public class SeanceService {
         Optional<Seance> existingSeance = seanceRepository.findById(id);
         if (existingSeance.isPresent()) {
             Seance seance = existingSeance.get();
-            seance.setHeureDebut(LocalDateTime.parse(seanceDTO.getHeureDebut()));
-            seance.setHeureFin(LocalDateTime.parse(seanceDTO.getHeureFin()));
+            seance.setHeureDebut(seanceDTO.getHeureDebut());
             seance.setAvecSousTitre(seanceDTO.getAvecSousTitre());
             seance.setDateSeance(seanceDTO.getDateSeance());
             seance.setTarif(seanceDTO.getTarif());
@@ -58,12 +57,10 @@ public class SeanceService {
     }
 
     private SeanceDTO convertToDTO(Seance seance) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         return new SeanceDTO(seance.getIdSeance(), 
                             seance.getFilmVersion() != null ? seance.getFilmVersion().getId() : null,
                             seance.getSalle() != null ? seance.getSalle().getIdSalle() : null,
-                            seance.getHeureDebut() != null ? seance.getHeureDebut().format(formatter) : null,
-                            seance.getHeureFin() != null ? seance.getHeureFin().format(formatter) : null,
+                            seance.getHeureDebut(),
                             seance.getAvecSousTitre(),
                             seance.getDateSeance(),
                             seance.getTarif(),
@@ -72,15 +69,11 @@ public class SeanceService {
 
     private Seance convertToEntity(SeanceDTO seanceDTO) {
         Seance seance = new Seance();
-        if (seanceDTO.getHeureDebut() != null) {
-            seance.setHeureDebut(LocalDateTime.parse(seanceDTO.getHeureDebut()));
-        }
-        if (seanceDTO.getHeureFin() != null) {
-            seance.setHeureFin(LocalDateTime.parse(seanceDTO.getHeureFin()));
-        }
+        seance.setHeureDebut(seanceDTO.getHeureDebut());
         seance.setAvecSousTitre(seanceDTO.getAvecSousTitre());
         seance.setDateSeance(seanceDTO.getDateSeance());
         seance.setTarif(seanceDTO.getTarif());
         return seance;
     }
 }
+

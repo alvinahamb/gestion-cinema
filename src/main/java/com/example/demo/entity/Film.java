@@ -20,8 +20,8 @@ public class Film {
     private Integer duree;
     
     @ManyToOne
-    @JoinColumn(name = "id_langue")
-    private Langue langue;
+    @JoinColumn(name = "id_langue_original")
+    private Langue langueOriginal;
     
     @ManyToOne
     @JoinColumn(name = "id_pays")
@@ -32,24 +32,19 @@ public class Film {
     private LocalDate dateAjout;
     
     private Integer classificationAge;
-    
-    @ManyToOne
-    @JoinColumn(name = "id_status")
-    private StatusFilm statusFilm;
 
     public Film() {}
 
-    public Film(String titre, String synopsis, Integer duree, Langue langue, Pays pays, 
-                LocalDate dateSortie, LocalDate dateAjout, Integer classificationAge, StatusFilm statusFilm) {
+    public Film(String titre, String synopsis, Integer duree, Langue langueOriginal, Pays pays, 
+                LocalDate dateSortie, LocalDate dateAjout, Integer classificationAge) {
         this.titre = titre;
         this.synopsis = synopsis;
         this.duree = duree;
-        this.langue = langue;
+        this.langueOriginal = langueOriginal;
         this.pays = pays;
         this.dateSortie = dateSortie;
         this.dateAjout = dateAjout;
         this.classificationAge = classificationAge;
-        this.statusFilm = statusFilm;
     }
 
     public Integer getIdFilm() {
@@ -84,12 +79,12 @@ public class Film {
         this.duree = duree;
     }
 
-    public Langue getLangue() {
-        return langue;
+    public Langue getLangueOriginal() {
+        return langueOriginal;
     }
 
-    public void setLangue(Langue langue) {
-        this.langue = langue;
+    public void setLangueOriginal(Langue langueOriginal) {
+        this.langueOriginal = langueOriginal;
     }
 
     public Pays getPays() {
@@ -122,13 +117,5 @@ public class Film {
 
     public void setClassificationAge(Integer classificationAge) {
         this.classificationAge = classificationAge;
-    }
-
-    public StatusFilm getStatusFilm() {
-        return statusFilm;
-    }
-
-    public void setStatusFilm(StatusFilm statusFilm) {
-        this.statusFilm = statusFilm;
     }
 }
