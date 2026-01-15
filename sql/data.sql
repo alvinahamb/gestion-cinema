@@ -3,13 +3,22 @@
 -- =====================
 
 INSERT INTO salle (nom_salle, capacite, ligne, colonne) VALUES
-('Salle 1', 20, 4, 5),
+('Salle 4', 100, 10, 10);
+
+INSERT INTO place 
+
+
 ('Salle 2', 50, 5, 10),
 ('Salle 3', 100, 10, 10);
 
 INSERT INTO type_place (libelle, description) VALUES
 ('Standard', 'Place standard'),
 ('VIP', 'Place premium');
+
+INSERT INTO type_place (libelle, description) VALUES
+('VIP2', 'Place VIP');
+INSERT INTO tarif_place (id_type_place, prix) VALUES
+(3, 90000.00);
 
 INSERT INTO tarif_place (id_type_place, prix) VALUES
 (1, 20000.00),
@@ -23,9 +32,18 @@ SELECT 1, 1, l, c FROM generate_series(1,4) l, generate_series(1,5) c;
 INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
 SELECT 2, 1, l, c FROM generate_series(1,5) l, generate_series(1,10) c;
 
--- Salle 3
+-- Salle 3 (100 places: 10 VIP2, 20 VIP, 70 Standard)
+-- 10 premières places (ligne 1) avec id_type_place = 3 (VIP2)
 INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
-SELECT 3, 2, l, c FROM generate_series(1,10) l, generate_series(1,10) c;
+SELECT 4, 3, 1, c FROM generate_series(1,10) c;
+
+-- 20 places (lignes 2-3) avec id_type_place = 2 (VIP)
+INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
+SELECT 4, 2, l, c FROM generate_series(2,3) l, generate_series(1,10) c;
+
+-- 70 places restantes (lignes 4-10) avec id_type_place = 1 (Standard)
+INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
+SELECT 4, 1, l, c FROM generate_series(4,10) l, generate_series(1,10) c;
 
 -- =====================
 -- CLIENTS

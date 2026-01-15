@@ -238,11 +238,3 @@ CREATE TABLE IF NOT EXISTS paiement_status_historique (
     FOREIGN KEY (id_status) REFERENCES status(id_status)
 );
 
-
-
-je voudais creer 
-SalleDTO =(idsalle, nomsalle, capacite, ligne, colonne, tarif_place, valeurMaximale, list[] placePDO)
-placeDTO=(idplace, salle, id type_place, numeroligne, numerocolonne, prix_place)
-typeplaceDTO=(idtypeplace, libelle, description)
-TarifPlaceDTO=(idTarif, idTypePlace, prix) 
-et corrige les DTO  existants et les services

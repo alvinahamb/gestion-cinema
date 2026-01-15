@@ -153,7 +153,7 @@ public class AchatController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getAllTarifs(@PathVariable Integer seanceId) {
         Map<String, BigDecimal> tarifsClient = achatService.getAllTarifsForSeance(seanceId);
-        List<TarifSeancePlaceDTO> tarifsPlace = achatService.getTarifsPlaceForSeance(seanceId);
+        List<TarifPlaceDTO> tarifsPlace = achatService.getTarifsPlaceForSeance(seanceId);
         
         Map<String, Object> response = new HashMap<>();
         response.put("tarifsClient", tarifsClient);
