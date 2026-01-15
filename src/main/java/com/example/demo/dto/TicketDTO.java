@@ -5,21 +5,22 @@ import java.math.BigDecimal;
 
 public class TicketDTO {
     private Integer idTicket;
-    private Integer idReservation;
-    private Integer idClient;
-    private Integer idSeance;
+    private ReservationDTO reservation;
+    private ClientDTO client;
+    private SeanceDTO seance;
     private LocalDate dateAchat;
     private BigDecimal total;
     private BigDecimal remise;
+    private BigDecimal montantRestant;
 
     public TicketDTO() {}
 
-    public TicketDTO(Integer idTicket, Integer idReservation, Integer idClient, Integer idSeance,
+    public TicketDTO(Integer idTicket, ReservationDTO reservation, ClientDTO client, SeanceDTO seance,
                      LocalDate dateAchat, BigDecimal total, BigDecimal remise) {
         this.idTicket = idTicket;
-        this.idReservation = idReservation;
-        this.idClient = idClient;
-        this.idSeance = idSeance;
+        this.reservation = reservation;
+        this.client = client;
+        this.seance = seance;
         this.dateAchat = dateAchat;
         this.total = total;
         this.remise = remise;
@@ -33,28 +34,28 @@ public class TicketDTO {
         this.idTicket = idTicket;
     }
 
-    public Integer getIdReservation() {
-        return idReservation;
+    public ReservationDTO getReservation() {
+        return reservation;
     }
 
-    public void setIdReservation(Integer idReservation) {
-        this.idReservation = idReservation;
+    public void setReservation(ReservationDTO reservation) {
+        this.reservation = reservation;
     }
 
-    public Integer getIdClient() {
-        return idClient;
+    public ClientDTO getClient() {
+        return client;
     }
 
-    public void setIdClient(Integer idClient) {
-        this.idClient = idClient;
+    public void setClient(ClientDTO client) {
+        this.client = client;
     }
 
-    public Integer getIdSeance() {
-        return idSeance;
+    public SeanceDTO getSeance() {
+        return seance;
     }
 
-    public void setIdSeance(Integer idSeance) {
-        this.idSeance = idSeance;
+    public void setSeance(SeanceDTO seance) {
+        this.seance = seance;
     }
 
     public LocalDate getDateAchat() {
@@ -79,5 +80,13 @@ public class TicketDTO {
 
     public void setRemise(BigDecimal remise) {
         this.remise = remise;
+    }
+
+    public BigDecimal getMontantRestant() {
+        return montantRestant;
+    }
+
+    public void setMontantRestant(BigDecimal montantRestant) {
+        this.montantRestant = montantRestant;
     }
 }

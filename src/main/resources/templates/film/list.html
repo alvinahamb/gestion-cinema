@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Films - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/film/list.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
@@ -25,28 +25,38 @@
                     <tr>
                         <th>ID</th>
                         <th>Titre</th>
-                        <th>Durée</th>
-                        <th>Classification</th>
+                        <th>Synopsis</th>
+                        <th>Durée (min)</th>
+                        <th>Langue Originale</th>
+                        <th>Pays</th>
                         <th>Date Sortie</th>
+                        <th>Date Ajout</th>
+                        <th>Classification Âge</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${films == null or films.isEmpty()}">
-                        <td colspan="6"><div class="empty-state"><p>Aucun film trouvé</p></div></td>
+                        <td colspan="10"><div class="empty-state"><p>Aucun film trouvé</p></div></td>
                     </tr>
                     <tr th:each="film : ${films}">
                         <td th:text="${film.idFilm}"></td>
                         <td th:text="${film.titre}"></td>
-                        <td th:text="${film.duree}"></td>
-                        <td th:text="${film.classificationAge}"></td>
-                        <td th:text="${film.dateSortie}"></td>
+                        <td th:text="${film.synopsis != null ? (film.synopsis.length() > 50 ? film.synopsis.substring(0, 50) + '...' : film.synopsis) : '-'}"></td>
+                        <td th:text="${film.duree} + ' min'"></td>
+                        <td th:text="${film.langueOriginal != null ? film.langueOriginal.nom : '-'}"></td>
+                        <td th:text="${film.pays != null ? film.pays.nom : '-'}"></td>
+                        <td th:text="${film.dateSortie != null ? film.dateSortie : '-'}"></td>
+                        <td th:text="${film.dateAjout != null ? film.dateAjout : '-'}"></td>
+                        <td th:text="${film.classificationAge != null ? film.classificationAge + '+' : '-'}"></td>
                         <td>
                             <div class="actions">
                                 <a th:href="@{/films/edit/{id}(id=${film.idFilm})}" class="btn btn-edit">Modifier</a>
                                 <form th:action="@{/films/delete/{id}(id=${film.idFilm})}" method="post" style="display:inline;">
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
                                 </form>
+                                <a th:href="@{/films/{id}/genres(id=${film.idFilm})}" class="btn btn-secondary">Ajouter/Retirer des genres</a>
+                                <a th:href="@{/films/{id}/versions(id=${film.idFilm})}" class="btn btn-secondary">Ajouter/Retirer des versions</a>
                             </div>
                         </td>
                     </tr>

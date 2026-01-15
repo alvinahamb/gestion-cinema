@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clients - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/client/list.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
@@ -26,21 +26,25 @@
                         <th>ID</th>
                         <th>Nom</th>
                         <th>Prénom</th>
+                        <th>Date de Naissance</th>
                         <th>Email</th>
                         <th>Téléphone</th>
+                        <th>Catégorie</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${clients == null or clients.isEmpty()}">
-                        <td colspan="6"><div class="empty-state"><p>Aucun client trouvé</p></div></td>
+                        <td colspan="8"><div class="empty-state"><p>Aucun client trouvé</p></div></td>
                     </tr>
                     <tr th:each="client : ${clients}">
                         <td th:text="${client.idClient}"></td>
                         <td th:text="${client.nom}"></td>
                         <td th:text="${client.prenom}"></td>
+                        <td th:text="${client.dateNaissance != null ? client.dateNaissance : '-'}"></td>
                         <td th:text="${client.email}"></td>
-                        <td th:text="${client.telephone}"></td>
+                        <td th:text="${client.telephone != null ? client.telephone : '-'}"></td>
+                        <td th:text="${client.categorieClient != null ? client.categorieClient.libelle : '-'}"></td>
                         <td>
                             <div class="actions">
                                 <a th:href="@{/clients/edit/{id}(id=${client.idClient})}" class="btn btn-edit">Modifier</a>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter/Modifier Salle - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/salle/form.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
@@ -28,6 +28,30 @@
                     <label for="capacite">Capacité (nombre de places) *</label>
                     <input type="number" id="capacite" name="capacite" th:value="${salle != null ? salle.capacite : ''}" required/>
                 </div>
+                <div class="form-group">
+                    <label for="ligne">Nombre de Lignes *</label>
+                    <input type="number" id="ligne" name="ligne" th:value="${salle != null ? salle.ligne : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="colonne">Nombre de Colonnes *</label>
+                    <input type="number" id="colonne" name="colonne" th:value="${salle != null ? salle.colonne : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label>Types de Places *</label>
+                    <div id="placesContainer">
+                        <div class="place-entry" style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <select name="typePlaces[]" required style="margin-right: 10px;">
+                                <option value="" disabled selected>-- Sélectionner un type de place --</option>
+                                <option th:each="typePlace : ${typePlaces}"
+                                        th:value="${typePlace.idTypePlace}"
+                                        th:text="${typePlace.libelle}">
+                                </option>
+                            </select>
+                            <input type="number" name="nombrePlaces[]" placeholder="Nombre de places" required style="margin-right: 10px;"/>
+                        </div>
+                    </div>
+                    <button  class="btn btn-submit" onclick="ajoutForm()" style="margin-top: 5px;">ajout ligne</button>
+                </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-submit">Enregistrer</button>
                     <a href="/salles" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
@@ -35,6 +59,16 @@
             </form>
         </div>
     </div>
+    <script>
+        function ajoutForm() {
+            var container = document.getElementById("placesContainer");
+            var firstEntry = container.querySelector('.place-entry');
+            var newEntry = firstEntry.cloneNode(true);
+            // Clear values
+            newEntry.querySelector('select').selectedIndex = 0;
+            newEntry.querySelectorAll('input').forEach(input => input.value = '');
+            container.appendChild(newEntry);
+        }
+    </script>
 </body>
 </html>
-</head>

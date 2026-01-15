@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ClientDTO;
-import com.example.demo.service.ClientService;
+import com.example.demo.dto.*;
+import com.example.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +15,8 @@ import java.util.Optional;
 public class ClientController {
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private CategorieClientService categorieClientService;
 
     @GetMapping
     public String listClients(Model model) {
@@ -25,6 +27,8 @@ public class ClientController {
 
     @GetMapping("/nouveau")
     public String newClient(Model model) {
+        List<CategorieClientDTO> categoriesClient = categorieClientService.getAllCategorieClients();
+        model.addAttribute("categoriesClient", categoriesClient);
         model.addAttribute("client", null);
         return "client/form";
     }
@@ -33,6 +37,8 @@ public class ClientController {
     public String editClient(@PathVariable Integer id, Model model) {
         Optional<ClientDTO> client = clientService.getClientById(id);
         if (client.isPresent()) {
+            List<CategorieClientDTO> categoriesClient = categorieClientService.getAllCategorieClients();
+            model.addAttribute("categoriesClient", categoriesClient);
             model.addAttribute("client", client.get());
             return "client/form";
         }
@@ -41,13 +47,13 @@ public class ClientController {
 
     @PostMapping("/save")
     public String saveClient(@ModelAttribute ClientDTO clientDTO) {
-        clientService.createClient(clientDTO);
-        return "redirect:/clients";
-    }
-
-    @PostMapping("/update")
-    public String updateClient(@RequestParam Integer id, @ModelAttribute ClientDTO clientDTO) {
-        clientService.updateClient(id, clientDTO);
+        if (clientDTO.getIdClient() != null && clientDTO.getIdClient() > 0) {
+            // C'est une mise à jour
+            clientService.updateClient(clientDTO.getIdClient(), clientDTO);
+        } else {
+            // C'est une création
+            clientService.createClient(clientDTO);
+        }
         return "redirect:/clients";
     }
 

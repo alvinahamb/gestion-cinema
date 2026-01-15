@@ -14,12 +14,20 @@ public class Salle {
     
     @Column(nullable = false)
     private Integer capacite;
+    
+    @Column(nullable = false)
+    private Integer ligne;
+    
+    @Column(nullable = false)
+    private Integer colonne;
 
     public Salle() {}
 
-    public Salle(String nomSalle, Integer capacite) {
+    public Salle(String nomSalle, Integer capacite, Integer ligne, Integer colonne) {
         this.nomSalle = nomSalle;
         this.capacite = capacite;
+        this.ligne = ligne;
+        this.colonne = colonne;
     }
 
     public Integer getIdSalle() {
@@ -44,5 +52,21 @@ public class Salle {
 
     public void setCapacite(Integer capacite) {
         this.capacite = capacite;
+    }
+
+    public Integer getLigne() {
+        return ligne;
+    }
+
+    public void setLigne(Integer ligne) {
+        this.ligne = ligne;
+    }
+
+    public Integer getColonne() {
+        return colonne;
+    }
+
+    public void setColonne(Integer colonne) {
+        this.colonne = colonne;
     }
 }

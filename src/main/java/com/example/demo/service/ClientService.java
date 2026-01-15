@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.CategorieClientDTO;
 import com.example.demo.dto.ClientDTO;
 import com.example.demo.entity.Client;
+import com.example.demo.repository.CategorieClientRepository;
 import com.example.demo.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,9 @@ import java.util.stream.Collectors;
 public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private CategorieClientRepository categorieClientRepository;
 
     public List<ClientDTO> getAllClients() {
         return clientRepository.findAll().stream()
@@ -40,6 +45,11 @@ public class ClientService {
             client.setDateNaissance(clientDTO.getDateNaissance());
             client.setEmail(clientDTO.getEmail());
             client.setTelephone(clientDTO.getTelephone());
+            if (clientDTO.getCategorieClientId() != null) {
+                categorieClientRepository.findById(clientDTO.getCategorieClientId()).ifPresent(client::setCategorieClient);
+            } else {
+                client.setCategorieClient(null);
+            }
             Client updatedClient = clientRepository.save(client);
             return convertToDTO(updatedClient);
         }
@@ -55,12 +65,22 @@ public class ClientService {
     }
 
     private ClientDTO convertToDTO(Client client) {
-        return new ClientDTO(client.getIdClient(), client.getNom(), client.getPrenom(), 
-                           client.getDateNaissance(), client.getEmail(), client.getTelephone());
+        CategorieClientDTO categorieClient = client.getCategorieClient() != null ? 
+            new CategorieClientDTO(client.getCategorieClient().getIdCategorieClient(), 
+                                  client.getCategorieClient().getLibelle(),
+                                  client.getCategorieClient().getDescription()) : null;
+        ClientDTO clientDTO = new ClientDTO(client.getIdClient(), client.getNom(), client.getPrenom(), 
+                           client.getDateNaissance(), client.getEmail(), client.getTelephone(), categorieClient);
+        clientDTO.setCategorieClientId(client.getCategorieClient() != null ? client.getCategorieClient().getIdCategorieClient() : null);
+        return clientDTO;
     }
 
     private Client convertToEntity(ClientDTO clientDTO) {
-        return new Client(clientDTO.getNom(), clientDTO.getPrenom(), clientDTO.getDateNaissance(), 
-                         clientDTO.getEmail(), clientDTO.getTelephone());
+        Client client = new Client(clientDTO.getNom(), clientDTO.getPrenom(), clientDTO.getDateNaissance(), 
+                                 clientDTO.getEmail(), clientDTO.getTelephone(), null);
+        if (clientDTO.getCategorieClientId() != null) {
+            categorieClientRepository.findById(clientDTO.getCategorieClientId()).ifPresent(client::setCategorieClient);
+        }
+        return client;
     }
 }

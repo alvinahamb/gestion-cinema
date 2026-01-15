@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter/Modifier Réservation - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/reservation/form.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
@@ -21,20 +21,53 @@
             <form th:action="@{/reservations/save}" method="post">
                 <input type="hidden" name="idReservation" th:value="${reservation != null and reservation.idReservation != null ? reservation.idReservation : ''}"/>
                 <div class="form-group">
+                    <label for="client">Client *</label>
+                    <select id="client" name="clientId" required>
+                        <option value="">-- Sélectionner un client --</option>
+                        <option th:each="client : ${clients}" 
+                                th:value="${client.idClient}" 
+                                th:text="${client.nom + ' ' + client.prenom}"
+                                th:selected="${reservation != null and reservation.client != null and reservation.client.idClient == client.idClient}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="seance">Séance *</label>
+                    <select id="seance" name="seanceId" required>
+                        <option value="">-- Sélectionner une séance --</option>
+                        <option th:each="seance : ${seances}" 
+                                th:value="${seance.idSeance}" 
+                                th:text="${seance.filmVersion != null ? seance.filmVersion.film.titre : 'Film inconnu'} + ' - ' + ${seance.dateSeance} + ' ' + ${seance.heureDebut}"
+                                th:selected="${reservation != null and reservation.seance != null and reservation.seance.idSeance == seance.idSeance}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="dateReservation">Date de Réservation *</label>
-                    <input type="date" id="dateReservation" name="dateReservation" th:value="${reservation != null and reservation.dateReservation != null ? reservation.dateReservation : ''}" required/>
+                    <input type="datetime-local" id="dateReservation" name="dateReservation" th:value="${reservation != null and reservation.dateReservation != null ? reservation.dateReservation : ''}" required/>
                 </div>
                 <div class="form-group">
                     <label for="total">Total (€) *</label>
                     <input type="number" id="total" name="total" step="0.01" th:value="${reservation != null ? reservation.total : ''}" required/>
                 </div>
                 <div class="form-group">
-                    <label for="datePaiementEffectue">Date de Paiement Effectué</label>
-                    <input type="date" id="datePaiementEffectue" name="datePaiementEffectue" th:value="${reservation != null and reservation.datePaiementEffectue != null ? reservation.datePaiementEffectue : ''}"/>
+                    <label for="remise">Remise (€)</label>
+                    <input type="number" id="remise" name="remise" step="0.01" th:value="${reservation != null ? reservation.remise : '0.00'}"/>
                 </div>
                 <div class="form-group">
                     <label for="datePaiementPrevu">Date de Paiement Prévue</label>
                     <input type="date" id="datePaiementPrevu" name="datePaiementPrevu" th:value="${reservation != null and reservation.datePaiementPrevu != null ? reservation.datePaiementPrevu : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status *</label>
+                    <select id="status" name="statusId" required>
+                        <option value="">-- Sélectionner un status --</option>
+                        <option th:each="status : ${statusList}" 
+                                th:value="${status.idStatus}" 
+                                th:text="${status.libelle}"
+                                th:selected="${reservation != null and reservation.status != null and reservation.status.idStatus == status.idStatus}">
+                        </option>
+                    </select>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-submit">Enregistrer</button>

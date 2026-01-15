@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Tarif Place - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💰 Gestion des Tarifs Places</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${tarifPlace == null or tarifPlace.idTarif == null}">Ajouter un Tarif Place</h1>
+            <h1 th:if="${tarifPlace != null and tarifPlace.idTarif != null}">Modifier un Tarif Place</h1>
+            <form th:action="@{/tarif-places/save}" method="post">
+                <input type="hidden" name="idTarif" th:value="${tarifPlace != null ? tarifPlace.idTarif : ''}"/>
+                <div class="form-group">
+                    <label for="idTypePlace">Type de Place *</label>
+                    <select id="idTypePlace" name="idTypePlace" required>
+                        <option value="">Sélectionner un type de place</option>
+                        <option th:each="tp : ${typePlaces}" th:value="${tp.idTypePlace}" th:selected="${tarifPlace != null and tarifPlace.idTypePlace == tp.idTypePlace}" th:text="${tp.libelle}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prix">Prix *</label>
+                    <input type="number" step="0.01" id="prix" name="prix" th:value="${tarifPlace != null ? tarifPlace.prix : ''}" required/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/tarif-places" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

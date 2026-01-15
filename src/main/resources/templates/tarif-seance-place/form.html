@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Tarif Séance Place - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💰 Tarifs Séance Place</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${tarifSeancePlace == null or tarifSeancePlace.id == null}">Ajouter un Tarif</h1>
+            <h1 th:if="${tarifSeancePlace != null and tarifSeancePlace.id != null}">Modifier un Tarif</h1>
+            <form th:action="@{/tarif-seance-places/save}" method="post">
+                <input type="hidden" name="id" th:value="${tarifSeancePlace != null ? tarifSeancePlace.id : ''}"/>
+                <div class="form-group">
+                    <label for="idSeance">Séance *</label>
+                    <select id="idSeance" name="idSeance" required>
+                        <option value="">Sélectionner une séance</option>
+                        <option th:each="s : ${seances}" 
+                                th:value="${s.idSeance}" 
+                                th:text="${'Séance #' + s.idSeance}"
+                                th:selected="${tarifSeancePlace != null and tarifSeancePlace.idSeance == s.idSeance}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idCategorieClient">Catégorie Client *</label>
+                    <select id="idCategorieClient" name="idCategorieClient" required>
+                        <option value="">Sélectionner une catégorie</option>
+                        <option th:each="cc : ${categoriesClient}" 
+                                th:value="${cc.idCategorieClient}" 
+                                th:text="${cc.libelle}"
+                                th:selected="${tarifSeancePlace != null and tarifSeancePlace.idCategorieClient == cc.idCategorieClient}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idTypePlace">Type Place *</label>
+                    <select id="idTypePlace" name="idTypePlace" required>
+                        <option value="">Sélectionner un type</option>
+                        <option th:each="tp : ${typePlaces}" 
+                                th:value="${tp.idTypePlace}" 
+                                th:text="${tp.libelle}"
+                                th:selected="${tarifSeancePlace != null and tarifSeancePlace.idTypePlace == tp.idTypePlace}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tarif">Tarif *</label>
+                    <input type="number" step="0.01" id="tarif" name="tarif" th:value="${tarifSeancePlace != null ? tarifSeancePlace.tarif : ''}" required/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/tarif-seance-places" class="btn btn-cancel">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

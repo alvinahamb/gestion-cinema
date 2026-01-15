@@ -13,6 +13,10 @@ public class Place {
     @JoinColumn(name = "id_salle")
     private Salle salle;
     
+    @ManyToOne
+    @JoinColumn(name = "id_type_place")
+    private TypePlace typePlace;
+    
     @Column(nullable = false)
     private Integer numeroLigne;
     
@@ -21,8 +25,9 @@ public class Place {
 
     public Place() {}
 
-    public Place(Salle salle, Integer numeroLigne, Integer numeroColonne) {
+    public Place(Salle salle, TypePlace typePlace, Integer numeroLigne, Integer numeroColonne) {
         this.salle = salle;
+        this.typePlace = typePlace;
         this.numeroLigne = numeroLigne;
         this.numeroColonne = numeroColonne;
     }
@@ -41,6 +46,14 @@ public class Place {
 
     public void setSalle(Salle salle) {
         this.salle = salle;
+    }
+
+    public TypePlace getTypePlace() {
+        return typePlace;
+    }
+
+    public void setTypePlace(TypePlace typePlace) {
+        this.typePlace = typePlace;
     }
 
     public Integer getNumeroLigne() {

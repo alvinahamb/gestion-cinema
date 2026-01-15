@@ -9,16 +9,19 @@ public class ClientDTO {
     private LocalDate dateNaissance;
     private String email;
     private String telephone;
+    private CategorieClientDTO categorieClient;
+    private Integer categorieClientId;
 
     public ClientDTO() {}
 
-    public ClientDTO(Integer idClient, String nom, String prenom, LocalDate dateNaissance, String email, String telephone) {
+    public ClientDTO(Integer idClient, String nom, String prenom, LocalDate dateNaissance, String email, String telephone, CategorieClientDTO categorieClient) {
         this.idClient = idClient;
         this.nom = nom;
         this.prenom = prenom;
         this.dateNaissance = dateNaissance;
         this.email = email;
         this.telephone = telephone;
+        this.categorieClient = categorieClient;
     }
 
     public Integer getIdClient() {
@@ -67,5 +70,21 @@ public class ClientDTO {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+
+    public CategorieClientDTO getCategorieClient() {
+        return categorieClient;
+    }
+
+    public void setCategorieClient(CategorieClientDTO categorieClient) {
+        this.categorieClient = categorieClient;
+    }
+
+    public Integer getCategorieClientId() {
+        return categorieClientId;
+    }
+
+    public void setCategorieClientId(Integer categorieClientId) {
+        this.categorieClientId = categorieClientId;
     }
 }

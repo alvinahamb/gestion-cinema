@@ -8,11 +8,16 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "home/index";
+        return "home/dashboard";
     }
 
     @GetMapping("/dashboard")
     public String dashboard() {
         return "home/dashboard";
+    }
+
+    @GetMapping("/parametre")
+    public String parametre() {
+        return "home/parametre";
     }
 }

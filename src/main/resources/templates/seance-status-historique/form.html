@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Historique Status Séance - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📊 Historique Status Séance</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${historique == null or historique.id == null}">Ajouter un Historique</h1>
+            <h1 th:if="${historique != null and historique.id != null}">Modifier un Historique</h1>
+            <form th:action="@{/seance-status-historiques/save}" method="post">
+                <input type="hidden" name="id" th:value="${historique != null ? historique.id : ''}"/>
+                <div class="form-group">
+                    <label for="idSeance">Séance *</label>
+                    <select id="idSeance" name="idSeance" required>
+                        <option value="">Sélectionner une séance</option>
+                        <option th:each="seance : ${seances}" 
+                                th:value="${seance.idSeance}" 
+                                th:text="${'Séance #' + seance.idSeance}"
+                                th:selected="${historique != null and historique.idSeance == seance.idSeance}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idStatus">Status *</label>
+                    <select id="idStatus" name="idStatus" required>
+                        <option value="">Sélectionner un status</option>
+                        <option th:each="status : ${statuses}" 
+                                th:value="${status.idStatus}" 
+                                th:text="${status.libelle}"
+                                th:selected="${historique != null and historique.idStatus == status.idStatus}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateModification">Date Modification</label>
+                    <input type="date" id="dateModification" name="dateModification" th:value="${historique != null ? historique.dateModification : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/seance-status-historiques" class="btn btn-cancel">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -6,26 +6,28 @@ import java.math.BigDecimal;
 
 public class SeanceDTO {
     private Integer idSeance;
-    private Integer idFilmVersion;
-    private Integer idSalle;
+    private FilmVersionDTO filmVersion;
+    private SalleDTO salle;
     private LocalTime heureDebut;
     private Boolean avecSousTitre;
     private LocalDate dateSeance;
     private BigDecimal tarif;
-    private Integer idStatus;
+    private StatusDTO status;
+    private BigDecimal valeurMaximale;
 
     public SeanceDTO() {}
 
-    public SeanceDTO(Integer idSeance, Integer idFilmVersion, Integer idSalle, LocalTime heureDebut,
-                    Boolean avecSousTitre, LocalDate dateSeance, BigDecimal tarif, Integer idStatus) {
+    public SeanceDTO(Integer idSeance, FilmVersionDTO filmVersion, SalleDTO salle, LocalTime heureDebut,
+                    Boolean avecSousTitre, LocalDate dateSeance, BigDecimal tarif, StatusDTO status, BigDecimal valeurMaximale) {
         this.idSeance = idSeance;
-        this.idFilmVersion = idFilmVersion;
-        this.idSalle = idSalle;
+        this.filmVersion = filmVersion;
+        this.salle = salle;
         this.heureDebut = heureDebut;
         this.avecSousTitre = avecSousTitre;
         this.dateSeance = dateSeance;
         this.tarif = tarif;
-        this.idStatus = idStatus;
+        this.status = status;
+        this.valeurMaximale = valeurMaximale;
     }
 
     public Integer getIdSeance() {
@@ -36,20 +38,20 @@ public class SeanceDTO {
         this.idSeance = idSeance;
     }
 
-    public Integer getIdFilmVersion() {
-        return idFilmVersion;
+    public FilmVersionDTO getFilmVersion() {
+        return filmVersion;
     }
 
-    public void setIdFilmVersion(Integer idFilmVersion) {
-        this.idFilmVersion = idFilmVersion;
+    public void setFilmVersion(FilmVersionDTO filmVersion) {
+        this.filmVersion = filmVersion;
     }
 
-    public Integer getIdSalle() {
-        return idSalle;
+    public SalleDTO getSalle() {
+        return salle;
     }
 
-    public void setIdSalle(Integer idSalle) {
-        this.idSalle = idSalle;
+    public void setSalle(SalleDTO salle) {
+        this.salle = salle;
     }
 
     public LocalTime getHeureDebut() {
@@ -84,11 +86,19 @@ public class SeanceDTO {
         this.tarif = tarif;
     }
 
-    public Integer getIdStatus() {
-        return idStatus;
+    public StatusDTO getStatus() {
+        return status;
     }
 
-    public void setIdStatus(Integer idStatus) {
-        this.idStatus = idStatus;
+    public void setStatus(StatusDTO status) {
+        this.status = status;
+    }
+
+    public BigDecimal getValeurMaximale() {
+        return valeurMaximale;
+    }
+
+    public void setValeurMaximale(BigDecimal valeurMaximale) {
+        this.valeurMaximale = valeurMaximale;
     }
 }

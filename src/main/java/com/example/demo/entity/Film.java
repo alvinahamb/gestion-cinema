@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "film")
@@ -32,6 +33,12 @@ public class Film {
     private LocalDate dateAjout;
     
     private Integer classificationAge;
+    
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FilmGenre> filmGenres;
+    
+    @OneToMany(mappedBy = "film", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FilmVersion> versions;
 
     public Film() {}
 
@@ -117,5 +124,21 @@ public class Film {
 
     public void setClassificationAge(Integer classificationAge) {
         this.classificationAge = classificationAge;
+    }
+
+    public List<FilmGenre> getFilmGenres() {
+        return filmGenres;
+    }
+
+    public void setFilmGenres(List<FilmGenre> filmGenres) {
+        this.filmGenres = filmGenres;
+    }
+
+    public List<FilmVersion> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<FilmVersion> versions) {
+        this.versions = versions;
     }
 }

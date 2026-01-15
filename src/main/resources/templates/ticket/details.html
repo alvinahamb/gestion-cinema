@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails Ticket - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎟️ Détails du Ticket</h2>
+        <div>
+            <a href="/ticket">← Retour à la liste</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div th:if="${ticket != null}" class="details-container">
+            <div class="details-header">
+                <h1>Ticket #<span th:text="${ticket.idTicket}"></span></h1>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-section">
+                    <h3>Informations générales</h3>
+                    <div class="detail-row">
+                        <span class="label">Réservation:</span>
+                        <span class="value">
+                            <a th:if="${ticket.reservation != null}" th:href="@{/reservations/details/{id}(id=${ticket.reservation.idReservation})}">
+                                Réservation #<span th:text="${ticket.reservation.idReservation}"></span>
+                            </a>
+                            <span th:if="${ticket.reservation == null}">-</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Client:</span>
+                        <span class="value">
+                            <a th:if="${ticket.client != null}" th:href="@{/clients/details/{id}(id=${ticket.client.idClient})}">
+                                <span th:text="${ticket.client.nom + ' ' + ticket.client.prenom}"></span>
+                            </a>
+                            <span th:if="${ticket.client == null}">-</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Séance:</span>
+                        <span class="value">
+                            <a th:if="${ticket.seance != null}" th:href="@{/seances/details/{id}(id=${ticket.seance.idSeance})}">
+                                <span th:if="${ticket.seance.filmVersion != null and ticket.seance.filmVersion.film != null}" th:text="${ticket.seance.filmVersion.film.titre}"></span>
+                                <span th:text="' - ' + ${ticket.seance.dateSeance} + ' ' + ${ticket.seance.heureDebut}"></span>
+                            </a>
+                            <span th:if="${ticket.seance == null}">-</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Total:</span>
+                        <span class="value" th:text="${ticket.total + ' €'}"></span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Places du ticket</h3>
+                    <div th:if="${ticketPlaces != null and !ticketPlaces.isEmpty()}" class="places-list">
+                        <div th:each="place : ${ticketPlaces}" class="place-item">
+                            <div class="place-info">
+                                <span class="place-number">Place <span th:text="${place.place.numeroLigne + '-' + place.place.numeroColonne}"></span></span>
+                                <span class="place-salle" th:text="${'Salle ' + place.place.salle.nomSalle}"></span>
+                                <span class="place-price" th:text="${place.prix + ' €'}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${ticketPlaces == null or ticketPlaces.isEmpty()}" class="empty-state">
+                        <p>Aucune place associée à ce ticket</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${ticket == null}" class="error-container">
+            <h2>Ticket introuvable</h2>
+            <p>Le ticket demandé n'existe pas ou a été supprimé.</p>
+            <a href="/ticket" class="btn">Retour à la liste</a>
+        </div>
+    </div>
+</body>
+</html>

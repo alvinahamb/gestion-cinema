@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifs Séance Place - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💰 Tarifs Séance Place</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Tarifs Séance Place</h1>
+            <a href="/tarif-seance-places/nouveau" class="btn">+ Ajouter</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Séance</th>
+                        <th>Catégorie Client</th>
+                        <th>Type Place</th>
+                        <th>Tarif</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${tarifSeancePlaces == null or tarifSeancePlaces.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucun tarif trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="tsp : ${tarifSeancePlaces}">
+                        <td th:text="${tsp.id}"></td>
+                        <td th:text="${tsp.seance != null ? tsp.seance.idSeance : 'N/A'}"></td>
+                        <td th:text="${tsp.categorieClient != null ? tsp.categorieClient.libelle : 'N/A'}"></td>
+                        <td th:text="${tsp.typePlace != null ? tsp.typePlace.libelle : 'N/A'}"></td>
+                        <td th:text="${tsp.tarif}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/tarif-seance-places/edit/{id}(id=${tsp.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/tarif-seance-places/delete/{id}(id=${tsp.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

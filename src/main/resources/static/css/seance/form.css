@@ -64,3 +64,72 @@ input:focus, select:focus, textarea:focus {
 .btn-cancel:hover {
     background: #5a6268;
 }
+
+/* Styles pour la section de personnalisation des tarifs */
+.tarif-customization-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.tarif-customization-section h3 {
+    margin-top: 0;
+    color: #495057;
+    font-size: 18px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.tarif-customization-section h4 {
+    color: #6c757d;
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.tarif-customization-section h5 {
+    color: #495057;
+    font-size: 14px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.tarif-client-section, .tarif-place-section {
+    margin-bottom: 20px;
+}
+
+.tarif-client-item, .tarif-place-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 15px;
+}
+
+.tarif-client-item label, .tarif-place-item label {
+    min-width: 150px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.tarif-client-item input, .tarif-place-item input {
+    flex: 1;
+    max-width: 120px;
+}
+
+.categorie-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.form-help {
+    font-size: 14px;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 5px;
+}

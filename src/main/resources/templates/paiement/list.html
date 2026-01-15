@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiements - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💳 Gestion des Paiements</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Paiements</h1>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Réservation</th>
+                        <th>Montant (€)</th>
+                        <th>Méthode</th>
+                        <th>Date Paiement</th>
+                        <th>Dernier Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${paiements == null or paiements.isEmpty()}">
+                        <td colspan="7"><div class="empty-state"><p>Aucun paiement trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="paiement : ${paiements}">
+                        <td th:text="${paiement.idPaiement}"></td>
+                        <td th:text="${paiement.ticket != null && paiement.ticket.reservation != null ? 'Réservation #' + paiement.ticket.reservation.idReservation : (paiement.ticket != null ? 'Ticket #' + paiement.ticket.idTicket : '-')}"></td>
+                        <td th:text="${paiement.montant}"></td>
+                        <td>-</td>
+                        <td th:text="${paiement.creerLe != null ? paiement.creerLe : '-'}"></td>
+                        <td>
+                            <span th:if="${paiement.status != null}" th:text="${paiement.status.libelle}" class="status-badge"></span>
+                            <span th:if="${paiement.status == null}" class="status-badge status-unknown">-</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/paiement/details/{id}(id=${paiement.idPaiement})}" class="btn-action btn-details">📋 Détails</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

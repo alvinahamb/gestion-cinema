@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.PlaceDTO;
 import com.example.demo.dto.SalleDTO;
+import com.example.demo.dto.TarifPlaceDTO;
 import com.example.demo.entity.Salle;
 import com.example.demo.repository.SalleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +10,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
+import java.math.BigDecimal;
 
 @Service
 public class SalleService {
     @Autowired
     private SalleRepository salleRepository;
+
+    @Autowired
+    private PlaceService placeService;
+
+    @Autowired
+    private TarifPlaceService tarifPlaceService;
 
     public List<SalleDTO> getAllSalles() {
         return salleRepository.findAll().stream()
@@ -37,6 +47,8 @@ public class SalleService {
             Salle salle = existingSalle.get();
             salle.setNomSalle(salleDTO.getNomSalle());
             salle.setCapacite(salleDTO.getCapacite());
+            salle.setLigne(salleDTO.getLigne());
+            salle.setColonne(salleDTO.getColonne());
             Salle updatedSalle = salleRepository.save(salle);
             return convertToDTO(updatedSalle);
         }
@@ -52,10 +64,29 @@ public class SalleService {
     }
 
     private SalleDTO convertToDTO(Salle salle) {
-        return new SalleDTO(salle.getIdSalle(), salle.getNomSalle(), salle.getCapacite());
+        List<PlaceDTO> places = placeService.getAllPlaces().stream()
+                .filter(p -> p.getIdSalle().equals(salle.getIdSalle()))
+                .collect(Collectors.toList());
+        
+        BigDecimal valeurMaximale = places.stream()
+                .map(PlaceDTO::getPrixPlace)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        SalleDTO dto = new SalleDTO(
+            salle.getIdSalle(), 
+            salle.getNomSalle(), 
+            salle.getCapacite(), 
+            salle.getLigne(), 
+            salle.getColonne(),
+            null, // tarifPlace
+            valeurMaximale,
+            places
+        );
+        return dto;
     }
 
     private Salle convertToEntity(SalleDTO salleDTO) {
-        return new Salle(salleDTO.getNomSalle(), salleDTO.getCapacite());
+        return new Salle(salleDTO.getNomSalle(), salleDTO.getCapacite(), 
+                        salleDTO.getLigne(), salleDTO.getColonne());
     }
 }

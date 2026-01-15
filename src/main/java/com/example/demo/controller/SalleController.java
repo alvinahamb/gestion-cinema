@@ -1,20 +1,25 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.SalleDTO;
-import com.example.demo.service.SalleService;
+import com.example.demo.dto.*;
+import com.example.demo.service.*;
+import com.example.demo.controller.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Controller
 @RequestMapping("/salles")
 public class SalleController {
     @Autowired
     private SalleService salleService;
+    @Autowired
+    private TypePlaceService typePlaceService;
+    @Autowired
+    private PlaceService placeService;
 
     @GetMapping
     public String listSalles(Model model) {
@@ -25,6 +30,8 @@ public class SalleController {
 
     @GetMapping("/nouveau")
     public String newSalle(Model model) {
+        List<TypePlaceDTO> typePlaces = typePlaceService.getAllTypePlaces();
+        model.addAttribute("typePlaces", typePlaces);
         model.addAttribute("salle", null);
         return "salle/form";
     }
@@ -40,8 +47,26 @@ public class SalleController {
     }
 
     @PostMapping("/save")
-    public String saveSalle(@ModelAttribute SalleDTO salleDTO) {
-        salleService.createSalle(salleDTO);
+    public String saveSalle(@ModelAttribute SalleDTO salleDTO, int[] typePlaces, int[] nombrePlaces) {
+        SalleDTO savedSalle = salleService.createSalle(salleDTO);
+        // Créer les places
+        int currentPlace = 0;
+        for (int i = 0; i < typePlaces.length; i++) {
+            int typeId = typePlaces[i];
+            int count = nombrePlaces[i];
+            TypePlaceDTO typePlaceDTO = typePlaceService.getTypePlaceById(typeId).orElseThrow();
+            for (int j = 0; j < count; j++) {
+                int ligne = (currentPlace / salleDTO.getColonne()) + 1;
+                int colonne = (currentPlace % salleDTO.getColonne()) + 1;
+                PlaceDTO placeDTO = new PlaceDTO();
+                placeDTO.setIdSalle(savedSalle.getIdSalle());
+                placeDTO.setIdTypePlace(typePlaceDTO.getIdTypePlace());
+                placeDTO.setNumeroLigne(ligne);
+                placeDTO.setNumeroColonne(colonne);
+                placeService.createPlace(placeDTO);
+                currentPlace++;
+            }
+        }
         return "redirect:/salles";
     }
 

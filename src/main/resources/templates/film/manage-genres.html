@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gérer les Genres - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎬 Gestion des Films</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Gérer les Genres du Film</h1>
+            <h2 th:text="'Film: ' + ${film.titre}"></h2>
+            <a th:href="@{/films}" class="btn btn-secondary">← Retour à la liste</a>
+        </div>
+
+        <!-- Messages de succès/erreur -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <div class="management-container">
+            <!-- Genres actuels -->
+            <div class="section">
+                <h3>Genres Actuels</h3>
+                <div class="items-list">
+                    <div th:if="${currentGenres == null or currentGenres.isEmpty()}" class="empty-state">
+                        <p>Aucun genre associé à ce film</p>
+                    </div>
+                    <div th:each="genre : ${currentGenres}" class="item-card">
+                        <span th:text="${genre.libelle}" class="item-name"></span>
+                        <form th:action="@{/films/{filmId}/genres/remove/{genreId}(filmId=${film.idFilm}, genreId=${genre.idGenre})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Retirer ce genre ?')">Retirer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ajouter un genre -->
+            <div class="section">
+                <h3>Ajouter un Genre</h3>
+                <div th:if="${availableGenres == null or availableGenres.isEmpty()}" class="empty-state">
+                    <p>Tous les genres sont déjà associés à ce film</p>
+                </div>
+                <div th:if="${availableGenres != null and !availableGenres.isEmpty()}" class="add-form">
+                    <form th:action="@{/films/{filmId}/genres/add(filmId=${film.idFilm})}" method="post">
+                        <div class="form-group">
+                            <label for="genreId">Sélectionner un genre:</label>
+                            <select name="genreId" id="genreId" required>
+                                <option value="">-- Choisir un genre --</option>
+                                <option th:each="genre : ${availableGenres}" th:value="${genre.idGenre}" th:text="${genre.libelle}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-submit">Ajouter le Genre</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

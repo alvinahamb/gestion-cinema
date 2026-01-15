@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails Réservation - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎫 Détails de la Réservation</h2>
+        <div>
+            <a href="/reservations">← Retour à la liste</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div th:if="${reservation != null}" class="details-container">
+            <div class="details-header">
+                <h1>Réservation #<span th:text="${reservation.idReservation}"></span></h1>
+                <div class="status-badge" th:classappend="${reservation.status != null ? 'status-' + reservation.status.code.toLowerCase() : 'status-unknown'}">
+                    <span th:text="${reservation.status != null ? reservation.status.libelle : 'Statut inconnu'}"></span>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-section">
+                    <h3>Informations générales</h3>
+                    <div class="detail-row">
+                        <span class="label">Client:</span>
+                        <span class="value">
+                            <a th:if="${reservation.client != null}" th:href="@{/clients/details/{id}(id=${reservation.client.idClient})}">
+                                <span th:text="${reservation.client.nom + ' ' + reservation.client.prenom}"></span>
+                            </a>
+                            <span th:if="${reservation.client == null}">-</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Séance:</span>
+                        <span class="value">
+                            <a th:if="${reservation.seance != null}" th:href="@{/seances/details/{id}(id=${reservation.seance.idSeance})}">
+                                <span th:if="${reservation.seance.filmVersion != null and reservation.seance.filmVersion.film != null}" th:text="${reservation.seance.filmVersion.film.titre}"></span>
+                                <span th:text="' - ' + ${reservation.seance.dateSeance} + ' ' + ${reservation.seance.heureDebut}"></span>
+                            </a>
+                            <span th:if="${reservation.seance == null}">-</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Date de réservation:</span>
+                        <span class="value" th:text="${reservation.dateReservation}"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Total:</span>
+                        <span class="value" th:text="${reservation.total + ' €'}"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Remise:</span>
+                        <span class="value" th:text="${reservation.remise != null ? reservation.remise + ' €' : '0.00 €'}"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Date de paiement prévu:</span>
+                        <span class="value" th:text="${reservation.datePaiementPrevu != null ? reservation.datePaiementPrevu : '-'}"></span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Places réservées</h3>
+                    <div th:if="${reservationPlaces != null and !reservationPlaces.isEmpty()}" class="places-list">
+                        <div th:each="place : ${reservationPlaces}" class="place-item">
+                            <div class="place-info">
+                                <span class="place-number">Place <span th:text="${place.place.numeroLigne + '-' + place.place.numeroColonne}"></span></span>
+                                <span class="place-salle" th:text="${'Salle ' + place.place.salle.nomSalle}"></span>
+                                <span class="place-price" th:text="${place.prix + ' €'}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${reservationPlaces == null or reservationPlaces.isEmpty()}" class="empty-state">
+                        <p>Aucune place réservée</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${reservation == null}" class="error-container">
+            <h2>Réservation introuvable</h2>
+            <p>La réservation demandée n'existe pas ou a été supprimée.</p>
+            <a href="/reservations" class="btn">Retour à la liste</a>
+        </div>
+    </div>
+</body>
+</html>

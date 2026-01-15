@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Places Ticket - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎟️ Places Ticket</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Places Ticket</h1>
+            <a href="/ticket-places/nouveau" class="btn">+ Ajouter</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ticket</th>
+                        <th>Place</th>
+                        <th>Catégorie Client</th>
+                        <th>Prix</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${ticketPlaces == null or ticketPlaces.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucune place ticket trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="tp : ${ticketPlaces}">
+                        <td th:text="${tp.id}"></td>
+                        <td th:text="${tp.ticket != null ? tp.ticket.idTicket : 'N/A'}"></td>
+                        <td th:text="${tp.place != null ? tp.place.idPlace : 'N/A'}"></td>
+                        <td th:text="${tp.categorieClient != null ? tp.categorieClient.libelle : 'N/A'}"></td>
+                        <td th:text="${tp.prix}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/ticket-places/edit/{id}(id=${tp.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/ticket-places/delete/{id}(id=${tp.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

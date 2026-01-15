@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Versions Film - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎬 Gestion des Versions Film</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Versions Film</h1>
+            <a href="/film-versions/nouveau" class="btn">+ Ajouter une Version</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Film</th>
+                        <th>Langue</th>
+                        <th>Sous-titré</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${filmVersions == null or filmVersions.isEmpty()}">
+                        <td colspan="5"><div class="empty-state"><p>Aucune version trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="version : ${filmVersions}">
+                        <td th:text="${version.id}"></td>
+                        <td th:text="${version.film != null ? version.film.titre : 'N/A'}"></td>
+                        <td th:text="${version.langue != null ? version.langue.nom : 'N/A'}"></td>
+                        <td th:text="${version.sousTitre ? 'Oui' : 'Non'}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/film-versions/edit/{id}(id=${version.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/film-versions/delete/{id}(id=${version.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
