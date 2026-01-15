@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gérer les Versions - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎬 Gestion des Films</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Gérer les Versions du Film</h1>
+            <h2 th:text="'Film: ' + ${film.titre}"></h2>
+            <a th:href="@{/films}" class="btn btn-secondary">← Retour à la liste</a>
+        </div>
+
+        <!-- Messages de succès/erreur -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <div class="management-container">
+            <!-- Versions actuelles -->
+            <div class="section">
+                <h3>Versions Actuelles</h3>
+                <div class="items-list">
+                    <div th:if="${currentVersions == null or currentVersions.isEmpty()}" class="empty-state">
+                        <p>Aucune version associée à ce film</p>
+                    </div>
+                    <div th:each="version : ${currentVersions}" class="item-card">
+                        <div class="version-info">
+                            <span th:text="${version.langue != null ? version.langue.nom : 'Langue inconnue'}" class="item-name"></span>
+                            <span th:if="${version.sousTitre}" class="subtitle-badge">(Sous-titres)</span>
+                        </div>
+                        <form th:action="@{/films/{filmId}/versions/remove/{versionId}(filmId=${film.idFilm}, versionId=${version.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Retirer cette version ?')">Retirer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ajouter une version -->
+            <div class="section">
+                <h3>Ajouter une Version</h3>
+                <div th:if="${availableLangues == null or availableLangues.isEmpty()}" class="empty-state">
+                    <p>Toutes les langues sont déjà associées à ce film</p>
+                </div>
+                <div th:if="${availableLangues != null and !availableLangues.isEmpty()}" class="add-form">
+                    <form th:action="@{/films/{filmId}/versions/add(filmId=${film.idFilm})}" method="post">
+                        <div class="form-group">
+                            <label for="langueId">Sélectionner une langue:</label>
+                            <select name="langueId" id="langueId" required>
+                                <option value="">-- Choisir une langue --</option>
+                                <option th:each="langue : ${availableLangues}" th:value="${langue.idLangue}" th:text="${langue.nom}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="sousTitre" value="true" id="sousTitre"/>
+                                Version avec sous-titres
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-submit">Ajouter la Version</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

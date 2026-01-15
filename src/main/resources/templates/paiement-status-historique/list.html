@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique Status Paiement - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📊 Historique Status Paiement</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Historiques Status Paiement</h1>
+            <a href="/paiement-status-historiques/nouveau" class="btn">+ Ajouter</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Paiement</th>
+                        <th>Status</th>
+                        <th>Date Modification</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${historiques == null or historiques.isEmpty()}">
+                        <td colspan="5"><div class="empty-state"><p>Aucun historique trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="h : ${historiques}">
+                        <td th:text="${h.id}"></td>
+                        <td th:text="${h.paiement != null ? h.paiement.idPaiement : 'N/A'}"></td>
+                        <td th:text="${h.status != null ? h.status.libelle : 'N/A'}"></td>
+                        <td th:text="${h.dateModification}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/paiement-status-historiques/edit/{id}(id=${h.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/paiement-status-historiques/delete/{id}(id=${h.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

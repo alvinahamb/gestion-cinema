@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achat de Ticket - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/achat/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎟️ Achat de Ticket</h2>
+        <div class="navbar-actions">
+            <a href="/dashboard">Accueil</a>
+            <a href="/seances">Séances</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Messages d'erreur/succès -->
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}"></span>
+        </div>
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}"></span>
+        </div>
+
+        <!-- Info Séance -->
+        <div class="seance-info">
+            <h1>
+                <span th:text="${seance.filmVersion != null and seance.filmVersion.film != null ? seance.filmVersion.film.titre : 'Film'}"></span>
+            </h1>
+            <div class="seance-details">
+                <div class="detail-item">
+                    <span class="label">📅 Date:</span>
+                    <span class="value" th:text="${seance.dateSeance}"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">⏰ Heure:</span>
+                    <span class="value" th:text="${seance.heureDebut}"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">🏠 Salle:</span>
+                    <span class="value" th:text="${seance.salle != null ? seance.salle.nomSalle : '-'}"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">🌍 Langue:</span>
+                    <span class="value" th:text="${seance.filmVersion != null and seance.filmVersion.langue != null ? seance.filmVersion.langue.nom : '-'}"></span>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="@{/achat/confirmer}" method="post" id="achatForm">
+            <input type="hidden" name="seanceId" th:value="${seance.idSeance}">
+            <input type="hidden" name="placeIds" id="placeIdsInput">
+            <input type="hidden" name="categorieIds" id="categorieIdsInput">
+
+            <!-- Sélection du client -->
+            <div class="section">
+                <h2>👤 Sélectionner un client</h2>
+                <select name="clientId" id="clientSelect" required class="form-select">
+                    <option value="">-- Choisir un client --</option>
+                    <option th:each="client : ${clients}" 
+                            th:value="${client.idClient}" 
+                            th:text="${client.nom + ' ' + client.prenom + (client.categorieClient != null ? ' (' + client.categorieClient.libelle + ')' : '')}">
+                    </option>
+                </select>
+            </div>
+
+            <!-- Plan de la salle -->
+            <div class="section">
+                <h2>🪑 Sélectionner les places</h2>
+                <div class="salle-legend">
+                    <div class="legend-item">
+                        <div class="legend-box available"></div>
+                        <span>Disponible</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box occupied"></div>
+                        <span>Occupée</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box selected"></div>
+                        <span>Sélectionnée</span>
+                    </div>
+                </div>
+                
+                <div class="ecran">ÉCRAN</div>
+                
+                <div class="salle-grid" id="salleGrid">
+                    <div th:each="ligne : ${#numbers.sequence(1, salle.ligne)}" class="salle-row">
+                        <span class="row-label" th:text="'Rang ' + ${ligne}"></span>
+                        <th:block th:each="place : ${places}" th:if="${place.numeroLigne == ligne}">
+                            <div th:class="${place.occupee ? 'place occupied' : 'place available'}"
+                                 th:data-place-id="${place.idPlace}"
+                                 th:data-type-place-id="${place.typePlace != null ? place.typePlace.idTypePlace : ''}"
+                                 th:data-type-place-nom="${place.typePlace != null ? place.typePlace.libelle : 'Standard'}"
+                                 th:title="${'Place ' + place.numeroLigne + '-' + place.numeroColonne + ' (' + (place.typePlace != null ? place.typePlace.libelle : 'Standard') + ')'}"
+                                 onclick="togglePlace(this)">
+                                <span th:text="${place.numeroColonne}"></span>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Places sélectionnées et catégories -->
+            <div class="section" id="selectedPlacesSection" style="display: none;">
+                <h2>📋 Places sélectionnées</h2>
+                <div id="selectedPlacesList" class="selected-places-list">
+                    <!-- Rempli dynamiquement par JavaScript -->
+                </div>
+            </div>
+
+            <!-- Tarifs disponibles -->
+            <div class="section">
+                <h2>💰 Tarifs</h2>
+                <div class="tarifs-grid">
+                    <div class="tarif-card" th:each="tarif : ${tarifsClient}">
+                        <div class="tarif-category" th:text="${tarif.categorieClient != null ? tarif.categorieClient.libelle : 'Standard'}"></div>
+                        <div class="tarif-price" th:text="${tarif.tarif + ' €'}"></div>
+                    </div>
+                    <div class="tarif-card" th:if="${tarifsClient == null or tarifsClient.isEmpty()}">
+                        <div class="tarif-category">Tarif standard</div>
+                        <div class="tarif-price" th:text="${seance.tarif + ' €'}"></div>
+                    </div>
+                </div>
+                
+                <div th:if="${tarifsPlace != null and !tarifsPlace.isEmpty()}" class="tarifs-place-section">
+                    <h3>Tarifs par type de place</h3>
+                    <table class="tarifs-table">
+                        <thead>
+                            <tr>
+                                <th>Type de place</th>
+                                <th>Catégorie</th>
+                                <th>Tarif</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="tp : ${tarifsPlace}">
+                                <td th:text="${tp.typePlace != null ? tp.typePlace.libelle : '-'}"></td>
+                                <td th:text="${tp.categorieClient != null ? tp.categorieClient.libelle : '-'}"></td>
+                                <td th:text="${tp.tarif + ' €'}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Récapitulatif -->
+            <div class="section recap-section">
+                <h2>🧾 Récapitulatif</h2>
+                <div class="recap-content" id="recapContent">
+                    <p class="no-selection">Aucune place sélectionnée</p>
+                </div>
+                <div class="recap-total" id="recapTotal" style="display: none;">
+                    <span>Total:</span>
+                    <span id="totalAmount">0.00 €</span>
+                </div>
+            </div>
+
+            <!-- Bouton confirmer -->
+            <div class="actions">
+                <a th:href="@{/seances}" class="btn btn-cancel">Annuler</a>
+                <button type="submit" class="btn btn-confirm" id="confirmBtn" disabled>Confirmer l'achat</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Données pour JavaScript -->
+    <script th:inline="javascript">
+        const seanceId = [[${seance.idSeance}]];
+        const tarifBase = [[${seance.tarif}]];
+        const categoriesClient = [[${categoriesClient}]];
+        const tarifsClient = [[${tarifsClient}]];
+        const tarifsPlace = [[${tarifsPlace}]];
+    </script>
+
+    <script>
+        let selectedPlaces = [];
+        let placeCategories = {};
+
+        function togglePlace(element) {
+            if (element.classList.contains('occupied')) {
+                return; // Ne rien faire si la place est occupée
+            }
+
+            const placeId = element.dataset.placeId;
+            const typePlaceId = element.dataset.typePlaceId;
+            const typePlaceNom = element.dataset.typePlaceNom;
+
+            if (element.classList.contains('selected')) {
+                // Désélectionner
+                element.classList.remove('selected');
+                element.classList.add('available');
+                selectedPlaces = selectedPlaces.filter(p => p.id !== placeId);
+                delete placeCategories[placeId];
+            } else {
+                // Sélectionner
+                element.classList.remove('available');
+                element.classList.add('selected');
+                selectedPlaces.push({
+                    id: placeId,
+                    typePlaceId: typePlaceId,
+                    typePlaceNom: typePlaceNom,
+                    title: element.title
+                });
+            }
+
+            updateSelectedPlacesList();
+            updateRecap();
+        }
+
+        function updateSelectedPlacesList() {
+            const container = document.getElementById('selectedPlacesList');
+            const section = document.getElementById('selectedPlacesSection');
+            
+            if (selectedPlaces.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            
+            let html = '';
+            selectedPlaces.forEach((place, index) => {
+                const currentCat = placeCategories[place.id] || '';
+                html += `
+                    <div class="selected-place-item">
+                        <div class="place-info">
+                            <span class="place-title">${place.title}</span>
+                        </div>
+                        <div class="place-category">
+                            <label>Catégorie:</label>
+                            <select onchange="updatePlaceCategory('${place.id}', this.value)" class="category-select">
+                                <option value="">-- Catégorie --</option>
+                                ${categoriesClient.map(cat => 
+                                    `<option value="${cat.idCategorieClient}" ${currentCat == cat.idCategorieClient ? 'selected' : ''}>${cat.libelle}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <div class="place-price" id="price-${place.id}">-</div>
+                        <button type="button" class="btn-remove" onclick="removePlace('${place.id}')">✕</button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function removePlace(placeId) {
+            const element = document.querySelector(`[data-place-id="${placeId}"]`);
+            if (element) {
+                element.classList.remove('selected');
+                element.classList.add('available');
+            }
+            selectedPlaces = selectedPlaces.filter(p => p.id !== placeId);
+            delete placeCategories[placeId];
+            updateSelectedPlacesList();
+            updateRecap();
+        }
+
+        function updatePlaceCategory(placeId, categorieId) {
+            placeCategories[placeId] = categorieId;
+            updateRecap();
+        }
+
+        function getTarif(typePlaceId, categorieClientId) {
+            // D'abord chercher dans tarifsPlace
+            if (tarifsPlace && tarifsPlace.length > 0 && typePlaceId && categorieClientId) {
+                const tarifPlace = tarifsPlace.find(tp => 
+                    tp.typePlace && tp.typePlace.idTypePlace == typePlaceId &&
+                    tp.categorieClient && tp.categorieClient.idCategorieClient == categorieClientId
+                );
+                if (tarifPlace && tarifPlace.tarif) {
+                    return parseFloat(tarifPlace.tarif);
+                }
+            }
+
+            // Ensuite chercher dans tarifsClient
+            if (tarifsClient && tarifsClient.length > 0 && categorieClientId) {
+                const tarifClient = tarifsClient.find(tc => 
+                    tc.categorieClient && tc.categorieClient.idCategorieClient == categorieClientId
+                );
+                if (tarifClient && tarifClient.tarif) {
+                    return parseFloat(tarifClient.tarif);
+                }
+            }
+
+            // Sinon retourner le tarif de base
+            return tarifBase ? parseFloat(tarifBase) : 0;
+        }
+
+        function updateRecap() {
+            const recapContent = document.getElementById('recapContent');
+            const recapTotal = document.getElementById('recapTotal');
+            const totalAmount = document.getElementById('totalAmount');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const placeIdsInput = document.getElementById('placeIdsInput');
+            const categorieIdsInput = document.getElementById('categorieIdsInput');
+
+            if (selectedPlaces.length === 0) {
+                recapContent.innerHTML = '<p class="no-selection">Aucune place sélectionnée</p>';
+                recapTotal.style.display = 'none';
+                confirmBtn.disabled = true;
+                placeIdsInput.value = '';
+                categorieIdsInput.value = '';
+                return;
+            }
+
+            let total = 0;
+            let html = '<ul class="recap-list">';
+            let placeIds = [];
+            let categorieIds = [];
+
+            selectedPlaces.forEach(place => {
+                const categorieId = placeCategories[place.id] || null;
+                const tarif = getTarif(place.typePlaceId, categorieId);
+                total += tarif;
+
+                const categorieName = categoriesClient.find(c => c.idCategorieClient == categorieId)?.libelle || 'Standard';
+                
+                html += `<li>${place.title} - ${categorieName} : <strong>${tarif.toFixed(2)} €</strong></li>`;
+                
+                placeIds.push(place.id);
+                categorieIds.push(categorieId || '');
+
+                // Mettre à jour le prix affiché pour cette place
+                const priceElement = document.getElementById(`price-${place.id}`);
+                if (priceElement) {
+                    priceElement.textContent = tarif.toFixed(2) + ' €';
+                }
+            });
+
+            html += '</ul>';
+            recapContent.innerHTML = html;
+            totalAmount.textContent = total.toFixed(2) + ' €';
+            recapTotal.style.display = 'flex';
+            
+            // Activer le bouton seulement si un client est sélectionné
+            const clientSelect = document.getElementById('clientSelect');
+            confirmBtn.disabled = !clientSelect.value;
+
+            placeIdsInput.value = placeIds.join(',');
+            categorieIdsInput.value = categorieIds.join(',');
+        }
+
+        // Écouter le changement de client
+        document.getElementById('clientSelect').addEventListener('change', function() {
+            updateRecap();
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateRecap();
+        });
+    </script>
+</body>
+</html>

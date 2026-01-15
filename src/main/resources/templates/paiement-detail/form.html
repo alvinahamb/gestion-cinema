@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Détail Paiement - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💳 Détails Paiement</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${paiementDetail == null or paiementDetail.id == null}">Ajouter un Détail Paiement</h1>
+            <h1 th:if="${paiementDetail != null and paiementDetail.id != null}">Modifier un Détail Paiement</h1>
+            <form th:action="@{/paiement-details/save}" method="post">
+                <input type="hidden" name="id" th:value="${paiementDetail != null ? paiementDetail.id : ''}"/>
+                <div class="form-group">
+                    <label for="idPaiement">Paiement *</label>
+                    <select id="idPaiement" name="idPaiement" required>
+                        <option value="">Sélectionner un paiement</option>
+                        <option th:each="p : ${paiements}" 
+                                th:value="${p.idPaiement}" 
+                                th:text="${'Paiement #' + p.idPaiement}"
+                                th:selected="${paiementDetail != null and paiementDetail.idPaiement == p.idPaiement}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idMethodePaiement">Méthode Paiement *</label>
+                    <select id="idMethodePaiement" name="idMethodePaiement" required>
+                        <option value="">Sélectionner une méthode</option>
+                        <option th:each="mp : ${methodesPaiement}" 
+                                th:value="${mp.idMethodePaiement}" 
+                                th:text="${mp.libelle}"
+                                th:selected="${paiementDetail != null and paiementDetail.idMethodePaiement == mp.idMethodePaiement}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="montant">Montant *</label>
+                    <input type="number" step="0.01" id="montant" name="montant" th:value="${paiementDetail != null ? paiementDetail.montant : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="datePaiement">Date Paiement</label>
+                    <input type="date" id="datePaiement" name="datePaiement" th:value="${paiementDetail != null ? paiementDetail.datePaiement : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/paiement-details" class="btn btn-cancel">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

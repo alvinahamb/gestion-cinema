@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Version Film - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎬 Gestion des Versions Film</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${filmVersion == null or filmVersion.id == null}">Ajouter une Version Film</h1>
+            <h1 th:if="${filmVersion != null and filmVersion.id != null}">Modifier une Version Film</h1>
+            <form th:action="@{/film-versions/save}" method="post" th:object="${filmVersion}">
+                <input type="hidden" name="id" th:value="${filmVersion != null ? filmVersion.id : ''}"/>
+                <div class="form-group">
+                    <label for="idFilm">Film *</label>
+                    <select id="idFilm" name="idFilm" required>
+                        <option value="">Sélectionner un film</option>
+                        <option th:each="film : ${films}" 
+                                th:value="${film.idFilm}" 
+                                th:text="${film.titre}"
+                                th:selected="${filmVersion != null and filmVersion.idFilm == film.idFilm}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idLangue">Langue *</label>
+                    <select id="idLangue" name="idLangue" required>
+                        <option value="">Sélectionner une langue</option>
+                        <option th:each="langue : ${langues}" 
+                                th:value="${langue.idLangue}" 
+                                th:text="${langue.nom}"
+                                th:selected="${filmVersion != null and filmVersion.idLangue == langue.idLangue}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sousTitre">Sous-titré</label>
+                    <input type="checkbox" id="sousTitre" name="sousTitre" th:checked="${filmVersion != null and filmVersion.sousTitre}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/film-versions" class="btn btn-cancel">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

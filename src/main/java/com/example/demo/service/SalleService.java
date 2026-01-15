@@ -37,6 +37,8 @@ public class SalleService {
             Salle salle = existingSalle.get();
             salle.setNomSalle(salleDTO.getNomSalle());
             salle.setCapacite(salleDTO.getCapacite());
+            salle.setLigne(salleDTO.getLigne());
+            salle.setColonne(salleDTO.getColonne());
             Salle updatedSalle = salleRepository.save(salle);
             return convertToDTO(updatedSalle);
         }
@@ -52,10 +54,12 @@ public class SalleService {
     }
 
     private SalleDTO convertToDTO(Salle salle) {
-        return new SalleDTO(salle.getIdSalle(), salle.getNomSalle(), salle.getCapacite());
+        return new SalleDTO(salle.getIdSalle(), salle.getNomSalle(), salle.getCapacite(), 
+                           salle.getLigne(), salle.getColonne());
     }
 
     private Salle convertToEntity(SalleDTO salleDTO) {
-        return new Salle(salleDTO.getNomSalle(), salleDTO.getCapacite());
+        return new Salle(salleDTO.getNomSalle(), salleDTO.getCapacite(), 
+                        salleDTO.getLigne(), salleDTO.getColonne());
     }
 }

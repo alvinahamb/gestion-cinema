@@ -1,28 +1,32 @@
 package com.example.demo.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class FilmDTO {
     private Integer idFilm;
     private String titre;
     private String synopsis;
     private Integer duree;
-    private Integer idLangueOriginal;
-    private Integer idPays;
+    private LangueDTO langueOriginal;
+    private PaysDTO pays;
     private LocalDate dateSortie;
     private LocalDate dateAjout;
     private Integer classificationAge;
+    private List<FilmGenreDTO> filmGenres;
+    private List<FilmVersionDTO> versions;
+    private List<Integer> idGenres;
 
     public FilmDTO() {}
 
-    public FilmDTO(Integer idFilm, String titre, String synopsis, Integer duree, Integer idLangueOriginal, 
-                   Integer idPays, LocalDate dateSortie, LocalDate dateAjout, Integer classificationAge) {
+    public FilmDTO(Integer idFilm, String titre, String synopsis, Integer duree, LangueDTO langueOriginal, 
+                   PaysDTO pays, LocalDate dateSortie, LocalDate dateAjout, Integer classificationAge) {
         this.idFilm = idFilm;
         this.titre = titre;
         this.synopsis = synopsis;
         this.duree = duree;
-        this.idLangueOriginal = idLangueOriginal;
-        this.idPays = idPays;
+        this.langueOriginal = langueOriginal;
+        this.pays = pays;
         this.dateSortie = dateSortie;
         this.dateAjout = dateAjout;
         this.classificationAge = classificationAge;
@@ -60,20 +64,20 @@ public class FilmDTO {
         this.duree = duree;
     }
 
-    public Integer getIdLangueOriginal() {
-        return idLangueOriginal;
+    public LangueDTO getLangueOriginal() {
+        return langueOriginal;
     }
 
-    public void setIdLangueOriginal(Integer idLangueOriginal) {
-        this.idLangueOriginal = idLangueOriginal;
+    public void setLangueOriginal(LangueDTO langueOriginal) {
+        this.langueOriginal = langueOriginal;
     }
 
-    public Integer getIdPays() {
-        return idPays;
+    public PaysDTO getPays() {
+        return pays;
     }
 
-    public void setIdPays(Integer idPays) {
-        this.idPays = idPays;
+    public void setPays(PaysDTO pays) {
+        this.pays = pays;
     }
 
     public LocalDate getDateSortie() {
@@ -98,5 +102,29 @@ public class FilmDTO {
 
     public void setClassificationAge(Integer classificationAge) {
         this.classificationAge = classificationAge;
+    }
+
+    public List<Integer> getIdGenres() {
+        return idGenres;
+    }
+
+    public void setIdGenres(List<Integer> idGenres) {
+        this.idGenres = idGenres;
+    }
+
+    public List<FilmGenreDTO> getFilmGenres() {
+        return filmGenres;
+    }
+
+    public void setFilmGenres(List<FilmGenreDTO> filmGenres) {
+        this.filmGenres = filmGenres;
+    }
+
+    public List<FilmVersionDTO> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<FilmVersionDTO> versions) {
+        this.versions = versions;
     }
 }

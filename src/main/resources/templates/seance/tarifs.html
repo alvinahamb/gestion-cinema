@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails des Tarifs - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎫 Gestion des Tarifs de Séance</h2>
+        <div>
+            <a href="/seances">← Retour aux Séances</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Message d'erreur si aucun tarif -->
+        <div th:if="${(tarifsClient == null or tarifsClient.isEmpty()) and (tarifsPlace == null or tarifsPlace.isEmpty())}" class="error-container">
+            <div class="error-icon">⚠️</div>
+            <h3>Aucun tarif configuré</h3>
+            <p>Cette séance n'a pas encore de tarifs spécifiques configurés.</p>
+            <p>Veuillez configurer les tarifs pour cette séance.</p>
+        </div>
+
+        <!-- Affichage normal si des tarifs existent -->
+        <div th:if="${(tarifsClient != null and !tarifsClient.isEmpty()) or (tarifsPlace != null and !tarifsPlace.isEmpty())}">
+            <div class="header">
+                <h1>Détails des Tarifs</h1>
+                <div class="seance-info">
+                    <h2 th:text="${seance.filmVersion.film.titre}"></h2>
+                    <div class="info-row">
+                        <span class="label">🎬 Salle:</span>
+                        <span class="value" th:text="${seance.salle.nomSalle}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">📅 Date et heure:</span>
+                        <span class="value" th:text="${seance.dateSeance + ' à ' + seance.heureDebut}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">🌍 Langue:</span>
+                        <span class="value" th:text="${seance.filmVersion.langue != null ? seance.filmVersion.langue.nom : 'Non spécifiée'}"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">📝 Sous-titres:</span>
+                        <span th:if="${seance.avecSousTitre}" class="badge badge-success">Oui</span>
+                        <span th:if="${!seance.avecSousTitre}" class="badge badge-secondary">Non</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">💰 Tarif de base:</span>
+                        <span class="value" th:text="${seance.tarif + ' €'}"></span>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Tarifs par catégorie client -->
+        <div class="tarifs-section">
+            <h3>Tarifs par Catégorie Client</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Catégorie Client</th>
+                            <th>Tarif (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${tarifsClient == null or tarifsClient.isEmpty()}">
+                            <td colspan="2"><div class="empty-state"><p>Aucun tarif spécifique par catégorie</p></div></td>
+                        </tr>
+                        <tr th:each="tarif : ${tarifsClient}">
+                            <td th:text="${tarif.categorieClient.libelle}"></td>
+                            <td th:text="${tarif.tarif}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tarifs par catégorie client et type de place -->
+        <div class="tarifs-section">
+            <h3>Tarifs par Catégorie Client et Type de Place</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Catégorie Client</th>
+                            <th>Type de Place</th>
+                            <th>Tarif (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${tarifsPlace == null or tarifsPlace.isEmpty()}">
+                            <td colspan="3"><div class="empty-state"><p>Aucun tarif spécifique par place</p></div></td>
+                        </tr>
+                        <tr th:each="tarif : ${tarifsPlace}">
+                            <td th:text="${tarif.categorieClient.libelle}"></td>
+                            <td th:text="${tarif.typePlace.libelle}"></td>
+                            <td th:text="${tarif.tarif}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/seances" class="btn btn-secondary">Retour à la liste</a>
+            <a th:href="@{/seances/edit/{id}(id=${seance.idSeance})}" class="btn btn-primary">Modifier la séance</a>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

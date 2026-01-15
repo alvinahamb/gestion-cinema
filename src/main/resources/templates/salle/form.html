@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter/Modifier Salle - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/salle/form.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
@@ -27,6 +27,14 @@
                 <div class="form-group">
                     <label for="capacite">Capacité (nombre de places) *</label>
                     <input type="number" id="capacite" name="capacite" th:value="${salle != null ? salle.capacite : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="ligne">Nombre de Lignes *</label>
+                    <input type="number" id="ligne" name="ligne" th:value="${salle != null ? salle.ligne : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="colonne">Nombre de Colonnes *</label>
+                    <input type="number" id="colonne" name="colonne" th:value="${salle != null ? salle.colonne : ''}" required/>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-submit">Enregistrer</button>

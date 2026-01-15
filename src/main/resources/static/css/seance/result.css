@@ -1,0 +1,295 @@
+/* ============================================
+   PAGE RÉSULTATS DE RECHERCHE - SÉANCES
+   Design unifié avec fond blanc
+   ============================================ */
+
+@import url('../shared-list-form.css');
+
+body {
+    background: #f8f9fa !important;
+}
+
+.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.navbar h2 {
+    color: white !important;
+}
+
+.navbar-actions a {
+    color: white !important;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+/* === FORMULAIRE DE RECHERCHE === */
+.filter-section {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.filter-section h2 {
+    color: #2d3748;
+    margin-bottom: 28px;
+    font-size: 1.8em;
+    font-weight: 700;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    align-items: end;
+}
+
+.filter-group label {
+    display: block;
+    color: #4a5568;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.filter-group input[type="date"],
+.filter-group input[type="time"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f7fafc;
+    color: #2d3748;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.filter-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.btn-search {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* === GRILLE DE CARTES SÉANCES === */
+.seances-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 28px;
+    margin-top: 32px;
+}
+
+.seance-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.seance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.seance-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(102, 126, 234, 0.15);
+    border-color: #667eea;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 24px;
+    color: white;
+}
+
+.card-header h3 {
+    color: white;
+    font-size: 1.4em;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.card-header .subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95em;
+    margin-bottom: 0;
+}
+
+.card-body {
+    padding: 24px;
+}
+
+.seance-info {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f7fafc;
+    border-radius: 10px;
+    border-left: 3px solid #667eea;
+}
+
+.info-label {
+    color: #718096;
+    font-weight: 600;
+    font-size: 0.9em;
+    min-width: 90px;
+}
+
+.info-value {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.badge-vf {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+}
+
+.badge-vost {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.badge-subtitle {
+    background: linear-gradient(135deg, #ed64a6 0%, #d53f8c 100%);
+    color: white;
+}
+
+.card-footer {
+    padding: 20px 24px;
+    background: #f7fafc;
+    display: flex;
+    gap: 12px;
+}
+
+.btn-action {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-acheter {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-acheter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.btn-reserver {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.btn-reserver:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(72, 187, 120, 0.4);
+    color: white;
+}
+
+/* === MESSAGE AUCUN RÉSULTAT === */
+.no-results {
+    background: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    margin-top: 32px;
+}
+
+.no-results h3 {
+    color: #2d3748;
+    font-size: 1.8em;
+    margin-bottom: 16px;
+}
+
+.no-results p {
+    color: #718096;
+    font-size: 1.1em;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .seances-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-footer {
+        flex-direction: column;
+    }
+}

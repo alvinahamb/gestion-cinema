@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Place Réservation - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎫 Places Réservation</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${reservationPlace == null or reservationPlace.id == null}">Ajouter une Place Réservation</h1>
+            <h1 th:if="${reservationPlace != null and reservationPlace.id != null}">Modifier une Place Réservation</h1>
+            <form th:action="@{/reservation-places/save}" method="post">
+                <input type="hidden" name="id" th:value="${reservationPlace != null ? reservationPlace.id : ''}"/>
+                <div class="form-group">
+                    <label for="reservation.idReservation">Réservation *</label>
+                    <select id="reservation.idReservation" name="reservation.idReservation" required>
+                        <option value="">Sélectionner une réservation</option>
+                        <option th:each="r : ${reservations}" 
+                                th:value="${r.idReservation}" 
+                                th:text="${'Réservation #' + r.idReservation}"
+                                th:selected="${reservationPlace != null and reservationPlace.reservation != null and reservationPlace.reservation.idReservation == r.idReservation}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="place.idPlace">Place *</label>
+                    <select id="place.idPlace" name="place.idPlace" required>
+                        <option value="">Sélectionner une place</option>
+                        <option th:each="p : ${places}" 
+                                th:value="${p.idPlace}" 
+                                th:text="${'Place #' + p.idPlace}"
+                                th:selected="${reservationPlace != null and reservationPlace.place != null and reservationPlace.place.idPlace == p.idPlace}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="categorieClient.idCategorieClient">Catégorie Client</label>
+                    <select id="categorieClient.idCategorieClient" name="categorieClient.idCategorieClient">
+                        <option value="">Sélectionner une catégorie</option>
+                        <option th:each="cc : ${categoriesClient}" 
+                                th:value="${cc.idCategorieClient}" 
+                                th:text="${cc.libelle}"
+                                th:selected="${reservationPlace != null and reservationPlace.categorieClient != null and reservationPlace.categorieClient.idCategorieClient == cc.idCategorieClient}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prix">Prix</label>
+                    <input type="number" step="0.01" id="prix" name="prix" th:value="${reservationPlace != null ? reservationPlace.prix : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/reservation-places" class="btn btn-cancel">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -22,15 +22,20 @@ public class Client {
     private String email;
     
     private String telephone;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_categorie_client")
+    private CategorieClient categorieClient;
 
     public Client() {}
 
-    public Client(String nom, String prenom, LocalDate dateNaissance, String email, String telephone) {
+    public Client(String nom, String prenom, LocalDate dateNaissance, String email, String telephone, CategorieClient categorieClient) {
         this.nom = nom;
         this.prenom = prenom;
         this.dateNaissance = dateNaissance;
         this.email = email;
         this.telephone = telephone;
+        this.categorieClient = categorieClient;
     }
 
     public Integer getIdClient() {
@@ -79,5 +84,13 @@ public class Client {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+
+    public CategorieClient getCategorieClient() {
+        return categorieClient;
+    }
+
+    public void setCategorieClient(CategorieClient categorieClient) {
+        this.categorieClient = categorieClient;
     }
 }

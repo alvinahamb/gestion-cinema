@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails Paiement - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💳 Détails du Paiement</h2>
+        <div>
+            <a href="/paiement">← Retour à la liste</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div th:if="${paiement != null}" class="details-container">
+            <div class="details-header">
+                <h1>Paiement #<span th:text="${paiement.idPaiement}"></span></h1>
+                <div class="status-badge" th:classappend="${paiement.status != null ? 'status-' + paiement.status.code.toLowerCase() : 'status-unknown'}">
+                    <span th:text="${paiement.status != null ? paiement.status.libelle : 'Statut inconnu'}"></span>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-section">
+                    <h3>Informations générales</h3>
+                    <div class="detail-row">
+                        <span class="label">Réservation:</span>
+                        <span class="value">
+                            <a th:if="${paiement.ticket != null and paiement.ticket.reservation != null}" th:href="@{/reservations/details/{id}(id=${paiement.ticket.reservation.idReservation})}">
+                                Réservation #<span th:text="${paiement.ticket.reservation.idReservation}"></span>
+                            </a>
+                            <span th:if="${paiement.ticket == null or paiement.ticket.reservation == null}">-</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Montant:</span>
+                        <span class="value" th:text="${paiement.montant + ' €'}"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Date de création:</span>
+                        <span class="value" th:text="${paiement.creerLe != null ? paiement.creerLe : '-'}"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Date paiement prévu:</span>
+                        <span class="value" th:text="${paiement.datePaiementPrevu != null ? paiement.datePaiementPrevu : '-'}"></span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Détails des paiements</h3>
+                    <div th:if="${paiementDetails != null and !paiementDetails.isEmpty()}" class="paiement-details">
+                        <div th:each="detail : ${paiementDetails}" class="detail-item">
+                            <div class="detail-info">
+                                <span class="detail-montant" th:text="${detail.montant + ' €'}"></span>
+                                <span class="detail-methode" th:text="${detail.methodePaiement != null ? detail.methodePaiement.libelle : '-'}"></span>
+                                <span class="detail-date" th:text="${detail.datePaiement != null ? detail.datePaiement : '-'}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${paiementDetails == null or paiementDetails.isEmpty()}" class="empty-state">
+                        <p>Aucun détail de paiement disponible</p>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Historique des statuts</h3>
+                    <div th:if="${statusHistorique != null and !statusHistorique.isEmpty()}" class="status-history">
+                        <div th:each="historique : ${statusHistorique}" class="status-item">
+                            <div class="status-info">
+                                <span class="status-name" th:text="${historique.status.libelle}"></span>
+                                <span class="status-date" th:text="${historique.dateModification != null ? historique.dateModification : '-'}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${statusHistorique == null or statusHistorique.isEmpty()}" class="empty-state">
+                        <p>Aucun historique de statut disponible</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${paiement == null}" class="error-container">
+            <h2>Paiement introuvable</h2>
+            <p>Le paiement demandé n'existe pas ou a été supprimé.</p>
+            <a href="/paiement" class="btn">Retour à la liste</a>
+        </div>
+    </div>
+
+    <style>
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .detail-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+
+        .detail-section h3 {
+            margin-top: 0;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .value {
+            color: #212529;
+        }
+
+        .status-history, .paiement-details {
+            margin-top: 15px;
+        }
+
+        .status-item, .detail-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+
+        .status-info, .detail-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-name {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .status-date, .detail-date {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .detail-montant {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .detail-methode {
+            color: #495057;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .error-container h2 {
+            color: #dc3545;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</body>
+</html>

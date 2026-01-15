@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- Sidebar Fragment -->
+    <div th:fragment="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2>🎬 Cinéma</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/seances" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/seances') ? 'active' : ''}">
+                <span class="icon">⏰</span>
+                <span>Séances</span>
+            </a>
+            
+            <a href="/reservations" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/reservations') ? 'active' : ''}">
+                <span class="icon">🎫</span>
+                <span>Réservations</span>
+            </a>
+            
+            <a href="/paiement" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/paiement') ? 'active' : ''}">
+                <span class="icon">💳</span>
+                <span>Paiements</span>
+            </a>
+            
+            <a href="/ticket" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/ticket') ? 'active' : ''}">
+                <span class="icon">🎟️</span>
+                <span>Tickets</span>
+            </a>
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="/dashboard" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/dashboard') ? 'active' : ''}">
+                <span class="icon">⚙️</span>
+                <span>Paramètres</span>
+            </a>
+            
+            <a href="/" class="sidebar-link">
+                <span class="icon">🏠</span>
+                <span>Accueil</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎟️ Gestion des Tickets</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Tickets</h1>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Réservation</th>
+                        <th>Client</th>
+                        <th>Séance</th>
+                        <th>Total (€)</th>
+                        <th>Restant (€)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${tickets == null or tickets.isEmpty()}">
+                        <td colspan="7"><div class="empty-state"><p>Aucun ticket trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="ticket : ${tickets}">
+                        <td th:text="${ticket.idTicket}"></td>
+                        <td th:text="${ticket.reservation != null ? 'Réservation #' + ticket.reservation.idReservation : '-'}"></td>
+                        <td th:text="${ticket.client != null ? ticket.client.nom + ' ' + ticket.client.prenom : '-'}"></td>
+                        <td th:text="${ticket.seance != null and ticket.seance.filmVersion != null ? ticket.seance.filmVersion.film.titre + ' - ' + ticket.seance.dateSeance + ' ' + ticket.seance.heureDebut : '-'}"></td>
+                        <td th:text="${ticket.total}"></td>
+                        <td th:text="${ticket.montantRestant} + ' €'" th:class="${ticket.montantRestant > 0 ? 'montant-restant' : 'montant-payé'}"></td>
+                        <td>
+                            <a th:href="@{/ticket/details/{id}(id=${ticket.idTicket})}" class="btn-action btn-details">📋 Détails</a>
+                            <a th:if="${ticket.montantRestant > 0}" th:href="@{/paiement/ticket/{id}(id=${ticket.idTicket})}" class="btn-action btn-pay">💳 Payer</a>
+                            <span th:if="${ticket.montantRestant <= 0}" class="btn-action btn-pay-disabled">✅ Payé</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        .montant-restant {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .montant-payé {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .btn-pay-disabled {
+            background-color: #6c757d;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+</body>
+</html>

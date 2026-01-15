@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Status - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📊 Gestion des Status</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${status == null or status.idStatus == null}">Ajouter un Status</h1>
+            <h1 th:if="${status != null and status.idStatus != null}">Modifier un Status</h1>
+            <form th:action="@{/status/save}" method="post">
+                <input type="hidden" name="idStatus" th:value="${status != null and status.idStatus != null ? status.idStatus : ''}"/>
+                <div class="form-group">
+                    <label for="libelle">Libellé *</label>
+                    <input type="text" id="libelle" name="libelle" th:value="${status != null ? status.libelle : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="code">Code *</label>
+                    <input type="text" id="code" name="code" th:value="${status != null ? status.code : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="ordre">Ordre *</label>
+                    <input type="number" id="ordre" name="ordre" th:value="${status != null ? status.ordre : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="typeStatut">Type Statut *</label>
+                    <select id="typeStatut" name="typeStatutId" required>
+                        <option value="">-- Sélectionner un type --</option>
+                        <option th:each="typeStatut : ${typeStatuts}"
+                                th:value="${typeStatut.idTypeStatut}"
+                                th:text="${typeStatut.libelle}"
+                                th:selected="${status != null and status.typeStatut != null and status.typeStatut.idTypeStatut == typeStatut.idTypeStatut}">
+                        </option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/status" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

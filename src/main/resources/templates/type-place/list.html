@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types de Places - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎟️ Gestion des Types de Places</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Types de Places</h1>
+            <a href="/types-places/nouveau" class="btn">+ Ajouter un Type</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Libellé</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${typePlaces == null or typePlaces.isEmpty()}">
+                        <td colspan="4"><div class="empty-state"><p>Aucun type de place trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="typePlace : ${typePlaces}">
+                        <td th:text="${typePlace.idTypePlace}"></td>
+                        <td th:text="${typePlace.libelle}"></td>
+                        <td th:text="${typePlace.description}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/types-places/edit/{id}(id=${typePlace.idTypePlace})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/types-places/delete/{id}(id=${typePlace.idTypePlace})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

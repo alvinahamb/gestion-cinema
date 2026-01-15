@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💳 Paiement</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/ticket">Tickets</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>Paiement du Ticket</h1>
+
+            <div class="ticket-info">
+                <h3>Informations du Ticket</h3>
+                <p><strong>ID Ticket:</strong> <span th:text="${ticket.idTicket}"></span></p>
+                <p><strong>Client:</strong> <span th:text="${ticket.client != null ? ticket.client.nom + ' ' + ticket.client.prenom : '-'}"></span></p>
+                <p><strong>Séance:</strong> <span th:text="${ticket.seance != null and ticket.seance.filmVersion != null ? ticket.seance.filmVersion.film.titre + ' - ' + ticket.seance.dateSeance + ' ' + ticket.seance.heureDebut : '-'}"></span></p>
+                <p><strong>Total à payer:</strong> <span th:text="${ticket.total} + ' €'"></span></p>
+                <p><strong>Statut paiement:</strong> <span th:text="${paiement.status != null ? paiement.status.libelle : '-'}"></span></p>
+            </div>
+
+            <form th:action="@{/paiement/process}" method="post" class="form">
+                <input type="hidden" th:name="idPaiement" th:value="${paiement.idPaiement}">
+
+                <div class="form-group">
+                    <label for="idMethodePaiement">Méthode de paiement:</label>
+                    <select id="idMethodePaiement" name="idMethodePaiement" required>
+                        <option value="">Sélectionner une méthode</option>
+                        <option th:each="methode : ${methodesPaiement}"
+                                th:value="${methode.idMethodePaiement}"
+                                th:text="${methode.libelle}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="montant">Montant à payer:</label>
+                    <input type="number" id="montant" name="montant" step="0.01" min="0.01" required
+                           th:placeholder="'Max: ' + ${ticket.total} + ' €'">
+                </div>
+
+                <div class="form-group">
+                    <label for="datePaiement">Date de paiement:</label>
+                    <input type="date" id="datePaiement" name="datePaiement" required
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">💳 Effectuer le paiement</button>
+                    <a th:href="@{/ticket}" class="btn-cancel">Annuler</a>
+                </div>
+            </form>
+
+            <!-- Afficher les erreurs s'il y en a -->
+            <div th:if="${param.error}" class="error-message">
+                <p th:text="'Erreur: ' + ${param.error}"></p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .ticket-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        .ticket-info h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        .ticket-info p {
+            margin: 8px 0;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+        }
+    </style>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "genre")
@@ -11,6 +12,9 @@ public class Genre {
     
     @Column(nullable = false)
     private String libelle;
+    
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FilmGenre> filmGenres;
 
     public Genre() {}
 
@@ -32,5 +36,13 @@ public class Genre {
 
     public void setLibelle(String libelle) {
         this.libelle = libelle;
+    }
+
+    public List<FilmGenre> getFilmGenres() {
+        return filmGenres;
+    }
+
+    public void setFilmGenres(List<FilmGenre> filmGenres) {
+        this.filmGenres = filmGenres;
     }
 }

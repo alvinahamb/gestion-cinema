@@ -1,89 +1,31 @@
-<!DOCTYPE html>
+<div class="navbar">
+        <h2>⏰ Gestion des Séances</h2>
+        <div class="navbar-actions">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div><!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Gestion Cinéma</title>
-    <link rel="stylesheet" href="/css/home/dashboard.css">
+    <link rel="stylesheet" href="/css/home/unified-dashboard.css">
 </head>
 <body>
     <div class="navbar">
         <h1>🎬 Gestion Cinéma</h1>
-        <div>
-            <a href="/">Accueil</a>
+        <div class="navbar-actions">
+            <a href="/dashboard">Accueil</a>
+            <a href="/parametre">Paramètres</a>
+            <form th:action="@{/seances/search}" method="get" class="search-form">
+                <input type="text" name="filmTitre" placeholder="Rechercher par film..." th:value="${searchTerm}" class="search-input">
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
         </div>
     </div>
 
     <div class="container">
-        <h2 class="section-title">📋 Gestion des Paramètres</h2>
-        <div class="modules-grid">
-            <a href="/langues" style="text-decoration: none;">
-                <div class="module-card">
-                    <div class="module-icon">🗣️</div>
-                    <h3>Langues</h3>
-                    <p>Gérer les langues des films</p>
-                    <button class="btn btn-small">Accéder</button>
-                </div>
-            </a>
-
-            <a href="/pays" style="text-decoration: none;">
-                <div class="module-card">
-                    <div class="module-icon">🌍</div>
-                    <h3>Pays</h3>
-                    <p>Gérer les pays d'origine</p>
-                    <button class="btn btn-small">Accéder</button>
-                </div>
-            </a>
-
-            <a href="/genres" style="text-decoration: none;">
-                <div class="module-card">
-                    <div class="module-icon">🎭</div>
-                    <h3>Genres</h3>
-                    <p>Gérer les genres de films</p>
-                    <button class="btn btn-small">Accéder</button>
-                </div>
-            </a>
-
-            <a href="/methodes-paiement" style="text-decoration: none;">
-                <div class="module-card">
-                    <div class="module-icon">💳</div>
-                    <h3>Méthodes de Paiement</h3>
-                    <p>Gérer les moyens de paiement</p>
-                    <button class="btn btn-small">Accéder</button>
-                </div>
-            </a>
-        </div>
-
-        <h2 class="section-title">👥 Gestion des Ressources</h2>
-        <div class="modules-grid">
-            <a href="/clients" style="text-decoration: none;">
-                <div class="module-card">
-                    <div class="module-icon">👤</div>
-                    <h3>Clients</h3>
-                    <p>Gérer les clients du cinéma</p>
-                    <button class="btn btn-small">Accéder</button>
-                </div>
-            </a>
-
-            <a href="/salles" style="text-decoration: none;">
-                <div class="module-card">
-                    <div class="module-icon">🎪</div>
-                    <h3>Salles</h3>
-                    <p>Gérer les salles de cinéma</p>
-                    <button class="btn btn-small">Accéder</button>
-                </div>
-            </a>
-
-            <a href="/films" style="text-decoration: none;">
-                <div class="module-card">
-                    <div class="module-icon">🎬</div>
-                    <h3>Films</h3>
-                    <p>Gérer le catalogue de films</p>
-                    <button class="btn btn-small">Accéder</button>
-                </div>
-            </a>
-        </div>
-
         <h2 class="section-title">🎫 Gestion des Opérations</h2>
         <div class="modules-grid">
             <a href="/seances" style="text-decoration: none;">
@@ -103,6 +45,23 @@
                     <button class="btn btn-small">Accéder</button>
                 </div>
             </a>
+
+             <a href="/ticket" style="text-decoration: none;">
+                <div class="module-card">
+                    <div class="module-icon">🧾</div>
+                    <h3>Ticket</h3>
+                    <p>Gérer les tickets</p>
+                    <button class="btn btn-small">Accéder</button>
+                </div>
+            </a>
+
+            <a href="/paiement" style="text-decoration: none;">
+                <div class="module-card">
+                    <div class="module-icon">💳</div>
+                    <h3>Paiements</h3>
+                    <p>Gérer les paiements</p>
+                    <button class="btn btn-small">Accéder</button>
+                </div>
         </div>
     </div>
 </body>

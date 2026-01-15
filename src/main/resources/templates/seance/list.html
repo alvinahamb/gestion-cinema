@@ -4,19 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Séances - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/seance/list.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
         <h2>⏰ Gestion des Séances</h2>
-        <div>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
+       <div class="navbar-actions">
+            <a href="/dashboard">Accueil</a>
+            <a href="/parametre">Paramètres</a>
+            <form th:action="@{/seances/search}" method="get" class="search-form">
+                <input type="text" name="filmTitre" placeholder="Rechercher par film..." th:value="${searchTerm}" class="search-input">
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
         </div>
     </div>
     <div class="container">
         <div class="header">
             <h1>Liste des Séances</h1>
+            <div th:if="${searchTerm != null and !searchTerm.isEmpty()}" class="search-results">
+                <p>Résultats pour "<span th:text="${searchTerm}"></span>" : <span th:text="${seances != null ? seances.size() : 0}"></span> séance(s) trouvée(s)</p>
+                <a href="/seances" class="btn btn-secondary">Voir toutes les séances</a>
+            </div>
             <a href="/seances/nouveau" class="btn">+ Ajouter une Séance</a>
         </div>
         <div class="table-container">
@@ -24,26 +32,33 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Film</th>
+                        <th>Salle</th>
                         <th>Date</th>
                         <th>Heure Début</th>
-                        <th>Tarif</th>
+                        <th>Tarif (€)</th>
                         <th>Sous-titres</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${seances == null or seances.isEmpty()}">
-                        <td colspan="6"><div class="empty-state"><p>Aucune séance trouvée</p></div></td>
+                        <td colspan="9"><div class="empty-state"><p>Aucune séance trouvée</p></div></td>
                     </tr>
                     <tr th:each="seance : ${seances}">
                         <td th:text="${seance.idSeance}"></td>
+                        <td th:text="${seance.filmVersion != null and seance.filmVersion.film != null ? seance.filmVersion.film.titre : '-'}"></td>
+                        <td th:text="${seance.salle != null ? seance.salle.nomSalle : '-'}"></td>
                         <td th:text="${seance.dateSeance}"></td>
                         <td th:text="${seance.heureDebut}"></td>
                         <td th:text="${seance.tarif}"></td>
                         <td th:text="${seance.avecSousTitre ? 'Oui' : 'Non'}"></td>
+                        <td th:text="${seance.status != null ? seance.status.libelle : '-'}"></td>
                         <td>
                             <div class="actions">
                                 <a th:href="@{/seances/edit/{id}(id=${seance.idSeance})}" class="btn btn-edit">Modifier</a>
+                                <a th:href="@{/seances/tarifs/{id}(id=${seance.idSeance})}" class="btn btn-info">Voir tarifs</a>
                                 <form th:action="@{/seances/delete/{id}(id=${seance.idSeance})}" method="post" style="display:inline;">
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
                                 </form>

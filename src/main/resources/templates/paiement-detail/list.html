@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails Paiement - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💳 Détails Paiement</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Détails Paiement</h1>
+            <a href="/paiement-details/nouveau" class="btn">+ Ajouter</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Paiement</th>
+                        <th>Méthode</th>
+                        <th>Montant</th>
+                        <th>Date Paiement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${paiementDetails == null or paiementDetails.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucun détail paiement trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="pd : ${paiementDetails}">
+                        <td th:text="${pd.id}"></td>
+                        <td th:text="${pd.paiement != null ? pd.paiement.idPaiement : 'N/A'}"></td>
+                        <td th:text="${pd.methodePaiement != null ? pd.methodePaiement.libelle : 'N/A'}"></td>
+                        <td th:text="${pd.montant}"></td>
+                        <td th:text="${pd.datePaiement}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/paiement-details/edit/{id}(id=${pd.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/paiement-details/delete/{id}(id=${pd.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

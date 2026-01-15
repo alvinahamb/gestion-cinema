@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservations - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/reservation/list.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
@@ -17,7 +17,6 @@
     <div class="container">
         <div class="header">
             <h1>Liste des Réservations</h1>
-            <a href="/reservations/nouveau" class="btn">+ Ajouter une Réservation</a>
         </div>
         <div class="table-container">
             <table>
@@ -25,29 +24,30 @@
                     <tr>
                         <th>ID</th>
                         <th>Client</th>
+                        <th>Séance</th>
                         <th>Date Réservation</th>
-                        <th>Total</th>
+                        <th>Total (€)</th>
+                        <th>Remise (€)</th>
+                        <th>Date Paiement Prévu</th>
                         <th>Statut</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${reservations == null or reservations.isEmpty()}">
-                        <td colspan="6"><div class="empty-state"><p>Aucune réservation trouvée</p></div></td>
+                        <td colspan="9"><div class="empty-state"><p>Aucune réservation trouvée</p></div></td>
                     </tr>
                     <tr th:each="reservation : ${reservations}">
                         <td th:text="${reservation.idReservation}"></td>
-                        <td th:text="${reservation.client.nom} + ' ' + ${reservation.client.prenom}"></td>
+                        <td th:text="${reservation.client != null ? reservation.client.nom + ' ' + reservation.client.prenom : '-'}"></td>
+                        <td th:text="${reservation.seance != null and reservation.seance.filmVersion != null ? reservation.seance.filmVersion.film.titre + ' - ' + reservation.seance.dateSeance + ' ' + reservation.seance.heureDebut : '-'}"></td>
                         <td th:text="${reservation.dateReservation}"></td>
                         <td th:text="${reservation.total}"></td>
-                        <td th:text="${reservation.statusLibelle}"></td>
+                        <td th:text="${reservation.remise != null ? reservation.remise : '0.00'}"></td>
+                        <td th:text="${reservation.datePaiementPrevu != null ? reservation.datePaiementPrevu : '-'}"></td>
+                        <td th:text="${reservation.status != null ? reservation.status.libelle : '-'}"></td>
                         <td>
-                            <div class="actions">
-                                <a th:href="@{/reservations/edit/{id}(id=${reservation.idReservation})}" class="btn btn-edit">Modifier</a>
-                                <form th:action="@{/reservations/delete/{id}(id=${reservation.idReservation})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
-                                </form>
-                            </div>
+                            <a th:href="@{/reservations/details/{id}(id=${reservation.idReservation})}" class="btn-action btn-details">📋 Détails</a>
                         </td>
                     </tr>
                 </tbody>

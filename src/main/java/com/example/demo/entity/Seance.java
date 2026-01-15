@@ -30,20 +30,20 @@ public class Seance {
     
     @ManyToOne
     @JoinColumn(name = "id_status")
-    private StatusSeance statusSeance;
+    private Status status;
 
     public Seance() {}
 
     public Seance(FilmVersion filmVersion, Salle salle, LocalTime heureDebut, 
                   Boolean avecSousTitre, LocalDate dateSeance, 
-                  BigDecimal tarif, StatusSeance statusSeance) {
+                  BigDecimal tarif, Status status) {
         this.filmVersion = filmVersion;
         this.salle = salle;
         this.heureDebut = heureDebut;
         this.avecSousTitre = avecSousTitre;
         this.dateSeance = dateSeance;
         this.tarif = tarif;
-        this.statusSeance = statusSeance;
+        this.status = status;
     }
 
     public Integer getIdSeance() {
@@ -102,11 +102,11 @@ public class Seance {
         this.tarif = tarif;
     }
 
-    public StatusSeance getStatusSeance() {
-        return statusSeance;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setStatusSeance(StatusSeance statusSeance) {
-        this.statusSeance = statusSeance;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

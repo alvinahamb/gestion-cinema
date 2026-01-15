@@ -1,31 +1,32 @@
 package com.example.demo.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
 public class ReservationDTO {
     private Integer idReservation;
     private ClientDTO client;
-    private Integer idSeance;
+    private SeanceDTO seance;
     private LocalDateTime dateReservation;
     private BigDecimal total;
     private BigDecimal remise;
-    private Integer idStatus;
-    private String statusLibelle;
+    private StatusDTO status;
+    private LocalDate datePaiementPrevu;
 
     public ReservationDTO() {}
 
-    public ReservationDTO(Integer idReservation, ClientDTO client, Integer idSeance, 
+    public ReservationDTO(Integer idReservation, ClientDTO client, SeanceDTO seance, 
                          LocalDateTime dateReservation, BigDecimal total, BigDecimal remise,
-                         Integer idStatus, String statusLibelle) {
+                         StatusDTO status, LocalDate datePaiementPrevu) {
         this.idReservation = idReservation;
         this.client = client;
-        this.idSeance = idSeance;
+        this.seance = seance;
         this.dateReservation = dateReservation;
         this.total = total;
         this.remise = remise;
-        this.idStatus = idStatus;
-        this.statusLibelle = statusLibelle;
+        this.status = status;
+        this.datePaiementPrevu = datePaiementPrevu;
     }
 
     public Integer getIdReservation() {
@@ -44,12 +45,12 @@ public class ReservationDTO {
         this.client = client;
     }
 
-    public Integer getIdSeance() {
-        return idSeance;
+    public SeanceDTO getSeance() {
+        return seance;
     }
 
-    public void setIdSeance(Integer idSeance) {
-        this.idSeance = idSeance;
+    public void setSeance(SeanceDTO seance) {
+        this.seance = seance;
     }
 
     public LocalDateTime getDateReservation() {
@@ -76,19 +77,19 @@ public class ReservationDTO {
         this.remise = remise;
     }
 
-    public Integer getIdStatus() {
-        return idStatus;
+    public StatusDTO getStatus() {
+        return status;
     }
 
-    public void setIdStatus(Integer idStatus) {
-        this.idStatus = idStatus;
+    public void setStatus(StatusDTO status) {
+        this.status = status;
     }
 
-    public String getStatusLibelle() {
-        return statusLibelle;
+    public LocalDate getDatePaiementPrevu() {
+        return datePaiementPrevu;
     }
 
-    public void setStatusLibelle(String statusLibelle) {
-        this.statusLibelle = statusLibelle;
+    public void setDatePaiementPrevu(LocalDate datePaiementPrevu) {
+        this.datePaiementPrevu = datePaiementPrevu;
     }
 }

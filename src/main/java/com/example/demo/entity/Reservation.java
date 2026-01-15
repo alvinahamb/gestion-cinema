@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
@@ -27,18 +28,21 @@ public class Reservation {
     
     @ManyToOne
     @JoinColumn(name = "id_status")
-    private StatusReservation statusReservation;
+    private Status status;
+    
+    private LocalDate datePaiementPrevu;
 
     public Reservation() {}
 
     public Reservation(Client client, Seance seance, LocalDateTime dateReservation, BigDecimal total,
-                      BigDecimal remise, StatusReservation statusReservation) {
+                      BigDecimal remise, Status status, LocalDate datePaiementPrevu) {
         this.client = client;
         this.seance = seance;
         this.dateReservation = dateReservation;
         this.total = total;
         this.remise = remise;
-        this.statusReservation = statusReservation;
+        this.status = status;
+        this.datePaiementPrevu = datePaiementPrevu;
     }
 
     public Integer getIdReservation() {
@@ -89,12 +93,20 @@ public class Reservation {
         this.remise = remise;
     }
 
-    public StatusReservation getStatusReservation() {
-        return statusReservation;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setStatusReservation(StatusReservation statusReservation) {
-        this.statusReservation = statusReservation;
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public LocalDate getDatePaiementPrevu() {
+        return datePaiementPrevu;
+    }
+
+    public void setDatePaiementPrevu(LocalDate datePaiementPrevu) {
+        this.datePaiementPrevu = datePaiementPrevu;
     }
 }
 

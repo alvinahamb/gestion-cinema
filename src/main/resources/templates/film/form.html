@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter/Modifier Film - Gestion Cinéma</title>
-    <link rel="stylesheet" th:href="@{/css/film/form.css}">
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
     <div class="navbar">
@@ -49,6 +49,10 @@
                 <div class="form-group">
                     <label for="dateSortie">Date de Sortie</label>
                     <input type="date" id="dateSortie" name="dateSortie" th:value="${film != null and film.dateSortie != null ? film.dateSortie : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="dateAjout">Date d'Ajout</label>
+                    <input type="date" id="dateAjout" name="dateAjout" th:value="${film != null and film.dateAjout != null ? film.dateAjout : ''}"/>
                 </div>
                 <div class="form-group">
                     <label for="classificationAge">Classification d'Âge</label>

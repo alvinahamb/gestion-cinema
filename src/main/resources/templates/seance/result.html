@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de la Recherche - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/seance/result.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>⏰ Gestion des Séances</h2>
+        <div class="navbar-actions">
+            <a href="/dashboard">Accueil</a>
+            <a href="/parametre">Paramètres</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Formulaire de recherche -->
+        <div class="filter-section">
+            <h2>🔍 Rechercher une Séance</h2>
+            <form th:action="@{/seances/search}" method="get" class="filter-form">
+                <div class="filter-group">
+                    <label for="filmTitre">Film</label>
+                    <input type="text" id="filmTitre" name="filmTitre" placeholder="Rechercher un film..." th:value="${searchTerm}">
+                </div>
+                <div class="filter-group">
+                    <label for="dateDebut">Date Début</label>
+                    <input type="date" id="dateDebut" name="dateDebut" th:value="${dateDebut}">
+                </div>
+                <div class="filter-group">
+                    <label for="heureDebut">Heure Début</label>
+                    <input type="time" id="heureDebut" name="heureDebut" th:value="${heureDebut}">
+                </div>
+                <div class="filter-group">
+                    <label for="dateFin">Date Fin</label>
+                    <input type="date" id="dateFin" name="dateFin" th:value="${dateFin}">
+                </div>
+                <div class="filter-group">
+                    <label for="heureFin">Heure Fin</label>
+                    <input type="time" id="heureFin" name="heureFin" th:value="${heureFin}">
+                </div>
+                <div class="filter-group">
+                    <button type="submit" class="btn-search">🔍 Rechercher</button>
+                </div>
+            </form>
+            
+            <!-- Résumé de la recherche -->
+            <div class="search-results" th:if="${dateDebut != null or dateFin != null or searchTerm != null}">
+                <p style="margin-top: 20px; padding: 12px; background: #f7fafc; border-radius: 8px; color: #4a5568;">
+                    <strong>Filtres appliqués :</strong>
+                    <span th:if="${searchTerm != null and !searchTerm.isEmpty()}">
+                        Film: "<span th:text="${searchTerm}"></span>"
+                    </span>
+                    <span th:if="${dateDebut != null}">
+                        Du <span th:text="${#temporals.format(dateDebut, 'dd/MM/yyyy')}"></span>
+                    </span>
+                    <span th:if="${heureDebut != null}">
+                        à <span th:text="${#temporals.format(heureDebut, 'HH:mm')}"></span>
+                    </span>
+                    <span th:if="${dateFin != null}">
+                        au <span th:text="${#temporals.format(dateFin, 'dd/MM/yyyy')}"></span>
+                    </span>
+                    <span th:if="${heureFin != null}">
+                        à <span th:text="${#temporals.format(heureFin, 'HH:mm')}"></span>
+                    </span>
+                    - <strong><span th:text="${seances != null ? seances.size() : 0}"></span> séance(s) trouvée(s)</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Grille de cartes de séances -->
+        <div th:if="${seances != null and !seances.isEmpty()}" class="seances-grid">
+            <div th:each="seance : ${seances}" class="seance-card">
+                <div class="card-header">
+                    <h3 th:text="${seance.filmVersion != null and seance.filmVersion.film != null ? seance.filmVersion.film.titre : 'Film inconnu'}">Titre du Film</h3>
+                    <p class="subtitle" th:text="${seance.salle != null ? 'Salle ' + seance.salle.nomSalle : '-'}">Salle</p>
+                </div>
+                
+                <div class="card-body">
+                    <div class="seance-info">
+                        <div class="info-row">
+                            <span class="info-label">🌐 Langue</span>
+                            <span class="info-value" th:text="${seance.filmVersion != null and seance.filmVersion.langue != null ? seance.filmVersion.langue.nom : '-'}">Français</span>
+                            <span class="badge badge-vf" th:if="${seance.filmVersion != null and seance.filmVersion.langue != null and seance.filmVersion.langue.nom == 'Français'}">VF</span>
+                            <span class="badge badge-vost" th:if="${seance.filmVersion != null and seance.filmVersion.langue != null and seance.filmVersion.langue.nom != 'Français'}">VO</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">📅 Date</span>
+                            <span class="info-value" th:text="${#temporals.format(seance.dateSeance, 'dd/MM/yyyy')}">01/01/2024</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">🕐 Heure</span>
+                            <span class="info-value" th:text="${#temporals.format(seance.heureDebut, 'HH:mm')}">20:00</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">💰 Tarif</span>
+                            <span class="info-value" th:text="${seance.tarif + ' €'}">12.00 €</span>
+                        </div>
+                        
+                        <div class="info-row" th:if="${seance.avecSousTitre}">
+                            <span class="info-label">💬 Sous-titres</span>
+                            <span class="badge badge-subtitle">SOUS-TITRÉ</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <a th:href="@{/achat/seance/{id}(id=${seance.idSeance})}" class="btn-action btn-acheter">
+                        🎫 Acheter
+                    </a>
+                    <a th:href="@{/reservations/seance/{id}(id=${seance.idSeance})}" class="btn-action btn-reserver">
+                        📝 Réserver
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message si aucun résultat -->
+        <div th:if="${seances == null or seances.isEmpty()}" class="no-results">
+            <h3>🎬 Aucune séance trouvée</h3>
+            <p>Essayez de modifier vos critères de recherche pour trouver des séances disponibles.</p>
+        </div>
+    </div>
+</body>
+</html>
