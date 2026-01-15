@@ -28,12 +28,14 @@
                         <th>Capacité</th>
                         <th>Lignes</th>
                         <th>Colonnes</th>
+                        <th>Valeur Maximale</th>
                         <th>Actions</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${salles == null or salles.isEmpty()}">
-                        <td colspan="6"><div class="empty-state"><p>Aucune salle trouvée</p></div></td>
+                        <td colspan="7"><div class="empty-state"><p>Aucune salle trouvée</p></div></td>
                     </tr>
                     <tr th:each="salle : ${salles}">
                         <td th:text="${salle.idSalle}"></td>
@@ -41,6 +43,7 @@
                         <td th:text="${salle.capacite}"></td>
                         <td th:text="${salle.ligne}"></td>
                         <td th:text="${salle.colonne}"></td>
+                        <td th:text="${salle.valeurMaximale}"></td>
                         <td>
                             <div class="actions">
                                 <a th:href="@{/salles/edit/{id}(id=${salle.idSalle})}" class="btn btn-edit">Modifier</a>

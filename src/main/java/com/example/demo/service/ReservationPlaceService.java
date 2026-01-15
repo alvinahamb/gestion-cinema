@@ -16,6 +16,7 @@ import com.example.demo.repository.ReservationPlaceRepository;
 import com.example.demo.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -103,20 +104,8 @@ public class ReservationPlaceService {
         PlaceDTO placeDTO = null;
         if (entity.getPlace() != null) {
             Place place = entity.getPlace();
-            SalleDTO salleDTO = null;
-            if (place.getSalle() != null) {
-                salleDTO = new SalleDTO(place.getSalle().getIdSalle(), place.getSalle().getNomSalle(), 
-                                       place.getSalle().getCapacite(), place.getSalle().getLigne(), 
-                                       place.getSalle().getColonne());
-            }
-            TypePlaceDTO typePlaceDTO = null;
-            if (place.getTypePlace() != null) {
-                typePlaceDTO = new TypePlaceDTO(place.getTypePlace().getIdTypePlace(), 
-                                               place.getTypePlace().getLibelle(), 
-                                               place.getTypePlace().getDescription());
-            }
-            placeDTO = new PlaceDTO(place.getIdPlace(), salleDTO, typePlaceDTO, 
-                                   place.getNumeroLigne(), place.getNumeroColonne());
+            placeDTO = new PlaceDTO(place.getIdPlace(), place.getSalle().getIdSalle(), place.getTypePlace().getIdTypePlace(), 
+                                   place.getNumeroLigne(), place.getNumeroColonne(), BigDecimal.ZERO);
         }
         
         CategorieClientDTO categorieClientDTO = null;

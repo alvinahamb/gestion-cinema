@@ -66,6 +66,14 @@ CREATE TABLE IF NOT EXISTS type_place (
     description TEXT
 );
 
+CREATE TABLE IF NOT EXISTS tarif_place (
+    id_tarif SERIAL PRIMARY KEY,
+    id_type_place INT,
+    prix DECIMAL(5,2),
+    FOREIGN KEY (id_type_place) REFERENCES type_place(id_type_place)
+);
+
+
 CREATE TABLE IF NOT EXISTS place (
     id_place SERIAL PRIMARY KEY,
     id_salle INT,
@@ -229,3 +237,12 @@ CREATE TABLE IF NOT EXISTS paiement_status_historique (
     FOREIGN KEY (id_paiement) REFERENCES paiement(id_paiement),
     FOREIGN KEY (id_status) REFERENCES status(id_status)
 );
+
+
+
+je voudais creer 
+SalleDTO =(idsalle, nomsalle, capacite, ligne, colonne, tarif_place, valeurMaximale, list[] placePDO)
+placeDTO=(idplace, salle, id type_place, numeroligne, numerocolonne, prix_place)
+typeplaceDTO=(idtypeplace, libelle, description)
+TarifPlaceDTO=(idTarif, idTypePlace, prix) 
+et corrige les DTO  existants et les services

@@ -92,9 +92,9 @@
                         <th:block th:each="place : ${places}" th:if="${place.numeroLigne == ligne}">
                             <div th:class="${place.occupee ? 'place occupied' : 'place available'}"
                                  th:data-place-id="${place.idPlace}"
-                                 th:data-type-place-id="${place.typePlace != null ? place.typePlace.idTypePlace : ''}"
-                                 th:data-type-place-nom="${place.typePlace != null ? place.typePlace.libelle : 'Standard'}"
-                                 th:title="${'Place ' + place.numeroLigne + '-' + place.numeroColonne + ' (' + (place.typePlace != null ? place.typePlace.libelle : 'Standard') + ')'}"
+                                 th:data-type-place-id="${place.idTypePlace}"
+                                 th:data-type-place-nom="${place.idTypePlace == 2 ? 'VIP' : 'Standard'}"
+                                 th:title="${'Place ' + place.numeroLigne + '-' + place.numeroColonne + ' (' + (place.idTypePlace == 2 ? 'VIP' : 'Standard') + ')'}"
                                  onclick="togglePlace(this)">
                                 <span th:text="${place.numeroColonne}"></span>
                             </div>
@@ -115,12 +115,8 @@
             <div class="section">
                 <h2>💰 Tarifs</h2>
                 <div class="tarifs-grid">
-                    <div class="tarif-card" th:each="tarif : ${tarifsClient}">
-                        <div class="tarif-category" th:text="${tarif.categorieClient != null ? tarif.categorieClient.libelle : 'Standard'}"></div>
-                        <div class="tarif-price" th:text="${tarif.tarif + ' €'}"></div>
-                    </div>
-                    <div class="tarif-card" th:if="${tarifsClient == null or tarifsClient.isEmpty()}">
-                        <div class="tarif-category">Tarif standard</div>
+                    <div class="tarif-card">
+                        <div class="tarif-category">Tarif par défaut</div>
                         <div class="tarif-price" th:text="${seance.tarif + ' €'}"></div>
                     </div>
                 </div>
@@ -131,15 +127,13 @@
                         <thead>
                             <tr>
                                 <th>Type de place</th>
-                                <th>Catégorie</th>
                                 <th>Tarif</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="tp : ${tarifsPlace}">
-                                <td th:text="${tp.typePlace != null ? tp.typePlace.libelle : '-'}"></td>
-                                <td th:text="${tp.categorieClient != null ? tp.categorieClient.libelle : '-'}"></td>
-                                <td th:text="${tp.tarif + ' €'}"></td>
+                                <td th:text="${tp.idTypePlace == 1 ? 'Standard' : (tp.idTypePlace == 2 ? 'VIP' : 'Autre')}"></td>
+                                <td th:text="${tp.prix + ' €'}"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -265,28 +259,17 @@
         }
 
         function getTarif(typePlaceId, categorieClientId) {
-            // D'abord chercher dans tarifsPlace
-            if (tarifsPlace && tarifsPlace.length > 0 && typePlaceId && categorieClientId) {
+            // Utiliser uniquement tarifsPlace (table tarif_place)
+            if (tarifsPlace && tarifsPlace.length > 0 && typePlaceId) {
                 const tarifPlace = tarifsPlace.find(tp => 
-                    tp.typePlace && tp.typePlace.idTypePlace == typePlaceId &&
-                    tp.categorieClient && tp.categorieClient.idCategorieClient == categorieClientId
+                    tp.idTypePlace == typePlaceId
                 );
-                if (tarifPlace && tarifPlace.tarif) {
-                    return parseFloat(tarifPlace.tarif);
+                if (tarifPlace && tarifPlace.prix) {
+                    return parseFloat(tarifPlace.prix);
                 }
             }
 
-            // Ensuite chercher dans tarifsClient
-            if (tarifsClient && tarifsClient.length > 0 && categorieClientId) {
-                const tarifClient = tarifsClient.find(tc => 
-                    tc.categorieClient && tc.categorieClient.idCategorieClient == categorieClientId
-                );
-                if (tarifClient && tarifClient.tarif) {
-                    return parseFloat(tarifClient.tarif);
-                }
-            }
-
-            // Sinon retourner le tarif de base
+            // Sinon retourner le tarif de base de la séance
             return tarifBase ? parseFloat(tarifBase) : 0;
         }
 

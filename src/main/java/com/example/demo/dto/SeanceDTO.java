@@ -13,11 +13,12 @@ public class SeanceDTO {
     private LocalDate dateSeance;
     private BigDecimal tarif;
     private StatusDTO status;
+    private BigDecimal valeurMaximale;
 
     public SeanceDTO() {}
 
     public SeanceDTO(Integer idSeance, FilmVersionDTO filmVersion, SalleDTO salle, LocalTime heureDebut,
-                    Boolean avecSousTitre, LocalDate dateSeance, BigDecimal tarif, StatusDTO status) {
+                    Boolean avecSousTitre, LocalDate dateSeance, BigDecimal tarif, StatusDTO status, BigDecimal valeurMaximale) {
         this.idSeance = idSeance;
         this.filmVersion = filmVersion;
         this.salle = salle;
@@ -26,6 +27,7 @@ public class SeanceDTO {
         this.dateSeance = dateSeance;
         this.tarif = tarif;
         this.status = status;
+        this.valeurMaximale = valeurMaximale;
     }
 
     public Integer getIdSeance() {
@@ -90,5 +92,13 @@ public class SeanceDTO {
 
     public void setStatus(StatusDTO status) {
         this.status = status;
+    }
+
+    public BigDecimal getValeurMaximale() {
+        return valeurMaximale;
+    }
+
+    public void setValeurMaximale(BigDecimal valeurMaximale) {
+        this.valeurMaximale = valeurMaximale;
     }
 }

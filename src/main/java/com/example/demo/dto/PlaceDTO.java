@@ -1,20 +1,24 @@
 package com.example.demo.dto;
 
+import java.math.BigDecimal;
+
 public class PlaceDTO {
     private Integer idPlace;
-    private SalleDTO salle;
-    private TypePlaceDTO typePlace;
+    private Integer idSalle;
+    private Integer idTypePlace;
     private Integer numeroLigne;
     private Integer numeroColonne;
+    private BigDecimal prixPlace;
 
     public PlaceDTO() {}
 
-    public PlaceDTO(Integer idPlace, SalleDTO salle, TypePlaceDTO typePlace, Integer numeroLigne, Integer numeroColonne) {
+    public PlaceDTO(Integer idPlace, Integer idSalle, Integer idTypePlace, Integer numeroLigne, Integer numeroColonne, BigDecimal prixPlace) {
         this.idPlace = idPlace;
-        this.salle = salle;
-        this.typePlace = typePlace;
+        this.idSalle = idSalle;
+        this.idTypePlace = idTypePlace;
         this.numeroLigne = numeroLigne;
         this.numeroColonne = numeroColonne;
+        this.prixPlace = prixPlace;
     }
 
     public Integer getIdPlace() {
@@ -25,20 +29,20 @@ public class PlaceDTO {
         this.idPlace = idPlace;
     }
 
-    public SalleDTO getSalle() {
-        return salle;
+    public Integer getIdSalle() {
+        return idSalle;
     }
 
-    public void setSalle(SalleDTO salle) {
-        this.salle = salle;
+    public void setIdSalle(Integer idSalle) {
+        this.idSalle = idSalle;
     }
 
-    public TypePlaceDTO getTypePlace() {
-        return typePlace;
+    public Integer getIdTypePlace() {
+        return idTypePlace;
     }
 
-    public void setTypePlace(TypePlaceDTO typePlace) {
-        this.typePlace = typePlace;
+    public void setIdTypePlace(Integer idTypePlace) {
+        this.idTypePlace = idTypePlace;
     }
 
     public Integer getNumeroLigne() {
@@ -55,6 +59,14 @@ public class PlaceDTO {
 
     public void setNumeroColonne(Integer numeroColonne) {
         this.numeroColonne = numeroColonne;
+    }
+
+    public BigDecimal getPrixPlace() {
+        return prixPlace;
+    }
+
+    public void setPrixPlace(BigDecimal prixPlace) {
+        this.prixPlace = prixPlace;
     }
 
     // Champ pour indiquer si la place est occupée (utilisé pour l'affichage)

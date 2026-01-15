@@ -71,7 +71,7 @@ public class AchatController {
 
         // Récupérer les tarifs
         List<TarifSeanceClientDTO> tarifsClient = tarifSeanceClientService.getBySeanceId(seanceId);
-        List<TarifSeancePlaceDTO> tarifsPlace = tarifSeancePlaceService.getBySeanceId(seanceId);
+        List<TarifPlaceDTO> tarifsPlace = achatService.getTarifsPlaceForSeance(seanceId);
 
         model.addAttribute("seance", seance);
         model.addAttribute("places", places);

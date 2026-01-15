@@ -1,12 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.PlaceDTO;
-import com.example.demo.dto.SalleDTO;
-import com.example.demo.dto.TypePlaceDTO;
+import com.example.demo.dto.TarifPlaceDTO;
 import com.example.demo.entity.Place;
 import com.example.demo.repository.PlaceRepository;
+import com.example.demo.repository.SalleRepository;
+import com.example.demo.repository.TypePlaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,6 +17,15 @@ import java.util.stream.Collectors;
 public class PlaceService {
     @Autowired
     private PlaceRepository placeRepository;
+
+    @Autowired
+    private TarifPlaceService tarifPlaceService;
+
+    @Autowired
+    private SalleRepository salleRepository;
+
+    @Autowired
+    private TypePlaceRepository typePlaceRepository;
 
     public List<PlaceDTO> getAllPlaces() {
         return placeRepository.findAll().stream()
@@ -55,26 +66,17 @@ public class PlaceService {
     }
 
     private PlaceDTO convertToDTO(Place place) {
-        SalleDTO salleDTO = null;
-        if (place.getSalle() != null) {
-            salleDTO = new SalleDTO();
-            salleDTO.setIdSalle(place.getSalle().getIdSalle());
-            salleDTO.setNomSalle(place.getSalle().getNomSalle());
-        }
-        
-        TypePlaceDTO typePlaceDTO = null;
-        if (place.getTypePlace() != null) {
-            typePlaceDTO = new TypePlaceDTO();
-            typePlaceDTO.setIdTypePlace(place.getTypePlace().getIdTypePlace());
-            typePlaceDTO.setLibelle(place.getTypePlace().getLibelle());
-        }
+        BigDecimal prixPlace = tarifPlaceService.getTarifPlaceByTypePlaceId(place.getTypePlace().getIdTypePlace())
+                .map(TarifPlaceDTO::getPrix)
+                .orElse(BigDecimal.ZERO);
         
         return new PlaceDTO(
             place.getIdPlace(),
-            salleDTO,
-            typePlaceDTO,
+            place.getSalle().getIdSalle(),
+            place.getTypePlace().getIdTypePlace(),
             place.getNumeroLigne(),
-            place.getNumeroColonne()
+            place.getNumeroColonne(),
+            prixPlace
         );
     }
 
@@ -82,6 +84,14 @@ public class PlaceService {
         Place place = new Place();
         place.setNumeroLigne(placeDTO.getNumeroLigne());
         place.setNumeroColonne(placeDTO.getNumeroColonne());
+        
+        if (placeDTO.getIdSalle() != null) {
+            salleRepository.findById(placeDTO.getIdSalle()).ifPresent(place::setSalle);
+        }
+        if (placeDTO.getIdTypePlace() != null) {
+            typePlaceRepository.findById(placeDTO.getIdTypePlace()).ifPresent(place::setTypePlace);
+        }
+        
         return place;
     }
 }

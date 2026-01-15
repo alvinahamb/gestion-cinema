@@ -22,6 +22,7 @@ import com.example.demo.entity.Langue;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +50,9 @@ public class SeanceService {
 
     @Autowired
     private LangueRepository langueRepository;
+
+    @Autowired
+    private SalleService salleService;
 
     public List<SeanceDTO> getAllSeances() {
         return seanceRepository.findAll().stream()
@@ -210,13 +214,20 @@ public class SeanceService {
         }
         
         SalleDTO salleDTO = null;
+        BigDecimal valeurMaximale = BigDecimal.ZERO;
         if (seance.getSalle() != null) {
-            salleDTO = new SalleDTO();
-            salleDTO.setIdSalle(seance.getSalle().getIdSalle());
-            salleDTO.setNomSalle(seance.getSalle().getNomSalle());
-            salleDTO.setCapacite(seance.getSalle().getCapacite());
-            salleDTO.setLigne(seance.getSalle().getLigne());
-            salleDTO.setColonne(seance.getSalle().getColonne());
+            Optional<SalleDTO> salleDTOOpt = salleService.getSalleById(seance.getSalle().getIdSalle());
+            if (salleDTOOpt.isPresent()) {
+                salleDTO = salleDTOOpt.get();
+                valeurMaximale = salleDTO.getValeurMaximale() != null ? salleDTO.getValeurMaximale() : BigDecimal.ZERO;
+            } else {
+                salleDTO = new SalleDTO();
+                salleDTO.setIdSalle(seance.getSalle().getIdSalle());
+                salleDTO.setNomSalle(seance.getSalle().getNomSalle());
+                salleDTO.setCapacite(seance.getSalle().getCapacite());
+                salleDTO.setLigne(seance.getSalle().getLigne());
+                salleDTO.setColonne(seance.getSalle().getColonne());
+            }
         }
         
         StatusDTO statusDTO = null;
@@ -241,7 +252,8 @@ public class SeanceService {
                             seance.getAvecSousTitre(),
                             seance.getDateSeance(),
                             seance.getTarif(),
-                            statusDTO);
+                            statusDTO,
+                            valeurMaximale);
     }
 
     private Seance convertToEntity(SeanceDTO seanceDTO) {

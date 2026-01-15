@@ -11,6 +11,10 @@ INSERT INTO type_place (libelle, description) VALUES
 ('Standard', 'Place standard'),
 ('VIP', 'Place premium');
 
+INSERT INTO tarif_place (id_type_place, prix) VALUES
+(1, 20000.00),
+(2, 50000.00);
+
 -- Salle 1
 INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
 SELECT 1, 1, l, c FROM generate_series(1,4) l, generate_series(1,5) c;

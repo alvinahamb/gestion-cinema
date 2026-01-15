@@ -48,10 +48,7 @@ public class AchatService {
     private StatusRepository statusRepository;
 
     @Autowired
-    private TarifSeanceClientRepository tarifSeanceClientRepository;
-
-    @Autowired
-    private TarifSeancePlaceRepository tarifSeancePlaceRepository;
+    private TarifPlaceRepository tarifPlaceRepository;
 
     @Autowired
     private PaiementService paiementService;
@@ -75,51 +72,28 @@ public class AchatService {
             dto.setNumeroColonne(place.getNumeroColonne());
             dto.setOccupee(occupiedPlaceIds.contains(place.getIdPlace()));
             
-            if (place.getTypePlace() != null) {
-                TypePlaceDTO typePlace = new TypePlaceDTO();
-                typePlace.setIdTypePlace(place.getTypePlace().getIdTypePlace());
-                typePlace.setLibelle(place.getTypePlace().getLibelle());
-                dto.setTypePlace(typePlace);
-            }
-            
-            if (place.getSalle() != null) {
-                SalleDTO salle = new SalleDTO();
-                salle.setIdSalle(place.getSalle().getIdSalle());
-                salle.setNomSalle(place.getSalle().getNomSalle());
-                salle.setLigne(place.getSalle().getLigne());
-                salle.setColonne(place.getSalle().getColonne());
-                dto.setSalle(salle);
-            }
+            dto.setIdSalle(place.getSalle().getIdSalle());
+            dto.setIdTypePlace(place.getTypePlace().getIdTypePlace());
             
             return dto;
         }).collect(Collectors.toList());
     }
 
     /**
-     * Récupère le tarif pour une catégorie client et type de place pour une séance
+     * Récupère le tarif basé uniquement sur le type de place (tarif_place)
      */
     public BigDecimal getTarif(Integer seanceId, Integer categorieClientId, Integer typePlaceId) {
-        // D'abord chercher dans tarif_seance_client_place
-        Optional<TarifSeancePlace> tarifPlace = tarifSeancePlaceRepository.findAll().stream()
-                .filter(t -> t.getSeance() != null && t.getSeance().getIdSeance().equals(seanceId)
-                        && t.getCategorieClient() != null && t.getCategorieClient().getIdCategorieClient().equals(categorieClientId)
-                        && t.getTypePlace() != null && t.getTypePlace().getIdTypePlace().equals(typePlaceId))
-                .findFirst();
-
-        if (tarifPlace.isPresent() && tarifPlace.get().getTarif() != null) {
-            return tarifPlace.get().getTarif();
+        // Utiliser uniquement tarif_place basé sur le type de place
+        if (typePlaceId != null) {
+            Optional<TarifPlace> tarifPlace = tarifPlaceRepository.findAll().stream()
+                    .filter(t -> t.getTypePlace() != null && t.getTypePlace().getIdTypePlace().equals(typePlaceId))
+                    .findFirst();
+            
+            if (tarifPlace.isPresent() && tarifPlace.get().getPrix() != null) {
+                return tarifPlace.get().getPrix();
+            }
         }
-
-        // Sinon chercher dans tarif_seance_client
-        Optional<TarifSeanceClient> tarifClient = tarifSeanceClientRepository.findAll().stream()
-                .filter(t -> t.getSeance() != null && t.getSeance().getIdSeance().equals(seanceId)
-                        && t.getCategorieClient() != null && t.getCategorieClient().getIdCategorieClient().equals(categorieClientId))
-                .findFirst();
-
-        if (tarifClient.isPresent() && tarifClient.get().getTarif() != null) {
-            return tarifClient.get().getTarif();
-        }
-
+        
         // Sinon utiliser le tarif par défaut de la séance
         Optional<Seance> seance = seanceRepository.findById(seanceId);
         return seance.map(Seance::getTarif).orElse(BigDecimal.ZERO);
@@ -202,45 +176,31 @@ public class AchatService {
     }
 
     /**
-     * Récupère tous les tarifs disponibles pour une séance
+     * Récupère tous les tarifs disponibles basés sur tarif_place
      */
     public Map<String, BigDecimal> getAllTarifsForSeance(Integer seanceId) {
-        List<TarifSeanceClient> tarifsClient = tarifSeanceClientRepository.findAll().stream()
-                .filter(t -> t.getSeance() != null && t.getSeance().getIdSeance().equals(seanceId))
-                .collect(Collectors.toList());
-
-        return tarifsClient.stream()
-                .filter(t -> t.getCategorieClient() != null)
+        // Retourner tous les tarifs de tarif_place
+        return tarifPlaceRepository.findAll().stream()
+                .filter(t -> t.getTypePlace() != null)
                 .collect(Collectors.toMap(
-                        t -> t.getCategorieClient().getIdCategorieClient().toString(),
-                        TarifSeanceClient::getTarif,
+                        t -> t.getTypePlace().getIdTypePlace().toString(),
+                        TarifPlace::getPrix,
                         (existing, replacement) -> existing
                 ));
     }
 
     /**
-     * Récupère tous les tarifs par type de place pour une séance
+     * Récupère tous les tarifs par type de place depuis tarif_place
      */
-    public List<TarifSeancePlaceDTO> getTarifsPlaceForSeance(Integer seanceId) {
-        return tarifSeancePlaceRepository.findAll().stream()
-                .filter(t -> t.getSeance() != null && t.getSeance().getIdSeance().equals(seanceId))
+    public List<TarifPlaceDTO> getTarifsPlaceForSeance(Integer seanceId) {
+        return tarifPlaceRepository.findAll().stream()
                 .map(t -> {
-                    TarifSeancePlaceDTO dto = new TarifSeancePlaceDTO();
-                    dto.setId(t.getId());
-                    dto.setTarif(t.getTarif());
-                    
-                    if (t.getCategorieClient() != null) {
-                        CategorieClientDTO cat = new CategorieClientDTO();
-                        cat.setIdCategorieClient(t.getCategorieClient().getIdCategorieClient());
-                        cat.setLibelle(t.getCategorieClient().getLibelle());
-                        dto.setCategorieClient(cat);
-                    }
+                    TarifPlaceDTO dto = new TarifPlaceDTO();
+                    dto.setIdTarif(t.getIdTarif());
+                    dto.setPrix(t.getPrix());
                     
                     if (t.getTypePlace() != null) {
-                        TypePlaceDTO tp = new TypePlaceDTO();
-                        tp.setIdTypePlace(t.getTypePlace().getIdTypePlace());
-                        tp.setLibelle(t.getTypePlace().getLibelle());
-                        dto.setTypePlace(tp);
+                        dto.setIdTypePlace(t.getTypePlace().getIdTypePlace());
                     }
                     
                     return dto;
