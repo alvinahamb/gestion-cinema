@@ -151,13 +151,12 @@ CREATE TABLE IF NOT EXISTS tarif_seance_client_place (
 
 CREATE TABLE IF NOT EXISTS remise_categorie (
     id_remise SERIAL PRIMARY KEY,
-    id_type_place INT NOT NULL,
+    id_type_place INT,
     id_categorie_client INT NOT NULL,
     tarif DECIMAL(7,2),
     pourcentage_de_reduction DECIMAL(5,2),
     FOREIGN KEY (id_type_place) REFERENCES type_place(id_type_place),
-    FOREIGN KEY (id_categorie_client) REFERENCES categorie_client(id_categorie_client),
-    UNIQUE(id_type_place, id_categorie_client)
+    FOREIGN KEY (id_categorie_client) REFERENCES categorie_client(id_categorie_client)
 );
 
 CREATE TABLE IF NOT EXISTS seance_status_historique (
@@ -247,4 +246,3 @@ CREATE TABLE IF NOT EXISTS paiement_status_historique (
     FOREIGN KEY (id_paiement) REFERENCES paiement(id_paiement),
     FOREIGN KEY (id_status) REFERENCES status(id_status)
 );
-

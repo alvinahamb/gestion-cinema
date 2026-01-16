@@ -12,6 +12,9 @@ public interface RemiseCategorieRepository extends JpaRepository<RemiseCategorie
     @Query("SELECT r FROM RemiseCategorie r WHERE r.typePlace.idTypePlace = ?1 AND r.categorieClient.idCategorieClient = ?2")
     Optional<RemiseCategorie> findByTypePlaceAndCategorie(Integer idTypePlace, Integer idCategorieClient);
     
+    @Query("SELECT r FROM RemiseCategorie r WHERE r.typePlace IS NULL AND r.categorieClient.idCategorieClient = ?1")
+    Optional<RemiseCategorie> findGeneralByCategorie(Integer idCategorieClient);
+    
     List<RemiseCategorie> findByTypePlaceIdTypePlace(Integer idTypePlace);
     List<RemiseCategorie> findByCategorieClientIdCategorieClient(Integer idCategorieClient);
 }

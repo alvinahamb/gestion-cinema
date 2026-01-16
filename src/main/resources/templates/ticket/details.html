@@ -36,25 +36,25 @@
                     <div class="detail-row">
                         <span class="label">Client:</span>
                         <span class="value">
-                            <a th:if="${ticket.client != null}" th:href="@{/clients/details/{id}(id=${ticket.client.idClient})}">
+                            <span th:if="${ticket.client != null}" th:href="@{/clients/details/{id}(id=${ticket.client.idClient})}">
                                 <span th:text="${ticket.client.nom + ' ' + ticket.client.prenom}"></span>
-                            </a>
+                            </span>
                             <span th:if="${ticket.client == null}">-</span>
                         </span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Séance:</span>
                         <span class="value">
-                            <a th:if="${ticket.seance != null}" th:href="@{/seances/details/{id}(id=${ticket.seance.idSeance})}">
+                            <span th:if="${ticket.seance != null}" th:href="@{/seances/details/{id}(id=${ticket.seance.idSeance})}">
                                 <span th:if="${ticket.seance.filmVersion != null and ticket.seance.filmVersion.film != null}" th:text="${ticket.seance.filmVersion.film.titre}"></span>
-                                <span th:text="' - ' + ${ticket.seance.dateSeance} + ' ' + ${ticket.seance.heureDebut}"></span>
-                            </a>
+                                <span th:text="${' - ' + ticket.seance.dateSeance + ' ' + ticket.seance.heureDebut}"></span>
+                            </span>
                             <span th:if="${ticket.seance == null}">-</span>
                         </span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Total:</span>
-                        <span class="value" th:text="${ticket.total + ' €'}"></span>
+                        <span class="value" th:text="${ticket.total + ' ar'}"></span>
                     </div>
                 </div>
 
@@ -64,8 +64,8 @@
                         <div th:each="place : ${ticketPlaces}" class="place-item">
                             <div class="place-info">
                                 <span class="place-number">Place <span th:text="${place.place.numeroLigne + '-' + place.place.numeroColonne}"></span></span>
-                                <span class="place-salle" th:text="${'Salle ' + place.place.salle.nomSalle}"></span>
-                                <span class="place-price" th:text="${place.prix + ' €'}"></span>
+                                <span class="place-salle">Salle <span th:text="${place.place.idSalle}"></span></span>
+                                <span class="place-price" th:text="${place.prix + ' ar'}"></span>
                             </div>
                         </div>
                     </div>

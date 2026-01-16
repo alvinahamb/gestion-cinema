@@ -72,7 +72,7 @@ public class RemiseCategorieService {
     private RemiseCategorieDTO convertToDTO(RemiseCategorie remiseCategorie) {
         return new RemiseCategorieDTO(
                 remiseCategorie.getIdRemise(),
-                remiseCategorie.getTypePlace().getIdTypePlace(),
+                remiseCategorie.getTypePlace() != null ? remiseCategorie.getTypePlace().getIdTypePlace() : null,
                 remiseCategorie.getCategorieClient().getIdCategorieClient(),
                 remiseCategorie.getTarif(),
                 remiseCategorie.getPourcentageDeReduction()
@@ -87,7 +87,9 @@ public class RemiseCategorieService {
         remiseCategorie.setTarif(remiseCategorieDTO.getTarif());
         remiseCategorie.setPourcentageDeReduction(remiseCategorieDTO.getPourcentageDeReduction());
 
-        TypePlace typePlace = typePlaceRepository.findById(remiseCategorieDTO.getIdTypePlace()).orElse(null);
+        TypePlace typePlace = remiseCategorieDTO.getIdTypePlace() != null 
+                ? typePlaceRepository.findById(remiseCategorieDTO.getIdTypePlace()).orElse(null)
+                : null;
         remiseCategorie.setTypePlace(typePlace);
 
         CategorieClient categorieClient = categorieCategoryRepository.findById(remiseCategorieDTO.getIdCategorieClient()).orElse(null);
