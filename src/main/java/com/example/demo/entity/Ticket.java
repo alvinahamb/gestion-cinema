@@ -26,18 +26,15 @@ public class Ticket {
     private LocalDate dateAchat;
     
     private BigDecimal total;
-    
-    private BigDecimal remise;
 
     public Ticket() {}
 
-    public Ticket(Reservation reservation, Client client, Seance seance, LocalDate dateAchat, BigDecimal total, BigDecimal remise) {
+    public Ticket(Reservation reservation, Client client, Seance seance, LocalDate dateAchat, BigDecimal total) {
         this.reservation = reservation;
         this.client = client;
         this.seance = seance;
         this.dateAchat = dateAchat;
         this.total = total;
-        this.remise = remise;
     }
 
     public Integer getIdTicket() {
@@ -86,13 +83,5 @@ public class Ticket {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
-    }
-
-    public BigDecimal getRemise() {
-        return remise;
-    }
-
-    public void setRemise(BigDecimal remise) {
-        this.remise = remise;
     }
 }

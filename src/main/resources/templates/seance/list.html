@@ -37,15 +37,14 @@
                         <th>Date</th>
                         <th>Heure Début</th>
                         <th>Tarif (€)</th>
-                        <th>Valeur Maximale</th>
-                        <th>Sous-titres</th>
+                        <th>Valeur Maximale</th>                        <th>Chiffre d'Affaire (€)</th>                        <th>Sous-titres</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${seances == null or seances.isEmpty()}">
-                        <td colspan="10"><div class="empty-state"><p>Aucune séance trouvée</p></div></td>
+                        <td colspan="11"><div class="empty-state"><p>Aucune séance trouvée</p></div></td>
                     </tr>
                     <tr th:each="seance : ${seances}">
                         <td th:text="${seance.idSeance}"></td>
@@ -55,6 +54,7 @@
                         <td th:text="${seance.heureDebut}"></td>
                         <td th:text="${seance.tarif}"></td>
                         <td th:text="${seance.salle != null ? seance.salle.valeurMaximale : 0}"></td>
+                        <td th:text="${seance.chiffreAffaire != null ? seance.chiffreAffaire : 0}"></td>
                         <td th:text="${seance.avecSousTitre ? 'Oui' : 'Non'}"></td>
                         <td th:text="${seance.status != null ? seance.status.libelle : '-'}"></td>
                         <td>

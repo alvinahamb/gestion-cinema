@@ -40,6 +40,9 @@ public class AchatController {
     @Autowired
     private TarifSeancePlaceService tarifSeancePlaceService;
 
+    @Autowired
+    private RemiseCategorieService remiseCategorieService;
+
     /**
      * Page d'achat de ticket pour une séance
      */
@@ -72,6 +75,7 @@ public class AchatController {
         // Récupérer les tarifs
         List<TarifSeanceClientDTO> tarifsClient = tarifSeanceClientService.getBySeanceId(seanceId);
         List<TarifPlaceDTO> tarifsPlace = achatService.getTarifsPlaceForSeance(seanceId);
+        List<RemiseCategorieDTO> remiseCategories = remiseCategorieService.getAllRemiseCategories();
 
         model.addAttribute("seance", seance);
         model.addAttribute("places", places);
@@ -79,6 +83,7 @@ public class AchatController {
         model.addAttribute("categoriesClient", categoriesClient);
         model.addAttribute("tarifsClient", tarifsClient);
         model.addAttribute("tarifsPlace", tarifsPlace);
+        model.addAttribute("remiseCategories", remiseCategories);
         model.addAttribute("salle", seance.getSalle());
 
         return "achat/form";
@@ -93,6 +98,7 @@ public class AchatController {
             @RequestParam Integer clientId,
             @RequestParam(required = false) String placeIds,
             @RequestParam(required = false) String categorieIds,
+            @RequestParam(required = false) String nombres,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -113,12 +119,19 @@ public class AchatController {
                             .collect(Collectors.toList())
                     : List.of();
 
+            List<Integer> nombresList = nombres != null && !nombres.isEmpty()
+                    ? Arrays.stream(nombres.split(","))
+                            .filter(s -> !s.isEmpty())
+                            .map(Integer::parseInt)
+                            .collect(Collectors.toList())
+                    : List.of();
+
             if (placeIdList.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Veuillez sélectionner au moins une place");
                 return "redirect:/achat/seance/" + seanceId;
             }
 
-            Ticket ticket = achatService.createAchat(clientId, seanceId, placeIdList, categorieIdList);
+            Ticket ticket = achatService.createAchat(clientId, seanceId, placeIdList, categorieIdList, nombresList);
             redirectAttributes.addFlashAttribute("success", "Achat confirmé avec succès ! Ticket #" + ticket.getIdTicket());
             return "redirect:/ticket";
 

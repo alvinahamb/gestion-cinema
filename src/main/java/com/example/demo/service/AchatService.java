@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,9 @@ public class AchatService {
     private TarifPlaceRepository tarifPlaceRepository;
 
     @Autowired
+    private RemiseCategorieRepository remiseCategorieRepository;
+
+    @Autowired
     private PaiementService paiementService;
 
     /**
@@ -80,29 +84,80 @@ public class AchatService {
     }
 
     /**
-     * Récupère le tarif basé uniquement sur le type de place (tarif_place)
+     * Récupère le tarif en fonction du type de place et de la catégorie client
+     * Règle de gestion:
+     * 1. Chercher d'abord une remise spécifique (typePlaceId, categorieClientId)
+     * 2. Sinon chercher une remise générale (id_type_place = NULL, categorieClientId)
+     * 3. Si remise trouvée:
+     *    - Si tarif de remise != NULL: utiliser ce tarif
+     *    - Sinon si pourcentage != NULL: calculer tarif_place - (tarif_place * pourcentage / 100)
+     * 4. Sinon: utiliser le tarif_place
+     * 5. En dernier recours: utiliser le tarif de la séance
      */
     public BigDecimal getTarif(Integer seanceId, Integer categorieClientId, Integer typePlaceId) {
-        // Utiliser uniquement tarif_place basé sur le type de place
+        // Récupérer le tarif de base depuis tarif_place
+        BigDecimal tarifBase = BigDecimal.ZERO;
         if (typePlaceId != null) {
             Optional<TarifPlace> tarifPlace = tarifPlaceRepository.findAll().stream()
                     .filter(t -> t.getTypePlace() != null && t.getTypePlace().getIdTypePlace().equals(typePlaceId))
                     .findFirst();
             
             if (tarifPlace.isPresent() && tarifPlace.get().getPrix() != null) {
-                return tarifPlace.get().getPrix();
+                tarifBase = tarifPlace.get().getPrix();
             }
         }
         
-        // Sinon utiliser le tarif par défaut de la séance
-        Optional<Seance> seance = seanceRepository.findById(seanceId);
-        return seance.map(Seance::getTarif).orElse(BigDecimal.ZERO);
+        // Si tarif de base est toujours zéro, utiliser le tarif de la séance
+        if (tarifBase.compareTo(BigDecimal.ZERO) == 0) {
+            Optional<Seance> seance = seanceRepository.findById(seanceId);
+            tarifBase = seance.map(Seance::getTarif).orElse(BigDecimal.ZERO);
+        }
+        
+        // Si une catégorie client est spécifiée, chercher une remise
+        if (categorieClientId != null) {
+            Optional<RemiseCategorie> remiseOpt = Optional.empty();
+            
+            // 1. Chercher d'abord une remise spécifique au type de place
+            if (typePlaceId != null) {
+                remiseOpt = remiseCategorieRepository.findByTypePlaceAndCategorie(typePlaceId, categorieClientId);
+            }
+            
+            // 2. Si pas trouvé, chercher une remise générale (id_type_place = NULL)
+            if (remiseOpt.isEmpty()) {
+                remiseOpt = remiseCategorieRepository.findGeneralByCategorie(categorieClientId);
+            }
+            
+            if (remiseOpt.isPresent()) {
+                RemiseCategorie remise = remiseOpt.get();
+                
+                // Si le tarif dans remise_categorie n'est pas NULL, utiliser ce tarif
+                if (remise.getTarif() != null) {
+                    return remise.getTarif();
+                }
+                
+                // Sinon, calculer avec le pourcentage de réduction
+                if (remise.getPourcentageDeReduction() != null) {
+                    BigDecimal reduction = tarifBase
+                            .multiply(remise.getPourcentageDeReduction())
+                            .divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+                    return tarifBase.subtract(reduction);
+                }
+            }
+        }
+        
+        // Retourner le tarif de base si aucune remise ne s'applique
+        return tarifBase;
     }
 
     /**
      * Crée un ticket avec les places sélectionnées (sans paiement automatique)
+     * @param clientId ID du client
+     * @param seanceId ID de la séance
+     * @param typePlaceIds Liste des IDs de types de place ou IDs de places individuelles
+     * @param categorieClientIds Liste des IDs de catégories client
+     * @param nombres Liste des nombres de places pour chaque sélection (si vide, 1 par défaut)
      */
-    public Ticket createAchat(Integer clientId, Integer seanceId, List<Integer> placeIds, List<Integer> categorieClientIds) {
+    public Ticket createAchat(Integer clientId, Integer seanceId, List<Integer> typePlaceIds, List<Integer> categorieClientIds, List<Integer> nombres) {
         // Vérifier le client
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client non trouvé"));
@@ -111,48 +166,80 @@ public class AchatService {
         Seance seance = seanceRepository.findById(seanceId)
                 .orElseThrow(() -> new RuntimeException("Séance non trouvée"));
 
-        // Vérifier que les places ne sont pas déjà prises (tickets + réservations)
+        // Récupérer les places occupées
         Set<Integer> occupiedPlaceIds = new HashSet<>(ticketPlaceRepository.findOccupiedPlaceIdsBySeanceId(seanceId));
         occupiedPlaceIds.addAll(reservationPlaceRepository.findOccupiedPlaceIdsBySeanceId(seanceId));
         
-        for (Integer placeId : placeIds) {
-            if (occupiedPlaceIds.contains(placeId)) {
-                throw new RuntimeException("La place " + placeId + " est déjà occupée");
+        // Vérifier la disponibilité AVANT l'attribution
+        // Calculer le nombre de places demandées par type
+        Map<Integer, Integer> placesDemandeesParType = new HashMap<>();
+        for (int i = 0; i < typePlaceIds.size(); i++) {
+            Integer typePlaceId = typePlaceIds.get(i);
+            Integer nombre = (i < nombres.size() && nombres.get(i) != null) ? nombres.get(i) : 1;
+            placesDemandeesParType.put(typePlaceId, placesDemandeesParType.getOrDefault(typePlaceId, 0) + nombre);
+        }
+        
+        // Compter les places disponibles par type dans la salle
+        for (Map.Entry<Integer, Integer> entry : placesDemandeesParType.entrySet()) {
+            Integer typePlaceId = entry.getKey();
+            Integer nombreDemande = entry.getValue();
+            
+            long nombreDisponible = placeRepository.findAll().stream()
+                    .filter(p -> p.getSalle() != null && p.getSalle().getIdSalle().equals(seance.getSalle().getIdSalle()))
+                    .filter(p -> p.getTypePlace() != null && p.getTypePlace().getIdTypePlace().equals(typePlaceId))
+                    .filter(p -> !occupiedPlaceIds.contains(p.getIdPlace()))
+                    .count();
+            
+            if (nombreDemande > nombreDisponible) {
+                String typeName = typePlaceId == 1 ? "Standard" : (typePlaceId == 2 ? "Premium" : (typePlaceId == 3 ? "VIP" : "type " + typePlaceId));
+                throw new RuntimeException("Pas assez de places disponibles de type " + typeName + 
+                        ". Demandé: " + nombreDemande + ", Disponible: " + nombreDisponible);
             }
         }
-
+        
         // Créer le ticket
         Ticket ticket = new Ticket();
         ticket.setClient(client);
         ticket.setSeance(seance);
         ticket.setDateAchat(LocalDate.now());
-        ticket.setRemise(BigDecimal.ZERO);
 
         // Calculer le total et créer les ticket_place
         BigDecimal total = BigDecimal.ZERO;
         ticket = ticketRepository.save(ticket);
 
-        for (int i = 0; i < placeIds.size(); i++) {
-            Integer placeId = placeIds.get(i);
+        for (int i = 0; i < typePlaceIds.size(); i++) {
+            Integer typePlaceOrPlaceId = typePlaceIds.get(i);
             Integer categorieId = (i < categorieClientIds.size()) ? categorieClientIds.get(i) : null;
+            Integer nombre = (i < nombres.size() && nombres.get(i) != null) ? nombres.get(i) : 1;
 
-            Place place = placeRepository.findById(placeId)
-                    .orElseThrow(() -> new RuntimeException("Place non trouvée: " + placeId));
+            // Créer "nombre" de ticket_place pour cette sélection
+            for (int j = 0; j < nombre; j++) {
+                // Chercher une place disponible du bon type (attribution automatique)
+                Place place = placeRepository.findAll().stream()
+                        .filter(p -> p.getSalle() != null && p.getSalle().getIdSalle().equals(seance.getSalle().getIdSalle()))
+                        .filter(p -> p.getTypePlace() != null && p.getTypePlace().getIdTypePlace().equals(typePlaceOrPlaceId))
+                        .filter(p -> !occupiedPlaceIds.contains(p.getIdPlace()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Erreur système: Plus de places disponibles de type " + typePlaceOrPlaceId));
 
-            Integer typePlaceId = place.getTypePlace() != null ? place.getTypePlace().getIdTypePlace() : null;
-            BigDecimal prix = getTarif(seanceId, categorieId, typePlaceId);
+                // Marquer la place comme occupée
+                occupiedPlaceIds.add(place.getIdPlace());
 
-            TicketPlace ticketPlace = new TicketPlace();
-            ticketPlace.setTicket(ticket);
-            ticketPlace.setPlace(place);
-            ticketPlace.setPrix(prix);
+                Integer typePlaceId = place.getTypePlace() != null ? place.getTypePlace().getIdTypePlace() : null;
+                BigDecimal prix = getTarif(seanceId, categorieId, typePlaceId);
 
-            if (categorieId != null) {
-                categorieClientRepository.findById(categorieId).ifPresent(ticketPlace::setCategorieClient);
+                TicketPlace ticketPlace = new TicketPlace();
+                ticketPlace.setTicket(ticket);
+                ticketPlace.setPlace(place);
+                ticketPlace.setPrix(prix);
+
+                if (categorieId != null) {
+                    categorieClientRepository.findById(categorieId).ifPresent(ticketPlace::setCategorieClient);
+                }
+
+                ticketPlaceRepository.save(ticketPlace);
+                total = total.add(prix);
             }
-
-            ticketPlaceRepository.save(ticketPlace);
-            total = total.add(prix);
         }
 
         // Mettre à jour le total du ticket

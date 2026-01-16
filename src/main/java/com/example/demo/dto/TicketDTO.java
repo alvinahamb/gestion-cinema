@@ -10,20 +10,18 @@ public class TicketDTO {
     private SeanceDTO seance;
     private LocalDate dateAchat;
     private BigDecimal total;
-    private BigDecimal remise;
     private BigDecimal montantRestant;
 
     public TicketDTO() {}
 
     public TicketDTO(Integer idTicket, ReservationDTO reservation, ClientDTO client, SeanceDTO seance,
-                     LocalDate dateAchat, BigDecimal total, BigDecimal remise) {
+                     LocalDate dateAchat, BigDecimal total) {
         this.idTicket = idTicket;
         this.reservation = reservation;
         this.client = client;
         this.seance = seance;
         this.dateAchat = dateAchat;
         this.total = total;
-        this.remise = remise;
     }
 
     public Integer getIdTicket() {
@@ -72,14 +70,6 @@ public class TicketDTO {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
-    }
-
-    public BigDecimal getRemise() {
-        return remise;
-    }
-
-    public void setRemise(BigDecimal remise) {
-        this.remise = remise;
     }
 
     public BigDecimal getMontantRestant() {
