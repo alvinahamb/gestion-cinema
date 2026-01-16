@@ -61,7 +61,6 @@ public class TicketService {
             Ticket ticket = existingTicket.get();
             ticket.setDateAchat(ticketDTO.getDateAchat());
             ticket.setTotal(ticketDTO.getTotal());
-            ticket.setRemise(ticketDTO.getRemise());
             
             Ticket updatedTicket = ticketRepository.save(ticket);
             return convertToDTO(updatedTicket);
@@ -99,8 +98,7 @@ public class TicketService {
             client,
             seance,
             ticket.getDateAchat(),
-            ticket.getTotal(),
-            ticket.getRemise()
+            ticket.getTotal()
         );
     }
 
@@ -108,7 +106,6 @@ public class TicketService {
         Ticket ticket = new Ticket();
         ticket.setDateAchat(ticketDTO.getDateAchat());
         ticket.setTotal(ticketDTO.getTotal());
-        ticket.setRemise(ticketDTO.getRemise());
 
         if (ticketDTO.getReservation() != null && ticketDTO.getReservation().getIdReservation() != null) {
             Reservation reservation = new Reservation();

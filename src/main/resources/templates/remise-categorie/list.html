@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remises Catégories - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎟️ Gestion des Remises par Catégorie</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Remises par Catégorie Client et Type de Place</h1>
+            <a href="/remise-categories/nouveau" class="btn">+ Ajouter une Remise</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type de Place</th>
+                        <th>Catégorie Client</th>
+                        <th>Tarif</th>
+                        <th>Pourcentage Réduction</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${remiseCategories == null or remiseCategories.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucune remise trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="remiseCategorie : ${remiseCategories}">
+                        <td th:text="${remiseCategorie.idRemise}"></td>
+                        <td th:text="${remiseCategorie.idTypePlace}"></td>
+                        <td th:text="${remiseCategorie.idCategorieClient}"></td>
+                        <td th:text="${remiseCategorie.tarif}"></td>
+                        <td th:text="${remiseCategorie.pourcentageDeReduction}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/remise-categories/edit/{id}(id=${remiseCategorie.idRemise})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/remise-categories/delete/{id}(id=${remiseCategorie.idRemise})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

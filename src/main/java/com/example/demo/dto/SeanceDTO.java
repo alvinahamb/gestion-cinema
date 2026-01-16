@@ -14,6 +14,7 @@ public class SeanceDTO {
     private BigDecimal tarif;
     private StatusDTO status;
     private BigDecimal valeurMaximale;
+    private BigDecimal chiffreAffaire;
 
     public SeanceDTO() {}
 
@@ -100,5 +101,13 @@ public class SeanceDTO {
 
     public void setValeurMaximale(BigDecimal valeurMaximale) {
         this.valeurMaximale = valeurMaximale;
+    }
+
+    public BigDecimal getChiffreAffaire() {
+        return chiffreAffaire;
+    }
+
+    public void setChiffreAffaire(BigDecimal chiffreAffaire) {
+        this.chiffreAffaire = chiffreAffaire;
     }
 }

@@ -74,7 +74,11 @@ public class TarifPlaceService {
     private TarifPlace convertToEntity(TarifPlaceDTO tarifPlaceDTO) {
         Optional<TypePlace> typePlace = typePlaceRepository.findById(tarifPlaceDTO.getIdTypePlace());
         if (typePlace.isPresent()) {
-            return new TarifPlace(typePlace.get(), tarifPlaceDTO.getPrix());
+            TarifPlace tarifPlace = new TarifPlace(typePlace.get(), tarifPlaceDTO.getPrix());
+            if (tarifPlaceDTO.getIdTarif() != null) {
+                tarifPlace.setIdTarif(tarifPlaceDTO.getIdTarif());
+            }
+            return tarifPlace;
         }
         return null;
     }

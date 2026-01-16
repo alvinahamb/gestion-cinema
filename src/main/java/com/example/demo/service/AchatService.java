@@ -51,6 +51,9 @@ public class AchatService {
     private TarifPlaceRepository tarifPlaceRepository;
 
     @Autowired
+    private RemiseCategorieRepository remiseCategorieRepository;
+
+    @Autowired
     private PaiementService paiementService;
 
     /**
@@ -80,23 +83,57 @@ public class AchatService {
     }
 
     /**
-     * Récupère le tarif basé uniquement sur le type de place (tarif_place)
+     * Récupère le tarif en fonction du type de place et de la catégorie client
+     * Règle de gestion:
+     * 1. Si une remise_categorie existe pour (typePlaceId, categorieClientId):
+     *    - Si prix de remise_categorie != NULL: utiliser ce prix
+     *    - Si prix de remise_categorie == NULL: calculer tarif_place - (tarif_place * pourcentageDeReduction / 100)
+     * 2. Sinon: utiliser le tarif_place
+     * 3. En dernier recours: utiliser le tarif de la séance
      */
     public BigDecimal getTarif(Integer seanceId, Integer categorieClientId, Integer typePlaceId) {
-        // Utiliser uniquement tarif_place basé sur le type de place
+        // Récupérer le tarif de base depuis tarif_place
+        BigDecimal tarifBase = BigDecimal.ZERO;
         if (typePlaceId != null) {
             Optional<TarifPlace> tarifPlace = tarifPlaceRepository.findAll().stream()
                     .filter(t -> t.getTypePlace() != null && t.getTypePlace().getIdTypePlace().equals(typePlaceId))
                     .findFirst();
             
             if (tarifPlace.isPresent() && tarifPlace.get().getPrix() != null) {
-                return tarifPlace.get().getPrix();
+                tarifBase = tarifPlace.get().getPrix();
             }
         }
         
-        // Sinon utiliser le tarif par défaut de la séance
-        Optional<Seance> seance = seanceRepository.findById(seanceId);
-        return seance.map(Seance::getTarif).orElse(BigDecimal.ZERO);
+        // Si tarif de base est toujours zéro, utiliser le tarif de la séance
+        if (tarifBase.compareTo(BigDecimal.ZERO) == 0) {
+            Optional<Seance> seance = seanceRepository.findById(seanceId);
+            tarifBase = seance.map(Seance::getTarif).orElse(BigDecimal.ZERO);
+        }
+        
+        // Si une catégorie client est spécifiée, vérifier s'il existe une remise
+        if (categorieClientId != null && typePlaceId != null) {
+            Optional<RemiseCategorie> remiseOpt = remiseCategorieRepository.findByTypePlaceAndCategorie(typePlaceId, categorieClientId);
+            
+            if (remiseOpt.isPresent()) {
+                RemiseCategorie remise = remiseOpt.get();
+                
+                // Si le prix dans remise_categorie n'est pas NULL, utiliser ce prix
+                if (remise.getTarif() != null) {
+                    return remise.getTarif();
+                }
+                
+                // Sinon, calculer avec le pourcentage de réduction
+                if (remise.getPourcentageDeReduction() != null) {
+                    BigDecimal reduction = tarifBase
+                            .multiply(remise.getPourcentageDeReduction())
+                            .divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+                    return tarifBase.subtract(reduction);
+                }
+            }
+        }
+        
+        // Retourner le tarif de base si aucune remise ne s'applique
+        return tarifBase;
     }
 
     /**
@@ -126,7 +163,6 @@ public class AchatService {
         ticket.setClient(client);
         ticket.setSeance(seance);
         ticket.setDateAchat(LocalDate.now());
-        ticket.setRemise(BigDecimal.ZERO);
 
         // Calculer le total et créer les ticket_place
         BigDecimal total = BigDecimal.ZERO;

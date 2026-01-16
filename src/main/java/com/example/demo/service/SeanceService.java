@@ -14,6 +14,7 @@ import com.example.demo.repository.SalleRepository;
 import com.example.demo.repository.StatusRepository;
 import com.example.demo.repository.FilmRepository;
 import com.example.demo.repository.LangueRepository;
+import com.example.demo.repository.PaiementDetailRepository;
 import com.example.demo.entity.FilmVersion;
 import com.example.demo.entity.Salle;
 import com.example.demo.entity.Status;
@@ -53,6 +54,9 @@ public class SeanceService {
 
     @Autowired
     private SalleService salleService;
+
+    @Autowired
+    private PaiementDetailRepository paiementDetailRepository;
 
     public List<SeanceDTO> getAllSeances() {
         return seanceRepository.findAll().stream()
@@ -245,7 +249,10 @@ public class SeanceService {
             );
         }
         
-        return new SeanceDTO(seance.getIdSeance(), 
+        // Calculer le chiffre d'affaires
+        BigDecimal chiffreAffaire = paiementDetailRepository.sumMontantBySeanceId(seance.getIdSeance());
+        
+        SeanceDTO dto = new SeanceDTO(seance.getIdSeance(), 
                             filmVersionDTO,
                             salleDTO,
                             seance.getHeureDebut(),
@@ -254,6 +261,9 @@ public class SeanceService {
                             seance.getTarif(),
                             statusDTO,
                             valeurMaximale);
+        dto.setChiffreAffaire(chiffreAffaire);
+        
+        return dto;
     }
 
     private Seance convertToEntity(SeanceDTO seanceDTO) {

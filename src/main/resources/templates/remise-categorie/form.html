@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Remise Catégorie - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎟️ Gestion des Remises par Catégorie</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${remiseCategorie == null or remiseCategorie.idRemise == null}">Ajouter une Remise Catégorie</h1>
+            <h1 th:if="${remiseCategorie != null and remiseCategorie.idRemise != null}">Modifier une Remise Catégorie</h1>
+            <form th:action="@{/remise-categories/save}" method="post">
+                <input type="hidden" name="idRemise" th:value="${remiseCategorie != null ? remiseCategorie.idRemise : ''}"/>
+                <div class="form-group">
+                    <label for="idTypePlace">Type de Place *</label>
+                    <select id="idTypePlace" name="idTypePlace" required>
+                        <option value="">Sélectionner un type de place</option>
+                        <option th:each="tp : ${typePlaces}" th:value="${tp.idTypePlace}" th:selected="${remiseCategorie != null and remiseCategorie.idTypePlace == tp.idTypePlace}" th:text="${tp.libelle}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="idCategorieClient">Catégorie Client *</label>
+                    <select id="idCategorieClient" name="idCategorieClient" required>
+                        <option value="">Sélectionner une catégorie client</option>
+                        <option th:each="cc : ${categorieClients}" th:value="${cc.idCategorieClient}" th:selected="${remiseCategorie != null and remiseCategorie.idCategorieClient == cc.idCategorieClient}" th:text="${cc.libelle}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tarif">Tarif</label>
+                    <input type="number" step="0.01" id="tarif" name="tarif" th:value="${remiseCategorie != null ? remiseCategorie.tarif : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="pourcentageDeReduction">Pourcentage de Réduction (%)</label>
+                    <input type="number" step="0.01" id="pourcentageDeReduction" name="pourcentageDeReduction" th:value="${remiseCategorie != null ? remiseCategorie.pourcentageDeReduction : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/remise-categories" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
