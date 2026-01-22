@@ -74,6 +74,34 @@
             </div>
         </div>
         
+        <!-- Résumé par Société -->
+        <div th:if="${resumesSocietes != null and !resumesSocietes.isEmpty()}" style="margin-bottom: 20px;">
+            <h3 style="margin-bottom: 15px;">🏢 Résumé par Société</h3>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div th:each="resume : ${resumesSocietes}" 
+                     style="flex: 1; min-width: 280px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #1565c0;">
+                    <h4 style="margin: 0 0 10px 0; color: #1565c0;" th:text="${resume.nomSociete}">Société</h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Diffusions :</span>
+                        <strong th:text="${resume.nombreDiffusions}">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Montant Total :</span>
+                        <strong th:text="${resume.montantTotal + ' Ar'}">0 Ar</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Payé :</span>
+                        <strong style="color: #2e7d32;" th:text="${resume.montantPaye + ' Ar'}">0 Ar</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid #eee;">
+                        <span>Reste à payer :</span>
+                        <strong th:style="${resume.montantRestant > 0 ? 'color: #c62828;' : 'color: #2e7d32;'}" 
+                                th:text="${resume.montantRestant + ' Ar'}">0 Ar</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="table-container">
             <table>
                 <thead>
@@ -106,7 +134,7 @@
                         </td>
                         <td>
                             <div class="actions">
-                                <a th:href="@{/paiement-societes/diffusion/{id}(id=${diffusion.id})}" class="btn" style="background: #1565c0;">💰 Paiements</a>
+                                <!-- <a th:href="@{/paiement-societes/diffusion/{id}(id=${diffusion.id})}" class="btn" style="background: #1565c0;">💰 Paiements</a> -->
                                 <a th:href="@{/diffusions/edit/{id}(id=${diffusion.id})}" class="btn btn-edit">Modifier</a>
                                 <form th:action="@{/diffusions/delete/{id}(id=${diffusion.id})}" method="post" style="display:inline;">
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>

@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.DiffusionDTO;
 import com.example.demo.dto.PubliciteDTO;
 import com.example.demo.dto.SocieteDTO;
+import com.example.demo.dto.SocieteResumeDTO;
 import com.example.demo.dto.TarifDiffusionDTO;
 import com.example.demo.service.DiffusionService;
 import com.example.demo.service.PubliciteService;
@@ -38,6 +39,10 @@ public class DiffusionController {
             Model model) {
         List<DiffusionDTO> diffusions = diffusionService.getAllDiffusions();
         model.addAttribute("diffusions", diffusions);
+        
+        // Résumé par société
+        List<SocieteResumeDTO> resumesSocietes = diffusionService.getResumeBySociete();
+        model.addAttribute("resumesSocietes", resumesSocietes);
         
         // Calcul du total des tarifs si mois et année sont fournis
         if (mois != null && annee != null) {

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.DiffusionDTO;
+import com.example.demo.dto.SocieteResumeDTO;
 import com.example.demo.entity.Diffusion;
 import com.example.demo.entity.Publicite;
 import com.example.demo.entity.Societe;
@@ -40,6 +41,35 @@ public class DiffusionService {
         return diffusionRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<SocieteResumeDTO> getResumeBySociete() {
+        List<Diffusion> allDiffusions = diffusionRepository.findAll();
+        
+        // Grouper par société
+        java.util.Map<Integer, List<Diffusion>> diffusionsBySociete = allDiffusions.stream()
+            .filter(d -> d.getSociete() != null)
+            .collect(Collectors.groupingBy(d -> d.getSociete().getId()));
+        
+        return diffusionsBySociete.entrySet().stream().map(entry -> {
+            Integer societeId = entry.getKey();
+            List<Diffusion> diffusions = entry.getValue();
+            
+            String nomSociete = diffusions.get(0).getSociete().getNom();
+            
+            BigDecimal montantTotal = diffusions.stream()
+                .filter(d -> d.getTarifDiffusion() != null && d.getTarifDiffusion().getTarif() != null && d.getNombre() != null)
+                .map(d -> d.getTarifDiffusion().getTarif().multiply(BigDecimal.valueOf(d.getNombre())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            BigDecimal montantPaye = diffusions.stream()
+                .map(d -> paiementSocieteRepository.sumMontantByDiffusionId(d.getId()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            BigDecimal montantRestant = montantTotal.subtract(montantPaye);
+            
+            return new SocieteResumeDTO(societeId, nomSociete, montantTotal, montantPaye, montantRestant, diffusions.size());
+        }).collect(Collectors.toList());
     }
 
     public Optional<DiffusionDTO> getDiffusionById(Integer id) {
