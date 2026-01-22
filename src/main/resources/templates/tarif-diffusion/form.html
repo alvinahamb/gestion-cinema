@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Tarif Diffusion - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💵 Gestion des Tarifs Diffusion</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${tarifDiffusion == null or tarifDiffusion.id == null}">Ajouter un Tarif Diffusion</h1>
+            <h1 th:if="${tarifDiffusion != null and tarifDiffusion.id != null}">Modifier un Tarif Diffusion</h1>
+            <form th:action="@{/tarif-diffusions/save}" method="post">
+                <input type="hidden" name="id" th:value="${tarifDiffusion != null and tarifDiffusion.id != null ? tarifDiffusion.id : ''}"/>
+                <div class="form-group">
+                    <label for="tarif">Tarif (Ar) *</label>
+                    <input type="number" step="0.01" id="tarif" name="tarif" th:value="${tarifDiffusion != null ? tarifDiffusion.tarif : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="dateAjout">Date d'ajout</label>
+                    <input type="date" id="dateAjout" name="dateAjout" th:value="${tarifDiffusion != null and tarifDiffusion.dateAjout != null ? tarifDiffusion.dateAjout : ''}"/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/tarif-diffusions" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

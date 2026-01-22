@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Société - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🏢 Gestion des Sociétés</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${societe == null or societe.id == null}">Ajouter une Société</h1>
+            <h1 th:if="${societe != null and societe.id != null}">Modifier une Société</h1>
+            <form th:action="@{/societes/save}" method="post">
+                <input type="hidden" name="id" th:value="${societe != null and societe.id != null ? societe.id : ''}"/>
+                <div class="form-group">
+                    <label for="nom">Nom de la Société *</label>
+                    <input type="text" id="nom" name="nom" th:value="${societe != null ? societe.nom : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="telephone">Téléphone</label>
+                    <input type="text" id="telephone" name="telephone" th:value="${societe != null ? societe.telephone : ''}"/>
+                </div>
+                <div class="form-group">
+                    <label for="adresse">Adresse *</label>
+                    <input type="text" id="adresse" name="adresse" th:value="${societe != null ? societe.adresse : ''}" required/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/societes" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

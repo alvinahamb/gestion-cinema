@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Publicité - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📺 Gestion des Publicités</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${publicite == null or publicite.id == null}">Ajouter une Publicité</h1>
+            <h1 th:if="${publicite != null and publicite.id != null}">Modifier une Publicité</h1>
+            <form th:action="@{/publicites/save}" method="post">
+                <input type="hidden" name="id" th:value="${publicite != null and publicite.id != null ? publicite.id : ''}"/>
+                <div class="form-group">
+                    <label for="code">Code *</label>
+                    <input type="text" id="code" name="code" th:value="${publicite != null ? publicite.code : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="titre">Titre *</label>
+                    <input type="text" id="titre" name="titre" th:value="${publicite != null ? publicite.titre : ''}" required/>
+                </div>
+                <div class="form-group">
+                    <label for="duree">Durée (secondes) *</label>
+                    <input type="number" id="duree" name="duree" th:value="${publicite != null ? publicite.duree : ''}" required/>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/publicites" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

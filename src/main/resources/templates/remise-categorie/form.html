@@ -22,7 +22,7 @@
                 <input type="hidden" name="idRemise" th:value="${remiseCategorie != null ? remiseCategorie.idRemise : ''}"/>
                 <div class="form-group">
                     <label for="idTypePlace">Type de Place *</label>
-                    <select id="idTypePlace" name="idTypePlace" required>
+                    <select id="idTypePlace" name="idTypePlace">
                         <option value="">Sélectionner un type de place</option>
                         <option th:each="tp : ${typePlaces}" th:value="${tp.idTypePlace}" th:selected="${remiseCategorie != null and remiseCategorie.idTypePlace == tp.idTypePlace}" th:text="${tp.libelle}"></option>
                     </select>

@@ -246,3 +246,47 @@ CREATE TABLE IF NOT EXISTS paiement_status_historique (
     FOREIGN KEY (id_paiement) REFERENCES paiement(id_paiement),
     FOREIGN KEY (id_status) REFERENCES status(id_status)
 );
+
+--22 janvier 2024 : ajout des tables societe, diffusion, tarif_diffusion
+CREATE TABLE IF NOT EXISTS societe(
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    date_ajout DATE,
+    telephone VARCHAR(20),
+    adresse VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS diffusion(
+    id SERIAL PRIMARY KEY,
+    id_societe INT,
+    id_pub INT,
+    id_tarif INT,
+    mois INT,
+    annee INT,
+    date_diffusion DATE,
+    nombre INT,
+    diff_attribue INT,
+    diff_restant INT,
+    date_ajout DATE,
+    FOREIGN KEY (id_societe) REFERENCES societe(id),
+    FOREIGN KEY (id_pub) REFERENCES publicite(id),
+    FOREIGN KEY (id_tarif) REFERENCES tarif_diffusion(id)
+);
+
+CREATE TABLE IF NOT EXISTS tarif_diffusion(
+    id SERIAL PRIMARY KEY,
+    tarif DECIMAL(12,2),
+    date_ajout DATE
+);
+
+CREATE TABLE IF NOT EXISTS publicite(
+    id SERIAL PRIMARY KEY,
+    titre VARCHAR(100) NOT NULL,
+    duree INT NOT NULL,
+    date_ajout DATE,
+);
+
+dans la liste de diffusion, en haut ajout un input
+pour mois et un autre pour annee et bouton valider
+quand on valide, ca affiche le total des tarifs
+de id_tarif(tarif_diffusion) pour mois = mois input et annee=annee.input

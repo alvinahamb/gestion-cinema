@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicités - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📺 Gestion des Publicités</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Publicités</h1>
+            <a href="/publicites/nouveau" class="btn">+ Ajouter une Publicité</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Code</th>
+                        <th>Titre</th>
+                        <th>Durée (s)</th>
+                        <th>Date Ajout</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${publicites == null or publicites.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucune publicité trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="publicite : ${publicites}">
+                        <td th:text="${publicite.id}"></td>
+                        <td th:text="${publicite.code}"></td>
+                        <td th:text="${publicite.titre}"></td>
+                        <td th:text="${publicite.duree}"></td>
+                        <td th:text="${publicite.dateAjout}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/publicites/edit/{id}(id=${publicite.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/publicites/delete/{id}(id=${publicite.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

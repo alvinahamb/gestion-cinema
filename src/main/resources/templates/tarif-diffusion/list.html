@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifs Diffusion - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💵 Gestion des Tarifs Diffusion</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Tarifs Diffusion</h1>
+            <a href="/tarif-diffusions/nouveau" class="btn">+ Ajouter un Tarif</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tarif (Ar)</th>
+                        <th>Date Ajout</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${tarifDiffusions == null or tarifDiffusions.isEmpty()}">
+                        <td colspan="4"><div class="empty-state"><p>Aucun tarif diffusion trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="tarifDiffusion : ${tarifDiffusions}">
+                        <td th:text="${tarifDiffusion.id}"></td>
+                        <td th:text="${tarifDiffusion.tarif}"></td>
+                        <td th:text="${tarifDiffusion.dateAjout}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/tarif-diffusions/edit/{id}(id=${tarifDiffusion.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/tarif-diffusions/delete/{id}(id=${tarifDiffusion.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

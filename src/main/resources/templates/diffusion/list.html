@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffusions - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📡 Gestion des Diffusions</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Diffusions</h1>
+            <a href="/diffusions/nouveau" class="btn">+ Ajouter une Diffusion</a>
+        </div>
+        
+        <!-- Formulaire de calcul du total des tarifs -->
+        <div class="form-container" style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+            <h3 style="margin-bottom: 15px;">📊 Calcul du total des tarifs</h3>
+            <form th:action="@{/diffusions}" method="get" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="mois">Mois</label>
+                    <select id="mois" name="mois" required style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="">-- Mois --</option>
+                        <option value="1" th:selected="${selectedMois == 1}">Janvier</option>
+                        <option value="2" th:selected="${selectedMois == 2}">Février</option>
+                        <option value="3" th:selected="${selectedMois == 3}">Mars</option>
+                        <option value="4" th:selected="${selectedMois == 4}">Avril</option>
+                        <option value="5" th:selected="${selectedMois == 5}">Mai</option>
+                        <option value="6" th:selected="${selectedMois == 6}">Juin</option>
+                        <option value="7" th:selected="${selectedMois == 7}">Juillet</option>
+                        <option value="8" th:selected="${selectedMois == 8}">Août</option>
+                        <option value="9" th:selected="${selectedMois == 9}">Septembre</option>
+                        <option value="10" th:selected="${selectedMois == 10}">Octobre</option>
+                        <option value="11" th:selected="${selectedMois == 11}">Novembre</option>
+                        <option value="12" th:selected="${selectedMois == 12}">Décembre</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="annee">Année</label>
+                    <input type="number" id="annee" name="annee" min="0" max="3000" 
+                           th:value="${selectedAnnee}" required 
+                           style="padding: 8px; border-radius: 4px; border: 1px solid #ccc; width: 100px;"/>
+                </div>
+                <button type="submit" class="btn" style="padding: 8px 20px;">Calculer</button>
+            </form>
+            
+            <!-- Affichage du résultat -->
+            <div th:if="${totalTarifs != null}" style="margin-top: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px; border-left: 4px solid #4caf50;">
+                <strong>💰 Total des tarifs pour 
+                    <span th:switch="${selectedMois}">
+                        <span th:case="1">Janvier</span>
+                        <span th:case="2">Février</span>
+                        <span th:case="3">Mars</span>
+                        <span th:case="4">Avril</span>
+                        <span th:case="5">Mai</span>
+                        <span th:case="6">Juin</span>
+                        <span th:case="7">Juillet</span>
+                        <span th:case="8">Août</span>
+                        <span th:case="9">Septembre</span>
+                        <span th:case="10">Octobre</span>
+                        <span th:case="11">Novembre</span>
+                        <span th:case="12">Décembre</span>
+                    </span>
+                    <span th:text="${selectedAnnee}"></span> :
+                </strong>
+                <span style="font-size: 1.3em; color: #2e7d32;" th:text="${totalTarifs + ' Ar'}"></span>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Société</th>
+                        <th>Publicité</th>
+                        <th>Tarif</th>
+                        <th>Mois/Année</th>
+                        <th>Nombre</th>
+                        <th>Attribué</th>
+                        <th>Restant</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${diffusions == null or diffusions.isEmpty()}">
+                        <td colspan="9"><div class="empty-state"><p>Aucune diffusion trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="diffusion : ${diffusions}">
+                        <td th:text="${diffusion.id}"></td>
+                        <td th:text="${diffusion.nomSociete}"></td>
+                        <td th:text="${diffusion.titrePublicite}"></td>
+                        <td th:text="${diffusion.tarifLibelle}"></td>
+                        <td th:text="${diffusion.mois + '/' + diffusion.annee}"></td>
+                        <td th:text="${diffusion.nombre}"></td>
+                        <td th:text="${diffusion.diffAttribue}"></td>
+                        <td th:text="${diffusion.diffRestant}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/diffusions/edit/{id}(id=${diffusion.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/diffusions/delete/{id}(id=${diffusion.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
