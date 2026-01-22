@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "diffusion")
@@ -35,6 +36,9 @@ public class Diffusion {
     private Integer diffRestant;
     
     private LocalDate dateAjout;
+    
+    @OneToMany(mappedBy = "diffusion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaiementSociete> paiementsSociete;
 
     public Diffusion() {}
 
@@ -139,5 +143,13 @@ public class Diffusion {
 
     public void setDateAjout(LocalDate dateAjout) {
         this.dateAjout = dateAjout;
+    }
+
+    public List<PaiementSociete> getPaiementsSociete() {
+        return paiementsSociete;
+    }
+
+    public void setPaiementsSociete(List<PaiementSociete> paiementsSociete) {
+        this.paiementsSociete = paiementsSociete;
     }
 }

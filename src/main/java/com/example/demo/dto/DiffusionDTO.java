@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class DiffusionDTO {
@@ -17,6 +18,8 @@ public class DiffusionDTO {
     private Integer diffAttribue;
     private Integer diffRestant;
     private LocalDate dateAjout;
+    private BigDecimal montantRestant;
+    private BigDecimal montantTotal;
 
     public DiffusionDTO() {}
 
@@ -150,5 +153,21 @@ public class DiffusionDTO {
 
     public void setDateAjout(LocalDate dateAjout) {
         this.dateAjout = dateAjout;
+    }
+
+    public BigDecimal getMontantRestant() {
+        return montantRestant;
+    }
+
+    public void setMontantRestant(BigDecimal montantRestant) {
+        this.montantRestant = montantRestant;
+    }
+
+    public BigDecimal getMontantTotal() {
+        return montantTotal;
+    }
+
+    public void setMontantTotal(BigDecimal montantTotal) {
+        this.montantTotal = montantTotal;
     }
 }

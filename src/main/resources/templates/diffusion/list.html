@@ -84,8 +84,8 @@
                         <th>Tarif</th>
                         <th>Mois/Année</th>
                         <th>Nombre</th>
-                        <th>Attribué</th>
-                        <th>Restant</th>
+                        <th>Montant Total</th>
+                        <th>Reste à payer</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -100,10 +100,13 @@
                         <td th:text="${diffusion.tarifLibelle}"></td>
                         <td th:text="${diffusion.mois + '/' + diffusion.annee}"></td>
                         <td th:text="${diffusion.nombre}"></td>
-                        <td th:text="${diffusion.diffAttribue}"></td>
-                        <td th:text="${diffusion.diffRestant}"></td>
+                        <td th:text="${diffusion.montantTotal != null ? diffusion.montantTotal + ' Ar' : '0 Ar'}"></td>
+                        <td th:style="${diffusion.montantRestant != null and diffusion.montantRestant > 0 ? 'color: #c62828; font-weight: bold;' : 'color: #2e7d32; font-weight: bold;'}">
+                            <span th:text="${diffusion.montantRestant != null ? diffusion.montantRestant + ' Ar' : '0 Ar'}"></span>
+                        </td>
                         <td>
                             <div class="actions">
+                                <a th:href="@{/paiement-societes/diffusion/{id}(id=${diffusion.id})}" class="btn" style="background: #1565c0;">💰 Paiements</a>
                                 <a th:href="@{/diffusions/edit/{id}(id=${diffusion.id})}" class="btn btn-edit">Modifier</a>
                                 <form th:action="@{/diffusions/delete/{id}(id=${diffusion.id})}" method="post" style="display:inline;">
                                     <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>

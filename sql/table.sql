@@ -284,9 +284,13 @@ CREATE TABLE IF NOT EXISTS publicite(
     titre VARCHAR(100) NOT NULL,
     duree INT NOT NULL,
     date_ajout DATE,
+    code VARCHAR(100) NOT NULL
 );
 
-dans la liste de diffusion, en haut ajout un input
-pour mois et un autre pour annee et bouton valider
-quand on valide, ca affiche le total des tarifs
-de id_tarif(tarif_diffusion) pour mois = mois input et annee=annee.input
+CREATE TABLE IF NOT EXISTS paiement_societe(
+    id SERIAL PRIMARY KEY,
+    id_diffusion INT,
+    montant DECIMAL(12,2),
+    date_paiement DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (id_diffusion) REFERENCES diffusion(id)
+);

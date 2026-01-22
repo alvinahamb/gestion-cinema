@@ -6,12 +6,14 @@ import com.example.demo.entity.Publicite;
 import com.example.demo.entity.Societe;
 import com.example.demo.entity.TarifDiffusion;
 import com.example.demo.repository.DiffusionRepository;
+import com.example.demo.repository.PaiementSocieteRepository;
 import com.example.demo.repository.PubliciteRepository;
 import com.example.demo.repository.SocieteRepository;
 import com.example.demo.repository.TarifDiffusionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,9 @@ public class DiffusionService {
     
     @Autowired
     private TarifDiffusionRepository tarifDiffusionRepository;
+    
+    @Autowired
+    private PaiementSocieteRepository paiementSocieteRepository;
 
     public List<DiffusionDTO> getAllDiffusions() {
         return diffusionRepository.findAll().stream()
@@ -160,6 +165,20 @@ public class DiffusionService {
         dto.setDiffAttribue(diffusion.getDiffAttribue());
         dto.setDiffRestant(diffusion.getDiffRestant());
         dto.setDateAjout(diffusion.getDateAjout());
+        
+        // Calcul du montant total et du montant restant à payer
+        if (diffusion.getTarifDiffusion() != null && diffusion.getTarifDiffusion().getTarif() != null 
+            && diffusion.getNombre() != null) {
+            BigDecimal montantTotal = diffusion.getTarifDiffusion().getTarif()
+                .multiply(BigDecimal.valueOf(diffusion.getNombre()));
+            dto.setMontantTotal(montantTotal);
+            
+            BigDecimal sommePaiements = paiementSocieteRepository.sumMontantByDiffusionId(diffusion.getId());
+            dto.setMontantRestant(montantTotal.subtract(sommePaiements));
+        } else {
+            dto.setMontantTotal(BigDecimal.ZERO);
+            dto.setMontantRestant(BigDecimal.ZERO);
+        }
         
         return dto;
     }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiements Sociétés - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💰 Gestion des Paiements Sociétés</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Paiements Sociétés</h1>
+            <a href="/paiement-societes/nouveau" class="btn">+ Ajouter un Paiement</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Diffusion</th>
+                        <th>Montant (Ar)</th>
+                        <th>Date Paiement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${paiements == null or paiements.isEmpty()}">
+                        <td colspan="5"><div class="empty-state"><p>Aucun paiement trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="paiement : ${paiements}">
+                        <td th:text="${paiement.id}"></td>
+                        <td th:text="${paiement.diffusionInfo}"></td>
+                        <td th:text="${paiement.montant}"></td>
+                        <td th:text="${paiement.datePaiement}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/paiement-societes/edit/{id}(id=${paiement.id})}" class="btn btn-edit">Modifier</a>
+                                <form th:action="@{/paiement-societes/delete/{id}(id=${paiement.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

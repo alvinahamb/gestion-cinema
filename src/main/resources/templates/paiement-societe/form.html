@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter/Modifier Paiement Société - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💰 Gestion des Paiements Sociétés</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1 th:if="${paiement == null or paiement.id == null}">Ajouter un Paiement</h1>
+            <h1 th:if="${paiement != null and paiement.id != null}">Modifier un Paiement</h1>
+            <form th:action="@{/paiement-societes/save}" method="post">
+                <input type="hidden" name="id" th:value="${paiement != null and paiement.id != null ? paiement.id : ''}"/>
+                
+                <div class="form-group">
+                    <label for="idDiffusion">Diffusion *</label>
+                    <select id="idDiffusion" name="idDiffusion" required>
+                        <option value="">-- Sélectionner une diffusion --</option>
+                        <option th:each="diffusion : ${diffusions}" 
+                                th:value="${diffusion.id}" 
+                                th:text="${diffusion.nomSociete + ' - ' + diffusion.titrePublicite + ' (' + diffusion.mois + '/' + diffusion.annee + ')'}"
+                                th:selected="${(paiement != null and paiement.idDiffusion == diffusion.id) or (selectedDiffusionId != null and selectedDiffusionId == diffusion.id)}"></option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="montant">Montant (Ar) *</label>
+                    <input type="number" step="0.01" id="montant" name="montant" 
+                           th:value="${paiement != null ? paiement.montant : ''}" required/>
+                </div>
+                
+                <div class="form-group">
+                    <label for="datePaiement">Date de Paiement *</label>
+                    <input type="date" id="datePaiement" name="datePaiement" 
+                           th:value="${paiement != null and paiement.datePaiement != null ? paiement.datePaiement : ''}" required/>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Enregistrer</button>
+                    <a href="/paiement-societes" class="btn btn-cancel" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
