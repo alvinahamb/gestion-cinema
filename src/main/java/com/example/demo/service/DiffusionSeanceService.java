@@ -3,14 +3,17 @@ package com.example.demo.service;
 import com.example.demo.dto.DiffusionSeanceDTO;
 import com.example.demo.entity.DiffusionSeance;
 import com.example.demo.entity.Diffusion;
+import com.example.demo.entity.FactureSociete;
 import com.example.demo.entity.Seance;
 import com.example.demo.repository.DiffusionSeanceRepository;
 import com.example.demo.repository.DiffusionRepository;
+import com.example.demo.repository.FactureSocieteRepository;
 import com.example.demo.repository.SeanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +31,9 @@ public class DiffusionSeanceService {
 
     @Autowired
     private SeanceRepository seanceRepository;
+
+    @Autowired
+    private FactureSocieteRepository factureSocieteRepository;
 
     public List<DiffusionSeanceDTO> getAllDiffusionSeances() {
         return diffusionSeanceRepository.findAll().stream()
@@ -48,10 +54,14 @@ public class DiffusionSeanceService {
 
     public DiffusionSeanceDTO createDiffusionSeance(DiffusionSeanceDTO dto) {
         DiffusionSeance entity = new DiffusionSeance();
+        Diffusion diffusion = null;
         
         if (dto.getIdDiffusion() != null) {
-            Optional<Diffusion> diffusion = diffusionRepository.findById(dto.getIdDiffusion());
-            diffusion.ifPresent(entity::setDiffusion);
+            Optional<Diffusion> diffusionOpt = diffusionRepository.findById(dto.getIdDiffusion());
+            if (diffusionOpt.isPresent()) {
+                diffusion = diffusionOpt.get();
+                entity.setDiffusion(diffusion);
+            }
         }
         
         if (dto.getIdSeance() != null) {
@@ -63,7 +73,45 @@ public class DiffusionSeanceService {
         entity.setNombre(dto.getNombre() != null ? dto.getNombre() : 1);
         
         DiffusionSeance saved = diffusionSeanceRepository.save(entity);
+        
+        // Mettre à jour le total de la facture société
+        if (diffusion != null && diffusion.getSociete() != null && diffusion.getTarifDiffusion() != null) {
+            updateFactureSocieteTotal(diffusion, entity.getNombre());
+        }
+        
         return convertToDTO(saved);
+    }
+    
+    /**
+     * Met à jour le total de la facture société après ajout d'une diffusion_seance.
+     * Total = total actuel + (nombre de diffusion_seance * tarif de la diffusion)
+     */
+    private void updateFactureSocieteTotal(Diffusion diffusion, Integer nombreDiffusion) {
+        // Chercher ou créer la facture société pour cette société
+        List<FactureSociete> factures = factureSocieteRepository.findBySocieteId(diffusion.getSociete().getId());
+        
+        FactureSociete facture;
+        if (!factures.isEmpty()) {
+            facture = factures.get(0);
+        } else {
+            // Créer une nouvelle facture société
+            facture = new FactureSociete();
+            facture.setSociete(diffusion.getSociete());
+            facture.setTotal(BigDecimal.ZERO);
+            facture.setPourcentageRestante(new BigDecimal("100"));
+            facture.setDateFacture(LocalDate.now());
+            facture.setDateAjout(LocalDate.now());
+        }
+        
+        // Calculer le montant à ajouter : nombre * tarif
+        BigDecimal tarif = diffusion.getTarifDiffusion().getTarif();
+        BigDecimal montantAjoute = tarif.multiply(new BigDecimal(nombreDiffusion));
+        
+        // Mettre à jour le total
+        BigDecimal nouveauTotal = facture.getTotal().add(montantAjoute);
+        facture.setTotal(nouveauTotal);
+        
+        factureSocieteRepository.save(facture);
     }
 
     public boolean deleteDiffusionSeance(Integer id) {

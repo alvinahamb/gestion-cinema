@@ -5,6 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sociétés - Gestion Cinéma</title>
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+    <style>
+        .factures-container {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .facture-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .facture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .facture-title {
+            font-weight: bold;
+            color: #1565c0;
+        }
+        .facture-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .facture-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .facture-item .label {
+            font-size: 0.8em;
+            color: #666;
+        }
+        .facture-item .value {
+            font-weight: bold;
+        }
+        .montant-restant-positif {
+            color: #c62828;
+        }
+        .montant-restant-zero {
+            color: #2e7d32;
+        }
+        .societe-totals {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 6px;
+        }
+        .expand-btn {
+            cursor: pointer;
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .expand-btn:hover {
+            background: #1565c0;
+        }
+        .hidden {
+            display: none;
+        }
+        .detail-row {
+            background: #f5f5f5;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .paiement-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 6px;
+        }
+        .paiement-form input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+        }
+        .paiement-form button {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .paiement-form button:hover {
+            background: #1b5e20;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -19,40 +124,124 @@
             <h1>Liste des Sociétés</h1>
             <a href="/societes/nouveau" class="btn">+ Ajouter une Société</a>
         </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Téléphone</th>
-                        <th>Adresse</th>
-                        <th>Date Ajout</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:if="${societes == null or societes.isEmpty()}">
-                        <td colspan="6"><div class="empty-state"><p>Aucune société trouvée</p></div></td>
-                    </tr>
-                    <tr th:each="societe : ${societes}">
-                        <td th:text="${societe.id}"></td>
-                        <td th:text="${societe.nom}"></td>
-                        <td th:text="${societe.telephone}"></td>
-                        <td th:text="${societe.adresse}"></td>
-                        <td th:text="${societe.dateAjout}"></td>
-                        <td>
-                            <div class="actions">
-                                <a th:href="@{/societes/edit/{id}(id=${societe.id})}" class="btn btn-edit">Modifier</a>
-                                <form th:action="@{/societes/delete/{id}(id=${societe.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
-                                </form>
+        
+        <div th:if="${societes == null or societes.isEmpty()}" class="empty-state">
+            <p>Aucune société trouvée</p>
+        </div>
+        
+        <div th:each="societe, iterStat : ${societes}" style="margin-bottom: 25px; background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;">
+            <!-- En-tête de la société -->
+            <div style="padding: 15px; background: #1976d2; color: white; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0;" th:text="${societe.nom}">Nom Société</h3>
+                    <small th:text="'📞 ' + (${societe.telephone} ?: '-') + ' | 📍 ' + (${societe.adresse} ?: '-')"></small>
+                </div>
+                <div class="actions">
+                    <a th:href="@{/societes/edit/{id}(id=${societe.id})}" class="btn btn-edit" style="background: white; color: #1976d2;">Modifier</a>
+                    <form th:action="@{/societes/delete/{id}(id=${societe.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Résumé des totaux -->
+            <div class="societe-totals">
+                <div class="facture-item">
+                    <span class="label">💰 Total Factures</span>
+                    <span class="value" th:text="${societe.totalFactures != null ? societe.totalFactures + ' Ar' : '0 Ar'}"></span>
+                </div>
+                <div class="facture-item">
+                    <span class="label">✅ Total Payé</span>
+                    <span class="value" style="color: #2e7d32;" th:text="${societe.totalPaye != null ? societe.totalPaye + ' Ar' : '0 Ar'}"></span>
+                </div>
+                <div class="facture-item">
+                    <span class="label">⏳ Reste à Payer</span>
+                    <span class="value" 
+                          th:classappend="${societe.totalRestant != null and societe.totalRestant > 0 ? 'montant-restant-positif' : 'montant-restant-zero'}"
+                          th:text="${societe.totalRestant != null ? societe.totalRestant + ' Ar' : '0 Ar'}"></span>
+                </div>
+            </div>
+            
+            <!-- Liste des factures -->
+            <div class="factures-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">📄 Factures</h4>
+                    <button class="expand-btn" th:onclick="'toggleFactures(' + ${iterStat.index} + ')'">
+                        Afficher/Masquer
+                    </button>
+                </div>
+                
+                <div th:id="'factures-' + ${iterStat.index}">
+                    <div th:if="${societe.factures == null or societe.factures.isEmpty()}" style="color: #666; font-style: italic;">
+                        Aucune facture pour cette société
+                    </div>
+                    
+                    <div th:each="facture : ${societe.factures}" class="facture-card">
+                        <div class="facture-header">
+                            <span class="facture-title" th:text="'Facture #' + ${facture.id}"></span>
+                            <span th:text="${facture.dateFacture}"></span>
+                        </div>
+                        <div class="facture-details">
+                            <div class="facture-item">
+                                <span class="label">Total</span>
+                                <span class="value" th:text="${facture.total != null ? facture.total + ' Ar' : '0 Ar'}"></span>
                             </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            <div class="facture-item">
+                                <span class="label">Payé</span>
+                                <span class="value" style="color: #2e7d32;" th:text="${facture.montantPaye != null ? facture.montantPaye + ' Ar' : '0 Ar'}"></span>
+                            </div>
+                            <div class="facture-item">
+                                <span class="label">Restant</span>
+                                <span class="value" 
+                                      th:classappend="${facture.montantRestant != null and facture.montantRestant > 0 ? 'montant-restant-positif' : 'montant-restant-zero'}"
+                                      th:text="${facture.montantRestant != null ? facture.montantRestant + ' Ar' : '0 Ar'}"></span>
+                            </div>
+                            <div class="facture-item">
+                                <span class="label">% Restant</span>
+                                <span class="value" th:text="${facture.pourcentageRestante != null ? facture.pourcentageRestante + ' %' : '100 %'}"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Détails des paiements -->
+                        <div th:if="${facture.details != null and !facture.details.isEmpty()}" style="margin-top: 10px;">
+                            <strong style="font-size: 0.9em;">Détails des paiements:</strong>
+                            <div th:each="detail : ${facture.details}" class="detail-row">
+                                <span th:text="${detail.datePaiement}"></span> - 
+                                <strong th:text="${detail.montant + ' Ar'}"></strong>
+                                <span th:if="${detail.pourcentagePaye != null}" th:text="'(' + ${detail.pourcentagePaye} + '%)'"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Formulaire de paiement -->
+                        <div th:if="${facture.pourcentageRestante == null or facture.pourcentageRestante > 0}" class="paiement-form">
+                            <form th:action="@{/societes/facture/{id}/paiement(id=${facture.id})}" method="post" style="display: flex; gap: 10px; align-items: center;">
+                                <label>💳 Ajouter un paiement:</label>
+                                <input type="number" name="montant" step="0.01" min="0.01" 
+                                       th:max="${facture.montantRestant}" 
+                                       placeholder="Montant" required>
+                                <button type="submit">Payer</button>
+                            </form>
+                        </div>
+                        <div th:if="${facture.pourcentageRestante != null and facture.pourcentageRestante <= 0}" 
+                             style="margin-top: 10px; padding: 10px; background: #c8e6c9; border-radius: 6px; color: #2e7d32; font-weight: bold;">
+                            ✅ Facture entièrement payée
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <script>
+        function toggleFactures(index) {
+            var element = document.getElementById('factures-' + index);
+            if (element.classList.contains('hidden')) {
+                element.classList.remove('hidden');
+            } else {
+                element.classList.add('hidden');
+            }
+        }
+    </script>
+    <script th:src="@{/js/format-numbers.js}"></script>
 </body>
 </html>

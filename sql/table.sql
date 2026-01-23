@@ -307,4 +307,32 @@ create table if not EXISTS diffusion_seance(
     FOREIGN KEY (id_seance) REFERENCES seance(id_seance)
 );
 
+create table if not exists facture_societe(
+    id SERIAL PRIMARY KEY,
+    id_societe INT,
+    id_diffusion INT,
+    total DECIMAL(12,2) DEFAULT 0,
+    pourcentage_restante DECIMAL(5,2) DEFAULT 100,
+    date_facture DATE DEFAULT CURRENT_DATE,
+    date_paiement DATE,
+    date_ajout DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (id_diffusion) REFERENCES diffusion(id),
+    FOREIGN KEY (id_societe) REFERENCES societe(id)
+);
 
+create table if not exists facture_societe_detail(
+    id SERIAL PRIMARY KEY,
+    id_facture_societe INT,
+    montant DECIMAL(12,2),
+    pourcentage_paye DECIMAL(5,2),
+    date_paiement DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (id_facture_societe) REFERENCES facture_societe(id)
+);
+
+dans la liste de societe ajoute paiement sur la facture et le paiement sera inserer dans facture sociee details
+ sachant que pourcentage paye = le pourcentage du montant dans facture societe details par rapport a la total dans facture_societe et
+ le pourcentage restant  dans facture_societe est 100 - la somme de pourcentage paye de ce facture dans paiement_Societe_Detail
+
+
+ dans la liste des seances ajoute deux colonnes total payes et total restant a payer est la somme de ca ()
+ la totale payes 100 - pourcentage restante * total / 100 dans la facture societe pour cette seance

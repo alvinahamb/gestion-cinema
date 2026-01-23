@@ -41,6 +41,8 @@
                         <th>Chiffre d'Affaire (€)</th>
                         <th>Montant Diffusion Pub (€)</th>
                         <th>CA Total (€)</th>
+                        <th>Total Pub Payé</th>
+                        <th>Total Pub Restant</th>
                         <th>Sous-titres</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -48,7 +50,7 @@
                 </thead>
                 <tbody>
                     <tr th:if="${seances == null or seances.isEmpty()}">
-                        <td colspan="14"><div class="empty-state"><p>Aucune séance trouvée</p></div></td>
+                        <td colspan="16"><div class="empty-state"><p>Aucune séance trouvée</p></div></td>
                     </tr>
                     <tr th:each="seance : ${seances}">
                         <td th:text="${seance.idSeance}"></td>
@@ -61,6 +63,8 @@
                         <td th:text="${seance.chiffreAffaire != null ? seance.chiffreAffaire : 0}"></td>
                         <td th:text="${seance.montantDiffusionPub != null ? seance.montantDiffusionPub : 0}"></td>
                         <td th:text="${(seance.chiffreAffaire != null ? seance.chiffreAffaire : 0) + (seance.montantDiffusionPub != null ? seance.montantDiffusionPub : 0)}"></td>
+                        <td th:text="${seance.totalPubPaye != null ? seance.totalPubPaye : 0}"></td>
+                        <td th:text="${seance.totalPubRestant != null ? seance.totalPubRestant : 0}"></td>
                         <td th:text="${seance.avecSousTitre ? 'Oui' : 'Non'}"></td>
                         <td th:text="${seance.status != null ? seance.status.libelle : '-'}"></td>
                         <td>

@@ -1,6 +1,8 @@
 package com.example.demo.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public class SocieteDTO {
     private Integer id;
@@ -8,6 +10,10 @@ public class SocieteDTO {
     private LocalDate dateAjout;
     private String telephone;
     private String adresse;
+    private List<FactureSocieteDTO> factures;
+    private BigDecimal totalFactures;
+    private BigDecimal totalPaye;
+    private BigDecimal totalRestant;
 
     public SocieteDTO() {}
 
@@ -57,5 +63,37 @@ public class SocieteDTO {
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;
+    }
+
+    public List<FactureSocieteDTO> getFactures() {
+        return factures;
+    }
+
+    public void setFactures(List<FactureSocieteDTO> factures) {
+        this.factures = factures;
+    }
+
+    public BigDecimal getTotalFactures() {
+        return totalFactures;
+    }
+
+    public void setTotalFactures(BigDecimal totalFactures) {
+        this.totalFactures = totalFactures;
+    }
+
+    public BigDecimal getTotalPaye() {
+        return totalPaye;
+    }
+
+    public void setTotalPaye(BigDecimal totalPaye) {
+        this.totalPaye = totalPaye;
+    }
+
+    public BigDecimal getTotalRestant() {
+        return totalRestant;
+    }
+
+    public void setTotalRestant(BigDecimal totalRestant) {
+        this.totalRestant = totalRestant;
     }
 }

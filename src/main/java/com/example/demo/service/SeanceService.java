@@ -16,6 +16,7 @@ import com.example.demo.repository.FilmRepository;
 import com.example.demo.repository.LangueRepository;
 import com.example.demo.repository.PaiementDetailRepository;
 import com.example.demo.repository.DiffusionSeanceRepository;
+import com.example.demo.repository.FactureSocieteRepository;
 import com.example.demo.entity.FilmVersion;
 import com.example.demo.entity.Salle;
 import com.example.demo.entity.Status;
@@ -61,6 +62,9 @@ public class SeanceService {
 
     @Autowired
     private DiffusionSeanceRepository diffusionSeanceRepository;
+
+    @Autowired
+    private FactureSocieteRepository factureSocieteRepository;
 
     public List<SeanceDTO> getAllSeances() {
         return seanceRepository.findAll().stream()
@@ -259,6 +263,10 @@ public class SeanceService {
         // Calculer le montant généré par les diffusions de pub
         BigDecimal montantDiffusionPub = diffusionSeanceRepository.sumMontantDiffusionBySeanceId(seance.getIdSeance());
         
+        // Calculer les totaux payés et restants pour les diffusions pub de cette séance
+        BigDecimal totalPubPaye = factureSocieteRepository.sumTotalPayeBySeanceId(seance.getIdSeance());
+        BigDecimal totalPubRestant = factureSocieteRepository.sumTotalRestantBySeanceId(seance.getIdSeance());
+        
         SeanceDTO dto = new SeanceDTO(seance.getIdSeance(), 
                             filmVersionDTO,
                             salleDTO,
@@ -270,6 +278,8 @@ public class SeanceService {
                             valeurMaximale);
         dto.setChiffreAffaire(chiffreAffaire);
         dto.setMontantDiffusionPub(montantDiffusionPub);
+        dto.setTotalPubPaye(totalPubPaye);
+        dto.setTotalPubRestant(totalPubRestant);
         
         return dto;
     }
