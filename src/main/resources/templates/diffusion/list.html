@@ -134,6 +134,7 @@
                         </td>
                         <td>
                             <div class="actions">
+                                <a th:href="@{/diffusion-seances/attribuer/{id}(id=${diffusion.id})}" class="btn" style="background: #9c27b0;">📺 Attribution</a>
                                 <!-- <a th:href="@{/paiement-societes/diffusion/{id}(id=${diffusion.id})}" class="btn" style="background: #1565c0;">💰 Paiements</a> -->
                                 <a th:href="@{/diffusions/edit/{id}(id=${diffusion.id})}" class="btn btn-edit">Modifier</a>
                                 <form th:action="@{/diffusions/delete/{id}(id=${diffusion.id})}" method="post" style="display:inline;">

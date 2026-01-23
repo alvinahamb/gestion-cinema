@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attribution de Publicité aux Séances - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📺 Attribution de Publicité aux Séances</h2>
+        <div>
+            <a href="/diffusions">← Retour aux Diffusions</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Attribution de pub pour: <span th:text="${diffusion.titrePublicite}"></span></h1>
+            <p style="color: #666;">
+                Société: <strong th:text="${diffusion.nomSociete}"></strong> | 
+                Mois/Année: <strong th:text="${diffusion.mois + '/' + diffusion.annee}"></strong> |
+                Nombre total: <strong th:text="${diffusion.nombre}"></strong>
+            </p>
+        </div>
+
+        <!-- Formulaire d'attribution -->
+        <div class="form-container" style="margin-bottom: 30px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+            <h3 style="margin-bottom: 15px;">➕ Attribuer à une séance</h3>
+            <form th:action="@{/diffusion-seances/save}" method="post" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                <input type="hidden" name="idDiffusion" th:value="${diffusion.id}">
+                
+                <div class="form-group" style="flex: 1; min-width: 300px; margin-bottom: 0;">
+                    <label for="idSeance">Séance</label>
+                    <select id="idSeance" name="idSeance" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="">-- Sélectionner une séance --</option>
+                        <option th:each="seance : ${seances}" 
+                                th:value="${seance.idSeance}"
+                                th:text="${seance.dateSeance + ' ' + seance.heureDebut + ' - ' + (seance.filmVersion != null and seance.filmVersion.film != null ? seance.filmVersion.film.titre : 'N/A') + ' (' + (seance.salle != null ? seance.salle.nomSalle : 'N/A') + ')'}">
+                        </option>
+                    </select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="nombre">Nombre</label>
+                    <input type="number" id="nombre" name="nombre" value="1" min="1" required
+                           style="padding: 10px; border-radius: 4px; border: 1px solid #ccc; width: 80px;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Date d'ajout</label>
+                    <input type="text" th:value="${#temporals.format(#temporals.createToday(), 'dd/MM/yyyy')}" disabled 
+                           style="padding: 10px; border-radius: 4px; border: 1px solid #ccc; background: #e8e8e8;">
+                </div>
+                
+                <button type="submit" class="btn" style="padding: 10px 25px;">Attribuer</button>
+            </form>
+        </div>
+
+        <!-- Liste des attributions existantes -->
+        <div class="table-container">
+            <h3 style="margin-bottom: 15px;">📋 Séances attribuées</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date Séance</th>
+                        <th>Film</th>
+                        <th>Salle</th>
+                        <th>Nombre</th>
+                        <th>Date Attribution</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${attributions == null or attributions.isEmpty()}">
+                        <td colspan="7"><div class="empty-state"><p>Aucune attribution trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="attribution : ${attributions}">
+                        <td th:text="${attribution.id}"></td>
+                        <td th:text="${attribution.dateSeance}"></td>
+                        <td th:text="${attribution.filmTitre != null ? attribution.filmTitre : '-'}"></td>
+                        <td th:text="${attribution.salleName != null ? attribution.salleName : '-'}"></td>
+                        <td th:text="${attribution.nombre != null ? attribution.nombre : 1}"></td>
+                        <td th:text="${attribution.dateAjout}"></td>
+                        <td>
+                            <form th:action="@{/diffusion-seances/delete/{id}(id=${attribution.id})}" method="post" style="display:inline;">
+                                <input type="hidden" name="idDiffusion" th:value="${diffusion.id}">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette attribution ?')">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Résumé -->
+        <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #1976d2;">
+            <strong>📊 Résumé:</strong>
+            <span>Nombre d'attributions: <strong th:text="${attributions != null ? attributions.size() : 0}"></strong></span>
+        </div>
+    </div>
+</body>
+</html>

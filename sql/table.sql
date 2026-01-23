@@ -294,3 +294,17 @@ CREATE TABLE IF NOT EXISTS paiement_societe(
     date_paiement DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (id_diffusion) REFERENCES diffusion(id)
 );
+
+-- 23 janvier 2026
+
+create table if not EXISTS diffusion_seance(
+    id SERIAL PRIMARY KEY,
+    id_diffusion INT,
+    id_seance INT,
+    nombre INT DEFAULT 1,
+    date_ajout DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (id_diffusion) REFERENCES diffusion(id),
+    FOREIGN KEY (id_seance) REFERENCES seance(id_seance)
+);
+
+

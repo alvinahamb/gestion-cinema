@@ -15,6 +15,7 @@ public class SeanceDTO {
     private StatusDTO status;
     private BigDecimal valeurMaximale;
     private BigDecimal chiffreAffaire;
+    private BigDecimal montantDiffusionPub;
 
     public SeanceDTO() {}
 
@@ -109,5 +110,13 @@ public class SeanceDTO {
 
     public void setChiffreAffaire(BigDecimal chiffreAffaire) {
         this.chiffreAffaire = chiffreAffaire;
+    }
+
+    public BigDecimal getMontantDiffusionPub() {
+        return montantDiffusionPub;
+    }
+
+    public void setMontantDiffusionPub(BigDecimal montantDiffusionPub) {
+        this.montantDiffusionPub = montantDiffusionPub;
     }
 }
