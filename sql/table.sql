@@ -106,12 +106,10 @@ CREATE TABLE IF NOT EXISTS film_genre (
     FOREIGN KEY (id_genre) REFERENCES genre(id_genre)
 );
 
-CREATE TABLE IF NOT EXISTS film_version (
     id SERIAL PRIMARY KEY,
     id_film INT,
     id_langue INT,
     sous_titre BOOLEAN,
-    FOREIGN KEY (id_film) REFERENCES film(id_film),
     FOREIGN KEY (id_langue) REFERENCES langue(id_langue)
 );
 
@@ -120,7 +118,6 @@ CREATE TABLE IF NOT EXISTS seance (
     id_film_version INT,
     id_salle INT,
     heure_debut TIME(0),
-    avec_sous_titre BOOLEAN,
     date_seance DATE DEFAULT CURRENT_DATE,
     tarif DECIMAL(5,2),
     id_status INT,
@@ -129,13 +126,11 @@ CREATE TABLE IF NOT EXISTS seance (
     FOREIGN KEY (id_status) REFERENCES status(id_status)
 );
 
-CREATE TABLE IF NOT EXISTS tarif_seance_client (
     id SERIAL PRIMARY KEY,
     id_seance INT,
     id_categorie_client INT,
     tarif DECIMAL(5,2),
     FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
-    FOREIGN KEY (id_categorie_client) REFERENCES categorie_client(id_categorie_client)
 );
 
 CREATE TABLE IF NOT EXISTS tarif_seance_client_place (
@@ -143,7 +138,6 @@ CREATE TABLE IF NOT EXISTS tarif_seance_client_place (
     id_seance INT,
     id_categorie_client INT,
     id_type_place INT,
-    tarif DECIMAL(5,2),
     FOREIGN KEY (id_categorie_client) REFERENCES categorie_client(id_categorie_client),
     FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
     FOREIGN KEY (id_type_place) REFERENCES type_place(id_type_place)
@@ -154,14 +148,13 @@ CREATE TABLE IF NOT EXISTS remise_categorie (
     id_type_place INT,
     id_categorie_client INT NOT NULL,
     tarif DECIMAL(7,2),
-    pourcentage_de_reduction DECIMAL(5,2),
     FOREIGN KEY (id_type_place) REFERENCES type_place(id_type_place),
     FOREIGN KEY (id_categorie_client) REFERENCES categorie_client(id_categorie_client)
 );
 
 CREATE TABLE IF NOT EXISTS seance_status_historique (
     id SERIAL PRIMARY KEY,
-    id_seance INT,
+
     id_status INT,
     date_modification DATE  DEFAULT CURRENT_DATE,
     FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
@@ -329,4 +322,67 @@ create table if not exists facture_societe_detail(
     FOREIGN KEY (id_facture_societe) REFERENCES facture_societe(id)
 );
 
-29 janvier 2025
+-- 29 janvier 2025
+create table if not exists produits (
+    id serial PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prix DECIMAL(7,2) NOT NULL
+);
+
+create Table if not EXISTS vente_produit (
+    id SERIAL PRIMARY KEY,
+    id_produit INT,
+    total DECIMAL(7,2),
+    id_seance INT,
+    date_achat DATE,
+    FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
+    FOREIGN KEY (id_produit) REFERENCES produits(id),
+);
+
+create table if not EXISTS vente_produit_detail (
+    id SERIAL PRIMARY KEY,
+    id_vente INT,
+    id_produit INT,
+    quantite INT,
+    prix_unitaire DECIMAL(7,2),
+    FOREIGN KEY (id_produit) REFERENCES produits(id),
+    FOREIGN KEY (id_vente_produit) REFERENCES vente_produit(id)
+);
+
+create table if not EXISTS stock (
+    id serial primary key,
+    id_produit INT,
+    quantite_actuelle INT,
+    FOREIGN KEY (id_produit) REFERENCES produits(id)
+);
+
+create table if not exists paiements_produits(
+    id serial PRIMARY KEY,
+    id_vente INT,
+    montant_paye DECIMAL(7,2),
+    montant_restant DECIMAL(7,2),
+    date_paiement DATE DEFAULT CURRENT_DATE,
+    foreign key (id_vente) REFERENCES vente_produit(id)
+);
+
+create table if not exists mouvement_total (
+    id serial primary key,
+    id_produit INT,
+    entree int,
+    sortie int,
+    quatite_actuelle int,
+    date_mouvement date,
+    id_vente_produit_detail INT,
+    FOREIGN key (id_produit) REFERENCES produits(id),
+    Foreign Key (id_vente_produit_detail) REFERENCES vente_produit_detail(id)
+);
+
+create table IF NOT EXISTS paiements_produit_details (
+    id serial PRIMARY key,
+    id_paiements int,
+    montant int,
+    date_paiement date DEFAULT CURRENT_DATE,
+    FOREIGN key (id_paiements) REFERENCES paiements_produits(id),
+);
+
+
