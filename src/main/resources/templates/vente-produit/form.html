@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle Vente de Produits - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+    <style>
+        .produit-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .produit-row select, .produit-row input {
+            flex: 1;
+        }
+        .produit-row .btn-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #produitsContainer {
+            margin-bottom: 20px;
+        }
+        .stock-info {
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
+        }
+        .total-display {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🛍️ Nouvelle Vente de Produits</h2>
+        <div>
+            <a href="/ventes-produits">Retour à la liste</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Nouvelle Vente de Produits</h1>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        
+        <div class="form-container">
+            <form th:action="@{/ventes-produits/save}" method="post" id="venteForm">
+                <div class="form-group">
+                    <label for="clientId">Client *</label>
+                    <select id="clientId" name="clientId" required>
+                        <option value="">Sélectionner un client</option>
+                        <option th:each="client : ${clients}" th:value="${client.idClient}" th:text="${client.nom + ' ' + client.prenom}"></option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="seanceId">Séance (optionnel)</label>
+                    <select id="seanceId" name="seanceId">
+                        <option value="">Aucune séance</option>
+                        <option th:each="seance : ${seances}" th:value="${seance.idSeance}" 
+                                th:text="${seance.filmVersion != null and seance.filmVersion.film != null ? seance.filmVersion.film.titre + ' - ' + seance.dateSeance + ' ' + seance.heureDebut : 'Séance #' + seance.idSeance}"></option>
+                    </select>
+                </div>
+                
+                <h3>Produits</h3>
+                <div id="produitsContainer">
+                    <div class="produit-row" data-index="0">
+                        <select name="produit_0" class="produit-select" required onchange="updateTotal()">
+                            <option value="">Sélectionner un produit</option>
+                            <option th:each="produit : ${produits}" th:value="${produit.id}" 
+                                    th:data-prix="${produit.prix}"
+                                    th:data-stock="${#lists.isEmpty(stocks) ? 0 : stocks.^[produit?.id == #root.produit.id]?.quantiteActuelle}"
+                                    th:text="${produit.nom + ' - ' + produit.prix + ' €'}"></option>
+                        </select>
+                        <input type="number" name="quantite_0" min="1" value="1" placeholder="Quantité" required onchange="updateTotal()" oninput="updateTotal()">
+                        <span class="stock-info"></span>
+                        <button type="button" class="btn-remove" onclick="removeProduit(this)">✕</button>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-secondary" onclick="addProduit()">+ Ajouter un produit</button>
+                
+                <div class="total-display">
+                    Total: <span id="totalAmount">0.00</span> €
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn">Enregistrer la Vente</button>
+                    <a href="/ventes-produits" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        var produits = /*[[${produits}]]*/ [];
+        var stocks = /*[[${stocks}]]*/ [];
+        var produitIndex = 1;
+        
+        function getStockForProduit(produitId) {
+            for (var i = 0; i < stocks.length; i++) {
+                if (stocks[i].produit && stocks[i].produit.id == produitId) {
+                    return stocks[i].quantiteActuelle || 0;
+                }
+            }
+            return 0;
+        }
+        
+        function getPrixForProduit(produitId) {
+            for (var i = 0; i < produits.length; i++) {
+                if (produits[i].id == produitId) {
+                    return produits[i].prix || 0;
+                }
+            }
+            return 0;
+        }
+        
+        function addProduit() {
+            var container = document.getElementById('produitsContainer');
+            var row = document.createElement('div');
+            row.className = 'produit-row';
+            row.setAttribute('data-index', produitIndex);
+            
+            var options = '<option value="">Sélectionner un produit</option>';
+            for (var i = 0; i < produits.length; i++) {
+                var stock = getStockForProduit(produits[i].id);
+                options += '<option value="' + produits[i].id + '" data-prix="' + produits[i].prix + '" data-stock="' + stock + '">' + 
+                           produits[i].nom + ' - ' + produits[i].prix + ' €</option>';
+            }
+            
+            row.innerHTML = 
+                '<select name="produit_' + produitIndex + '" class="produit-select" required onchange="updateTotal()">' + options + '</select>' +
+                '<input type="number" name="quantite_' + produitIndex + '" min="1" value="1" placeholder="Quantité" required onchange="updateTotal()" oninput="updateTotal()">' +
+                '<span class="stock-info"></span>' +
+                '<button type="button" class="btn-remove" onclick="removeProduit(this)">✕</button>';
+            
+            container.appendChild(row);
+            produitIndex++;
+            updateTotal();
+        }
+        
+        function removeProduit(button) {
+            var rows = document.querySelectorAll('.produit-row');
+            if (rows.length > 1) {
+                button.parentElement.remove();
+                updateTotal();
+            } else {
+                alert('Au moins un produit est requis');
+            }
+        }
+        
+        function updateTotal() {
+            var total = 0;
+            var rows = document.querySelectorAll('.produit-row');
+            
+            rows.forEach(function(row) {
+                var select = row.querySelector('select');
+                var quantiteInput = row.querySelector('input[type="number"]');
+                var stockInfo = row.querySelector('.stock-info');
+                
+                if (select.value && quantiteInput.value) {
+                    var prix = getPrixForProduit(select.value);
+                    var quantite = parseInt(quantiteInput.value) || 0;
+                    var stock = getStockForProduit(select.value);
+                    
+                    total += prix * quantite;
+                    
+                    if (stock !== null && stock !== undefined) {
+                        stockInfo.textContent = '(Stock: ' + stock + ')';
+                        if (quantite > stock) {
+                            stockInfo.style.color = 'red';
+                        } else {
+                            stockInfo.style.color = '#666';
+                        }
+                    }
+                } else {
+                    stockInfo.textContent = '';
+                }
+            });
+            
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+        
+        // Initialiser le total au chargement
+        document.addEventListener('DOMContentLoaded', updateTotal);
+    </script>
+</body>
+</html>

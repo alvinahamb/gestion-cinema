@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouvements de Stock - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📦 Mouvements de Stock</h2>
+        <div>
+            <a href="/stocks">Retour au Stock</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Mouvements pour: <span th:text="${produit != null ? produit.nom : 'Produit'}"></span></h1>
+        </div>
+        
+        <div class="info-box" th:if="${stock != null}">
+            <p><strong>Stock actuel:</strong> <span th:text="${stock.quantiteActuelle}"></span> unités</p>
+            <p><strong>Prix unitaire:</strong> <span th:text="${produit != null ? produit.prix : '-'}"></span> €</p>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Entrée</th>
+                        <th>Sortie</th>
+                        <th>Quantité Après</th>
+                        <th>Date</th>
+                        <th>Vente Associée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${mouvements == null or mouvements.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucun mouvement trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="mouvement : ${mouvements}">
+                        <td th:text="${mouvement.id}"></td>
+                        <td th:text="${mouvement.entree != null ? mouvement.entree : 0}" th:style="${mouvement.entree != null and mouvement.entree > 0} ? 'color: green; font-weight: bold;' : ''"></td>
+                        <td th:text="${mouvement.sortie != null ? mouvement.sortie : 0}" th:style="${mouvement.sortie != null and mouvement.sortie > 0} ? 'color: red; font-weight: bold;' : ''"></td>
+                        <td th:text="${mouvement.quantiteActuelle}"></td>
+                        <td th:text="${mouvement.dateMouvement}"></td>
+                        <td th:text="${mouvement.venteProduitDetail != null ? 'Vente #' + mouvement.venteProduitDetail.venteProduitId : '-'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <style>
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+        .info-box p {
+            margin: 5px 0;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails Vente - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+    <style>
+        .details-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .detail-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .detail-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .detail-card p {
+            margin: 8px 0;
+        }
+        .detail-card strong {
+            color: #555;
+        }
+        .total-box {
+            background: #28a745;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🛍️ Détails de la Vente</h2>
+        <div>
+            <a href="/ventes-produits">Retour à la liste</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Vente #<span th:text="${vente.id}"></span></h1>
+        </div>
+        
+        <div class="total-box">
+            Total: <span th:text="${vente.total}"></span> €
+        </div>
+        
+        <div class="details-container">
+            <div class="detail-card">
+                <h3>👤 Client</h3>
+                <p><strong>Nom:</strong> <span th:text="${vente.client != null ? vente.client.nom + ' ' + vente.client.prenom : '-'}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${vente.client != null ? vente.client.email : '-'}"></span></p>
+            </div>
+            
+            <div class="detail-card">
+                <h3>🎬 Séance</h3>
+                <p th:if="${vente.seance != null}">
+                    <strong>Film:</strong> <span th:text="${vente.seance.filmVersion != null and vente.seance.filmVersion.film != null ? vente.seance.filmVersion.film.titre : '-'}"></span>
+                </p>
+                <p th:if="${vente.seance != null}">
+                    <strong>Date:</strong> <span th:text="${vente.seance.dateSeance}"></span> à <span th:text="${vente.seance.heureDebut}"></span>
+                </p>
+                <p th:if="${vente.seance == null}">Aucune séance associée</p>
+            </div>
+        </div>
+        
+        <div class="detail-card" style="margin-bottom: 20px;">
+            <h3>📅 Date d'achat</h3>
+            <p th:text="${vente.dateAchat}"></p>
+        </div>
+        
+        <div class="table-container">
+            <h2>Produits achetés</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix Unitaire (€)</th>
+                        <th>Quantité</th>
+                        <th>Sous-Total (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${vente.details == null or vente.details.isEmpty()}">
+                        <td colspan="4"><div class="empty-state"><p>Aucun détail trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="detail : ${vente.details}">
+                        <td th:text="${detail.produit != null ? detail.produit.nom : '-'}"></td>
+                        <td th:text="${detail.prixUnitaire}"></td>
+                        <td th:text="${detail.quantite}"></td>
+                        <td th:text="${detail.sousTotal}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

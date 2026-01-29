@@ -329,14 +329,29 @@ create table if not exists produits (
     prix DECIMAL(7,2) NOT NULL
 );
 
+-- Tables pour la gestion des produits (29 janvier 2025 - MISE À JOUR)
+-- DROP TABLE IF EXISTS paiements_produit_details CASCADE;
+-- DROP TABLE IF EXISTS mouvement_total CASCADE;
+-- DROP TABLE IF EXISTS paiements_produits CASCADE;
+-- DROP TABLE IF EXISTS vente_produit_detail CASCADE;
+-- DROP TABLE IF EXISTS vente_produit CASCADE;
+-- DROP TABLE IF EXISTS stock CASCADE;
+-- DROP TABLE IF EXISTS produits CASCADE;
+
+create table if not exists produits (
+    id serial PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    prix DECIMAL(7,2) NOT NULL
+);
+
 create Table if not EXISTS vente_produit (
     id SERIAL PRIMARY KEY,
-    id_produit INT,
-    total DECIMAL(7,2),
+    id_client INT,
     id_seance INT,
-    date_achat DATE,
-    FOREIGN KEY (id_seance) REFERENCES seance(id_seance),
-    FOREIGN KEY (id_produit) REFERENCES produits(id),
+    total DECIMAL(7,2),
+    date_achat DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (id_client) REFERENCES client(id_client),
+    FOREIGN KEY (id_seance) REFERENCES seance(id_seance)
 );
 
 create table if not EXISTS vente_produit_detail (
@@ -346,13 +361,13 @@ create table if not EXISTS vente_produit_detail (
     quantite INT,
     prix_unitaire DECIMAL(7,2),
     FOREIGN KEY (id_produit) REFERENCES produits(id),
-    FOREIGN KEY (id_vente_produit) REFERENCES vente_produit(id)
+    FOREIGN KEY (id_vente) REFERENCES vente_produit(id)
 );
 
 create table if not EXISTS stock (
     id serial primary key,
-    id_produit INT,
-    quantite_actuelle INT,
+    id_produit INT UNIQUE,
+    quantite_actuelle INT DEFAULT 0,
     FOREIGN KEY (id_produit) REFERENCES produits(id)
 );
 
@@ -368,10 +383,10 @@ create table if not exists paiements_produits(
 create table if not exists mouvement_total (
     id serial primary key,
     id_produit INT,
-    entree int,
-    sortie int,
+    entree int DEFAULT 0,
+    sortie int DEFAULT 0,
     quatite_actuelle int,
-    date_mouvement date,
+    date_mouvement date DEFAULT CURRENT_DATE,
     id_vente_produit_detail INT,
     FOREIGN key (id_produit) REFERENCES produits(id),
     Foreign Key (id_vente_produit_detail) REFERENCES vente_produit_detail(id)
@@ -380,17 +395,7 @@ create table if not exists mouvement_total (
 create table IF NOT EXISTS paiements_produit_details (
     id serial PRIMARY key,
     id_paiements int,
-    montant int,
+    montant DECIMAL(7,2),
     date_paiement date DEFAULT CURRENT_DATE,
-    FOREIGN key (id_paiements) REFERENCES paiements_produits(id),
+    FOREIGN key (id_paiements) REFERENCES paiements_produits(id)
 );
-
-
-fait le CRUD de produits, le read de stock et dans le read de stock l'insertion de mouvement_total avec id_vente
-fait le read de paiements_produits avec le detail des paiements_produit_details et le produit_detail nullable
-fait le CRUD vente_produit pour create vente_produit achat produit
-avec selection => client, seance, produits (plusieurs avec quantite)
-les paiments seront directements inserer dans les tables et le stock et mouvement_total mis a jour, il bouge donc en suivant ca 
-ajoute une colonne dans la liste des seances dans les colonnes ce sera le chiffre d'affaire (CA) de produit vendu
-pour chaque seance, le CA Total (€) = CA Total (€) actuel + CA des produits vendus pour cette seance
-affiche la somme des CA ( chiffre d'affaire ) produit en dehors de la table

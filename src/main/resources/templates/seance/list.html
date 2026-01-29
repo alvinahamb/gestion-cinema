@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Séances - Gestion Cinéma</title>
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+    <style>
+        .ca-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .ca-summary h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .ca-summary .ca-amount {
+            font-size: 28px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -27,6 +48,17 @@
             </div>
             <a href="/seances/nouveau" class="btn">+ Ajouter une Séance</a>
         </div>
+        
+        <!-- Résumé CA Produits -->
+        <div class="ca-summary">
+            <div>
+                <h3>🛒 Chiffre d'Affaires Total Produits (toutes séances)</h3>
+            </div>
+            <div class="ca-amount">
+                <span th:text="${totalCAProduits != null ? totalCAProduits : 0}"></span> €
+            </div>
+        </div>
+        
         <div class="table-container">
             <table>
                 <thead>
@@ -38,7 +70,8 @@
                         <th>Heure Début</th>
                         <th>Tarif (€)</th>
                         <th>Valeur Maximale</th>
-                        <th>Chiffre d'Affaire (€)</th>
+                        <th>CA Tickets (€)</th>
+                        <th>CA Produits (€)</th>
                         <th>Montant Diffusion Pub (€)</th>
                         <th>CA Total (€)</th>
                         <th>Total Pub Payé</th>
@@ -61,8 +94,9 @@
                         <td th:text="${seance.tarif}"></td>
                         <td th:text="${seance.salle != null ? seance.salle.valeurMaximale : 0}"></td>
                         <td th:text="${seance.chiffreAffaire != null ? seance.chiffreAffaire : 0}"></td>
+                        <td th:text="${seance.chiffreAffaireProduits != null ? seance.chiffreAffaireProduits : 0}"></td>
                         <td th:text="${seance.montantDiffusionPub != null ? seance.montantDiffusionPub : 0}"></td>
-                        <td th:text="${(seance.chiffreAffaire != null ? seance.chiffreAffaire : 0) + (seance.montantDiffusionPub != null ? seance.montantDiffusionPub : 0)}"></td>
+                        <td th:text="${(seance.chiffreAffaire != null ? seance.chiffreAffaire : 0) + (seance.montantDiffusionPub != null ? seance.montantDiffusionPub : 0) + (seance.chiffreAffaireProduits != null ? seance.chiffreAffaireProduits : 0)}"></td>
                         <td th:text="${seance.totalPubPaye != null ? seance.totalPubPaye : 0}"></td>
                         <td th:text="${seance.totalPubRestant != null ? seance.totalPubRestant : 0}"></td>
                         <td th:text="${seance.avecSousTitre ? 'Oui' : 'Non'}"></td>
@@ -84,4 +118,3 @@
     <script th:src="@{/js/format-numbers.js}"></script>
 </body>
 </html>
-</head>

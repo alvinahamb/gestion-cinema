@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventes de Produits - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>🛍️ Ventes de Produits</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Ventes de Produits</h1>
+            <a href="/ventes-produits/nouveau" class="btn">+ Nouvelle Vente</a>
+        </div>
+        
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Client</th>
+                        <th>Séance</th>
+                        <th>Total (€)</th>
+                        <th>Date d'Achat</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${ventes == null or ventes.isEmpty()}">
+                        <td colspan="6"><div class="empty-state"><p>Aucune vente trouvée</p></div></td>
+                    </tr>
+                    <tr th:each="vente : ${ventes}">
+                        <td th:text="${vente.id}"></td>
+                        <td th:text="${vente.client != null ? vente.client.nom + ' ' + vente.client.prenom : '-'}"></td>
+                        <td th:text="${vente.seance != null and vente.seance.filmVersion != null and vente.seance.filmVersion.film != null ? vente.seance.filmVersion.film.titre + ' - ' + vente.seance.dateSeance : '-'}"></td>
+                        <td th:text="${vente.total}"></td>
+                        <td th:text="${vente.dateAchat}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/ventes-produits/details/{id}(id=${vente.id})}" class="btn btn-info">Détails</a>
+                                <form th:action="@{/ventes-produits/delete/{id}(id=${vente.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiements Produits - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>💳 Paiements Produits</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Liste des Paiements Produits</h1>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Vente</th>
+                        <th>Client</th>
+                        <th>Montant Payé (€)</th>
+                        <th>Montant Restant (€)</th>
+                        <th>Date Paiement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${paiements == null or paiements.isEmpty()}">
+                        <td colspan="7"><div class="empty-state"><p>Aucun paiement trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="paiement : ${paiements}">
+                        <td th:text="${paiement.id}"></td>
+                        <td th:text="${paiement.venteProduit != null ? 'Vente #' + paiement.venteProduit.id : '-'}"></td>
+                        <td th:text="${paiement.venteProduit != null and paiement.venteProduit.client != null ? paiement.venteProduit.client.nom + ' ' + paiement.venteProduit.client.prenom : '-'}"></td>
+                        <td th:text="${paiement.montantPaye}"></td>
+                        <td th:text="${paiement.montantRestant}"></td>
+                        <td th:text="${paiement.datePaiement}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/paiements-produits/details/{id}(id=${paiement.id})}" class="btn btn-info">Détails</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

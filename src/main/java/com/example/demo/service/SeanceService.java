@@ -17,6 +17,7 @@ import com.example.demo.repository.LangueRepository;
 import com.example.demo.repository.PaiementDetailRepository;
 import com.example.demo.repository.DiffusionSeanceRepository;
 import com.example.demo.repository.FactureSocieteRepository;
+import com.example.demo.repository.VenteProduitRepository;
 import com.example.demo.entity.FilmVersion;
 import com.example.demo.entity.Salle;
 import com.example.demo.entity.Status;
@@ -65,6 +66,9 @@ public class SeanceService {
 
     @Autowired
     private FactureSocieteRepository factureSocieteRepository;
+
+    @Autowired
+    private VenteProduitRepository venteProduitRepository;
 
     public List<SeanceDTO> getAllSeances() {
         return seanceRepository.findAll().stream()
@@ -267,6 +271,9 @@ public class SeanceService {
         BigDecimal totalPubPaye = factureSocieteRepository.sumTotalPayeBySeanceId(seance.getIdSeance());
         BigDecimal totalPubRestant = factureSocieteRepository.sumTotalRestantBySeanceId(seance.getIdSeance());
         
+        // Calculer le CA des produits vendus pour cette séance
+        BigDecimal chiffreAffaireProduits = venteProduitRepository.sumTotalBySeanceId(seance.getIdSeance());
+        
         SeanceDTO dto = new SeanceDTO(seance.getIdSeance(), 
                             filmVersionDTO,
                             salleDTO,
@@ -280,6 +287,7 @@ public class SeanceService {
         dto.setMontantDiffusionPub(montantDiffusionPub);
         dto.setTotalPubPaye(totalPubPaye);
         dto.setTotalPubRestant(totalPubRestant);
+        dto.setChiffreAffaireProduits(chiffreAffaireProduits);
         
         return dto;
     }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrée de Stock - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📦 Entrée de Stock</h2>
+        <div>
+            <a href="/stocks">Retour au Stock</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Ajouter une entrée de stock</h1>
+        </div>
+        
+        <div class="form-container">
+            <form th:action="@{/stocks/entree}" method="post">
+                <div class="form-group">
+                    <label for="produitId">Produit *</label>
+                    <select id="produitId" name="produitId" required>
+                        <option value="">Sélectionner un produit</option>
+                        <option th:each="produit : ${produits}" th:value="${produit.id}" th:text="${produit.nom + ' - ' + produit.prix + ' €'}"></option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quantite">Quantité *</label>
+                    <input type="number" id="quantite" name="quantite" min="1" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn">Enregistrer</button>
+                    <a href="/stocks" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

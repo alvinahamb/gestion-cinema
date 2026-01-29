@@ -49,10 +49,15 @@ public class SeanceController {
     @Autowired
     private TypePlaceService typePlaceService;
 
+    @Autowired
+    private VenteProduitService venteProduitService;
+
     @GetMapping
     public String listSeances(Model model) {
         List<SeanceDTO> seances = seanceService.getAllSeances();
+        BigDecimal totalCAProduits = venteProduitService.getTotalAllVentes();
         model.addAttribute("seances", seances);
+        model.addAttribute("totalCAProduits", totalCAProduits);
         return "seance/list";
     }
 

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock - Gestion Cinéma</title>
+    <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
+</head>
+<body>
+    <div class="navbar">
+        <h2>📦 Gestion du Stock</h2>
+        <div>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/">Accueil</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>État du Stock</h1>
+            <a href="/stocks/entree" class="btn">+ Entrée de Stock</a>
+        </div>
+        
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        
+        <div class="table-container">
+            <h2>Stock actuel</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Produit</th>
+                        <th>Prix Unitaire (€)</th>
+                        <th>Quantité Actuelle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${stocks == null or stocks.isEmpty()}">
+                        <td colspan="5"><div class="empty-state"><p>Aucun stock trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="stock : ${stocks}">
+                        <td th:text="${stock.id}"></td>
+                        <td th:text="${stock.produit != null ? stock.produit.nom : '-'}"></td>
+                        <td th:text="${stock.produit != null ? stock.produit.prix : '-'}"></td>
+                        <td th:text="${stock.quantiteActuelle}"></td>
+                        <td>
+                            <div class="actions">
+                                <a th:href="@{/stocks/mouvements/{id}(id=${stock.produit.id})}" class="btn btn-info">Voir mouvements</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="table-container" style="margin-top: 30px;">
+            <h2>Historique des Mouvements</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Produit</th>
+                        <th>Entrée</th>
+                        <th>Sortie</th>
+                        <th>Quantité Après</th>
+                        <th>Date</th>
+                        <th>Vente Associée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${mouvements == null or mouvements.isEmpty()}">
+                        <td colspan="7"><div class="empty-state"><p>Aucun mouvement trouvé</p></div></td>
+                    </tr>
+                    <tr th:each="mouvement : ${mouvements}">
+                        <td th:text="${mouvement.id}"></td>
+                        <td th:text="${mouvement.produit != null ? mouvement.produit.nom : '-'}"></td>
+                        <td th:text="${mouvement.entree != null ? mouvement.entree : 0}"></td>
+                        <td th:text="${mouvement.sortie != null ? mouvement.sortie : 0}"></td>
+                        <td th:text="${mouvement.quantiteActuelle}"></td>
+                        <td th:text="${mouvement.dateMouvement}"></td>
+                        <td th:text="${mouvement.venteProduitDetail != null ? 'Vente #' + mouvement.venteProduitDetail.venteProduitId : '-'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

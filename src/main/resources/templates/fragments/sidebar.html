@@ -33,6 +33,28 @@
             
             <div class="sidebar-divider"></div>
             
+            <a href="/produits" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/produits') ? 'active' : ''}">
+                <span class="icon">🛒</span>
+                <span>Produits</span>
+            </a>
+            
+            <a href="/stocks" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/stocks') ? 'active' : ''}">
+                <span class="icon">📦</span>
+                <span>Stock</span>
+            </a>
+            
+            <a href="/ventes-produits" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/ventes-produits') ? 'active' : ''}">
+                <span class="icon">🛍️</span>
+                <span>Ventes Produits</span>
+            </a>
+            
+            <a href="/paiements-produits" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/paiements-produits') ? 'active' : ''}">
+                <span class="icon">💰</span>
+                <span>Paiements Produits</span>
+            </a>
+            
+            <div class="sidebar-divider"></div>
+            
             <a href="/dashboard" class="sidebar-link" th:classappend="${#strings.contains(#request.requestURI, '/dashboard') ? 'active' : ''}">
                 <span class="icon">⚙️</span>
                 <span>Paramètres</span>
