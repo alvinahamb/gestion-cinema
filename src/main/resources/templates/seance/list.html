@@ -25,6 +25,18 @@
             font-size: 28px;
             font-weight: bold;
         }
+        .totals-row {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            border-top: 3px solid #667eea;
+        }
+        .totals-row td {
+            padding: 15px;
+            text-align: left;
+        }
+        .totals-row td:first-child {
+            color: #667eea;
+        }
     </style>
 </head>
 <body>
@@ -112,9 +124,67 @@
                         </td>
                     </tr>
                 </tbody>
+                <tfoot>
+                    <tr class="totals-row">
+                        <td colspan="5">TOTAUX</td>
+                        <td id="total-tarif">0</td>
+                        <td id="total-valeur-max">0</td>
+                        <td id="total-ca-tickets">0</td>
+                        <td id="total-ca-produits">0</td>
+                        <td id="total-montant-diffusion-pub">0</td>
+                        <td id="total-ca-total">0</td>
+                        <td id="total-pub-paye">0</td>
+                        <td id="total-pub-restant">0</td>
+                        <td colspan="3"></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
     <script th:src="@{/js/format-numbers.js}"></script>
+    <script>
+        function calculateTotals() {
+            const table = document.querySelector('table');
+            const rows = table.querySelectorAll('tbody tr');
+            
+            let totals = {
+                tarif: 0,
+                valeurMax: 0,
+                caTickets: 0,
+                caProduits: 0,
+                montantDiffusionPub: 0,
+                caTotal: 0,
+                totalPubPaye: 0,
+                totalPubRestant: 0
+            };
+            
+            rows.forEach(row => {
+                // Vérifier que ce n'est pas la ligne vide
+                if (row.querySelector('td:nth-child(2)').textContent.trim() !== 'Aucune séance trouvée') {
+                    const cells = row.querySelectorAll('td');
+                    totals.tarif += parseFloat(cells[5].textContent.trim()) || 0;
+                    totals.valeurMax += parseFloat(cells[6].textContent.trim()) || 0;
+                    totals.caTickets += parseFloat(cells[7].textContent.trim()) || 0;
+                    totals.caProduits += parseFloat(cells[8].textContent.trim()) || 0;
+                    totals.montantDiffusionPub += parseFloat(cells[9].textContent.trim()) || 0;
+                    totals.caTotal += parseFloat(cells[10].textContent.trim()) || 0;
+                    totals.totalPubPaye += parseFloat(cells[11].textContent.trim()) || 0;
+                    totals.totalPubRestant += parseFloat(cells[12].textContent.trim()) || 0;
+                }
+            });
+            
+            document.getElementById('total-tarif').textContent = totals.tarif.toFixed(2);
+            document.getElementById('total-valeur-max').textContent = totals.valeurMax.toFixed(2);
+            document.getElementById('total-ca-tickets').textContent = totals.caTickets.toFixed(2);
+            document.getElementById('total-ca-produits').textContent = totals.caProduits.toFixed(2);
+            document.getElementById('total-montant-diffusion-pub').textContent = totals.montantDiffusionPub.toFixed(2);
+            document.getElementById('total-ca-total').textContent = totals.caTotal.toFixed(2);
+            document.getElementById('total-pub-paye').textContent = totals.totalPubPaye.toFixed(2);
+            document.getElementById('total-pub-restant').textContent = totals.totalPubRestant.toFixed(2);
+        }
+        
+        // Calculer les totaux au chargement de la page
+        document.addEventListener('DOMContentLoaded', calculateTotals);
+    </script>
 </body>
 </html>
