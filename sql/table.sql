@@ -392,6 +392,9 @@ create table if not exists mouvement_total (
     Foreign Key (id_vente_produit_detail) REFERENCES vente_produit_detail(id)
 );
 
+INSERT INTO mouvement_total (id_produit, entree, sortie, quatite_actuelle, date_mouvement, id_vente_produit_detail)
+VALUES (1,100,0,100,CURRENT_DATE,NULL);
+
 create table IF NOT EXISTS paiements_produit_details (
     id serial PRIMARY key,
     id_paiements int,
