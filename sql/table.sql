@@ -329,10 +329,4 @@ create table if not exists facture_societe_detail(
     FOREIGN KEY (id_facture_societe) REFERENCES facture_societe(id)
 );
 
-dans la liste de societe ajoute paiement sur la facture et le paiement sera inserer dans facture sociee details
- sachant que pourcentage paye = le pourcentage du montant dans facture societe details par rapport a la total dans facture_societe et
- le pourcentage restant  dans facture_societe est 100 - la somme de pourcentage paye de ce facture dans paiement_Societe_Detail
-
-
- dans la liste des seances ajoute deux colonnes total payes et total restant a payer est la somme de ca ()
- la totale payes 100 - pourcentage restante * total / 100 dans la facture societe pour cette seance
+29 janvier 2025
