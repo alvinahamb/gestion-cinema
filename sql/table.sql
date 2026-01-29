@@ -386,3 +386,11 @@ create table IF NOT EXISTS paiements_produit_details (
 );
 
 
+fait le CRUD de produits, le read de stock et dans le read de stock l'insertion de mouvement_total avec id_vente
+fait le read de paiements_produits avec le detail des paiements_produit_details et le produit_detail nullable
+fait le CRUD vente_produit pour create vente_produit achat produit
+avec selection => client, seance, produits (plusieurs avec quantite)
+les paiments seront directements inserer dans les tables et le stock et mouvement_total mis a jour, il bouge donc en suivant ca 
+ajoute une colonne dans la liste des seances dans les colonnes ce sera le chiffre d'affaire (CA) de produit vendu
+pour chaque seance, le CA Total (€) = CA Total (€) actuel + CA des produits vendus pour cette seance
+affiche la somme des CA ( chiffre d'affaire ) produit en dehors de la table
