@@ -112,13 +112,7 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h2>🏢 Gestion des Sociétés</h2>
-        <div>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="header">
             <h1>Liste des Sociétés</h1>
@@ -245,3 +239,4 @@
     <script th:src="@{/js/format-numbers.js}"></script>
 </body>
 </html>
+

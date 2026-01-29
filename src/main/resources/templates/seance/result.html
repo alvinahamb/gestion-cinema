@@ -7,13 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/seance/result.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>⏰ Gestion des Séances</h2>
-        <div class="navbar-actions">
-            <a href="/dashboard">Accueil</a>
-            <a href="/parametre">Paramètres</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container">
         <!-- Formulaire de recherche -->

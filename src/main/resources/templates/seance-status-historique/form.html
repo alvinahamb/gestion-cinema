@@ -7,13 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>📊 Historique Status Séance</h2>
-        <div>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="form-container">
             <h1 th:if="${historique == null or historique.id == null}">Ajouter un Historique</h1>
@@ -53,3 +47,4 @@
     </div>
 </body>
 </html>
+

@@ -7,13 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>📺 Attribution de Publicité aux Séances</h2>
-        <div>
-            <a href="/diffusions">← Retour aux Diffusions</a>
-            <a href="/dashboard">Dashboard</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="header">
             <h1>Attribution de pub pour: <span th:text="${diffusion.titrePublicite}"></span></h1>
@@ -102,3 +96,4 @@
     </div>
 </body>
 </html>
+

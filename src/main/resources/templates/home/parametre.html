@@ -7,17 +7,7 @@
     <link rel="stylesheet" href="/css/home/unified-dashboard.css">
 </head>
 <body>
-    <div class="navbar">
-        <h1>🎬 Gestion Cinéma</h1>
-        <div class="navbar-actions">
-            <a href="/dashboard">Accueil</a>
-            <a href="/parametre">Paramètres</a>
-            <form th:action="@{/seances/search}" method="get" class="search-form">
-                <input type="text" name="filmTitre" placeholder="Rechercher par film..." th:value="${searchTerm}" class="search-input">
-                <button type="submit" class="search-btn">🔍</button>
-            </form>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container">
         <h2 class="section-title">📋 Gestion des Paramètres</h2>

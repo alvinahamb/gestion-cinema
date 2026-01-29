@@ -40,17 +40,7 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h2>⏰ Gestion des Séances</h2>
-       <div class="navbar-actions">
-            <a href="/dashboard">Accueil</a>
-            <a href="/parametre">Paramètres</a>
-            <form th:action="@{/seances/search}" method="get" class="search-form">
-                <input type="text" name="filmTitre" placeholder="Rechercher par film..." th:value="${searchTerm}" class="search-input">
-                <button type="submit" class="search-btn">🔍</button>
-            </form>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="header">
             <h1>Liste des Séances</h1>
@@ -61,13 +51,42 @@
             <a href="/seances/nouveau" class="btn">+ Ajouter une Séance</a>
         </div>
         
+        <!-- Filtres de date -->
+        <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; gap: 15px; align-items: center;">
+            <div>
+                <label for="filterMois" style="font-weight: bold; margin-right: 8px;">Mois :</label>
+                <select id="filterMois" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">Tous</option>
+                    <option value="01">Janvier</option>
+                    <option value="02">Février</option>
+                    <option value="03">Mars</option>
+                    <option value="04">Avril</option>
+                    <option value="05">Mai</option>
+                    <option value="06">Juin</option>
+                    <option value="07">Juillet</option>
+                    <option value="08">Août</option>
+                    <option value="09">Septembre</option>
+                    <option value="10">Octobre</option>
+                    <option value="11">Novembre</option>
+                    <option value="12">Décembre</option>
+                </select>
+            </div>
+            <div>
+                <label for="filterAnnee" style="font-weight: bold; margin-right: 8px;">Année :</label>
+                <input type="number" id="filterAnnee" placeholder="2026" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100px;" />
+            </div>
+            <button onclick="filtrerSeances()" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Filtrer</button>
+            <button onclick="reinitialiserFiltres()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Réinitialiser</button>
+            <span id="resultatFiltre" style="margin-left: auto; color: #667eea; font-weight: bold;"></span>
+        </div>
+        
         <!-- Résumé CA Produits -->
         <div class="ca-summary">
             <div>
-                <h3>🛒 Chiffre d'Affaires Total Produits (toutes séances)</h3>
+                <h3 id="ca-summary-title">🛒 Chiffre d'Affaires Total Produits (toutes séances)</h3>
             </div>
             <div class="ca-amount">
-                <span th:text="${totalCAProduits != null ? totalCAProduits : 0}"></span> €
+                <span id="ca-total-produits" th:text="${totalCAProduits != null ? totalCAProduits : 0}"></span> Ar
             </div>
         </div>
         
@@ -80,12 +99,12 @@
                         <th>Salle</th>
                         <th>Date</th>
                         <th>Heure Début</th>
-                        <th>Tarif (€)</th>
+                        <th>Tarif (Ar)</th>
                         <th>Valeur Maximale</th>
-                        <th>CA Tickets (€)</th>
-                        <th>CA Produits (€)</th>
-                        <th>Montant Diffusion Pub (€)</th>
-                        <th>CA Total (€)</th>
+                        <th>CA Tickets (Ar)</th>
+                        <th>CA Produits (Ar)</th>
+                        <th>Montant Diffusion Pub (Ar)</th>
+                        <th>CA Total (Ar)</th>
                         <th>Total Pub Payé</th>
                         <th>Total Pub Restant</th>
                         <th>Sous-titres</th>
@@ -130,9 +149,9 @@
                         <td id="total-tarif">0</td>
                         <td id="total-valeur-max">0</td>
                         <td id="total-ca-tickets">0</td>
-                        <td id="total-ca-produits">0</td>
+                        <td id="total-ca-produits" style="color:red;">0</td>
                         <td id="total-montant-diffusion-pub">0</td>
-                        <td id="total-ca-total">0</td>
+                        <td id="total-ca-total" style="color:red;">0</td>
                         <td id="total-pub-paye">0</td>
                         <td id="total-pub-restant">0</td>
                         <td colspan="3"></td>
@@ -158,33 +177,113 @@
                 totalPubRestant: 0
             };
             
+            // Fonction pour nettoyer et parser les nombres formatés
+            function parseFormattedNumber(text) {
+                // Enlever les espaces (séparateurs de milliers) et remplacer virgule par point
+                const cleaned = text.trim().replace(/\s/g, '').replace(',', '.');
+                return parseFloat(cleaned) || 0;
+            }
+            
             rows.forEach(row => {
-                // Vérifier que ce n'est pas la ligne vide
-                if (row.querySelector('td:nth-child(2)').textContent.trim() !== 'Aucune séance trouvée') {
+                if (row.style.display !== 'none' && row.querySelector('td:nth-child(2)').textContent.trim() !== 'Aucune séance trouvée') {
                     const cells = row.querySelectorAll('td');
-                    totals.tarif += parseFloat(cells[5].textContent.trim()) || 0;
-                    totals.valeurMax += parseFloat(cells[6].textContent.trim()) || 0;
-                    totals.caTickets += parseFloat(cells[7].textContent.trim()) || 0;
-                    totals.caProduits += parseFloat(cells[8].textContent.trim()) || 0;
-                    totals.montantDiffusionPub += parseFloat(cells[9].textContent.trim()) || 0;
-                    totals.caTotal += parseFloat(cells[10].textContent.trim()) || 0;
-                    totals.totalPubPaye += parseFloat(cells[11].textContent.trim()) || 0;
-                    totals.totalPubRestant += parseFloat(cells[12].textContent.trim()) || 0;
+                    totals.tarif += parseFormattedNumber(cells[5].textContent);
+                    totals.valeurMax += parseFormattedNumber(cells[6].textContent);
+                    totals.caTickets += parseFormattedNumber(cells[7].textContent);
+                    totals.caProduits += parseFormattedNumber(cells[8].textContent);
+                    totals.montantDiffusionPub += parseFormattedNumber(cells[9].textContent);
+                    totals.caTotal += parseFormattedNumber(cells[10].textContent);
+                    totals.totalPubPaye += parseFormattedNumber(cells[11].textContent);
+                    totals.totalPubRestant += parseFormattedNumber(cells[12].textContent);
                 }
             });
             
-            document.getElementById('total-tarif').textContent = totals.tarif.toFixed(2);
-            document.getElementById('total-valeur-max').textContent = totals.valeurMax.toFixed(2);
-            document.getElementById('total-ca-tickets').textContent = totals.caTickets.toFixed(2);
-            document.getElementById('total-ca-produits').textContent = totals.caProduits.toFixed(2);
-            document.getElementById('total-montant-diffusion-pub').textContent = totals.montantDiffusionPub.toFixed(2);
-            document.getElementById('total-ca-total').textContent = totals.caTotal.toFixed(2);
-            document.getElementById('total-pub-paye').textContent = totals.totalPubPaye.toFixed(2);
-            document.getElementById('total-pub-restant').textContent = totals.totalPubRestant.toFixed(2);
+            // Fonction pour formater les nombres avec séparateurs de milliers
+            function formatNumber(num) {
+                return num.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            
+            document.getElementById('total-tarif').textContent = formatNumber(totals.tarif)+"Ar";
+            document.getElementById('total-valeur-max').textContent = formatNumber(totals.valeurMax)+"Ar";
+            document.getElementById('total-ca-tickets').textContent = formatNumber(totals.caTickets)+"Ar";
+            document.getElementById('total-ca-produits').textContent = formatNumber(totals.caProduits)+"Ar";
+            document.getElementById('total-montant-diffusion-pub').textContent = formatNumber(totals.montantDiffusionPub)+"Ar";
+            document.getElementById('total-ca-total').textContent = formatNumber(totals.caTotal)+"Ar";
+            document.getElementById('total-pub-paye').textContent = formatNumber(totals.totalPubPaye)+"Ar";
+            document.getElementById('total-pub-restant').textContent = formatNumber(totals.totalPubRestant)+"Ar";
+            
+            document.getElementById('ca-total-produits').textContent = formatNumber(totals.caProduits);
         }
         
         // Calculer les totaux au chargement de la page
         document.addEventListener('DOMContentLoaded', calculateTotals);
+        
+        // Fonction pour filtrer les séances par mois et année
+        function filtrerSeances() {
+            const mois = document.getElementById('filterMois').value;
+            const annee = document.getElementById('filterAnnee').value;
+            const table = document.querySelector('table tbody');
+            const rows = table.querySelectorAll('tr');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                // Vérifier que ce n'est pas la ligne vide
+                const filmCell = row.querySelector('td:nth-child(2)');
+                if (filmCell && filmCell.textContent.trim() !== 'Aucune séance trouvée') {
+                    const dateCell = row.querySelector('td:nth-child(4)');
+                    if (dateCell) {
+                        const dateText = dateCell.textContent.trim(); // Format: YYYY-MM-DD
+                        const [year, month] = dateText.split('-');
+                        
+                        let afficher = true;
+                        
+                        // Filtrer par mois si sélectionné
+                        if (mois && month !== mois) {
+                            afficher = false;
+                        }
+                        
+                        // Filtrer par année si saisie
+                        if (annee && year !== annee) {
+                            afficher = false;
+                        }
+                        
+                        row.style.display = afficher ? '' : 'none';
+                        if (afficher) visibleCount++;
+                    }
+                }
+            });
+            
+            // Recalculer les totaux après filtrage
+            calculateTotals();
+            
+            // Afficher le résultat du filtre
+            const resultatFiltre = document.getElementById('resultatFiltre');
+            const caTitle = document.getElementById('ca-summary-title');
+            if (mois || annee) {
+                resultatFiltre.textContent = `${visibleCount} séance(s) affichée(s)`;
+                caTitle.textContent = '🛒 Chiffre d\'Affaires Total Produits (séances filtrées)';
+            } else {
+                resultatFiltre.textContent = '';
+                caTitle.textContent = '🛒 Chiffre d\'Affaires Total Produits (toutes séances)';
+            }
+        }
+        
+        // Fonction pour réinitialiser les filtres
+        function reinitialiserFiltres() {
+            document.getElementById('filterMois').value = '';
+            document.getElementById('filterAnnee').value = '';
+            
+            const table = document.querySelector('table tbody');
+            const rows = table.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+            
+            calculateTotals();
+            document.getElementById('resultatFiltre').textContent = '';
+            document.getElementById('ca-summary-title').textContent = '🛒 Chiffre d\'Affaires Total Produits (toutes séances)';
+        }
     </script>
 </body>
 </html>

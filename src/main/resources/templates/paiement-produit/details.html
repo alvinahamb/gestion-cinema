@@ -40,13 +40,7 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h2>💳 Détails du Paiement</h2>
-        <div>
-            <a href="/paiements-produits">Retour à la liste</a>
-            <a href="/dashboard">Dashboard</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="header">
             <h1>Paiement #<span th:text="${paiement.id}"></span></h1>
@@ -130,3 +124,4 @@
     </div>
 </body>
 </html>
+

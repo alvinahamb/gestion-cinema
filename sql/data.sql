@@ -1,70 +1,33 @@
--- =====================
--- SALLES & PLACES
--- =====================
-
--- INSERT INTO salle (nom_salle, capacite, ligne, colonne) VALUES
-
--- INSERT INTO place 
--- ('Salle 2', 50, 5, 10),
--- ('Salle 3', 100, 10, 10);
-
-INSERT INTO type_place (libelle, description) VALUES
-('Standard', 'Place standard'),
-('Premium', 'Place premium'),
-('VIP', 'Place VIP');
-
--- INSERT INTO type_place (libelle, description) VALUES
--- INSERT INTO tarif_place (id_type_place, prix) VALUES
 
 INSERT INTO tarif_place (id_type_place, prix) VALUES
-(1, 20000.00),
-(2, 50000.00),
-(3, 100000.00);
+(1, 30000.00),
+(2, 40000.00),
+(3, 80000.00);
 
--- =====================
--- REMISES CATEGORIES
--- =====================
--- Remise pour la catégorie Enfant (id_categorie_client = 1)
--- id_type_place = NULL signifie que la réduction s'applique à tous les types de place
-INSERT INTO remise_categorie (id_type_place, id_categorie_client, tarif, pourcentage_de_reduction) VALUES
+INSERT INTO remise_categorie (id_type_place, id_categorie_client, pourcentage_de_reduction, tarif) VALUES
 (NULL, 1, NULL, 50.00);  -- Enfant: 50% de réduction sur tous les types de place
 
--- -- Salle 1
--- INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
--- SELECT 1, 1, l, c FROM generate_series(1,4) l, generate_series(1,5) c;
-
--- -- Salle 2
--- INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
--- SELECT 2, 1, l, c FROM generate_series(1,5) l, generate_series(1,10) c;
-
--- -- Salle 3 (100 places: 10 VIP2, 20 VIP, 70 Standard)
--- -- 10 premières places (ligne 1) avec id_type_place = 3 (VIP2)
--- INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
--- SELECT 4, 3, 1, c FROM generate_series(1,10) c;
-
--- -- 20 places (lignes 2-3) avec id_type_place = 2 (VIP)
--- INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
--- SELECT 4, 2, l, c FROM generate_series(2,3) l, generate_series(1,10) c;
-
--- -- 70 places restantes (lignes 4-10) avec id_type_place = 1 (Standard)
--- INSERT INTO place (id_salle, id_type_place, numero_ligne, numero_colonne)
--- SELECT 4, 1, l, c FROM generate_series(4,10) l, generate_series(1,10) c;
+-- INSERT INTO remise_categorie ( id_categorie_client, pourcentage_de_reduction, tarif) VALUES (2, 3, NULL, 45000.00);
+-- INSERT INTO remise_categorie ( id_categorie_client, pourcentage_de_reduction, tarif) VALUES (3, 2, NULL, 30000.00);
+-- INSERT INTO remise_categorie ( id_categorie_client, pourcentage_de_reduction, tarif) VALUES (4, 1, NULL, 20000.00);
+-- INSERT INTO remise_categorie ( id_categorie_client, pourcentage_de_reduction, tarif) VALUES (5, 2, NULL, 40000.00);
+-- INSERT INTO remise_categorie ( id_categorie_client, pourcentage_de_reduction, tarif) VALUES (6, 1, NULL, 30000.00);
+-- INSERT INTO remise_categorie ( id_categorie_client, pourcentage_de_reduction, tarif) VALUES (7, 3, NULL, 80000.00);
 
 -- =====================
 -- CLIENTS
 -- =====================
 
 INSERT INTO categorie_client (libelle, description) VALUES
-('Enfant','');
+('Enfant',''),
+('Adulte',''),
+('Senior',''),
+('Ado','');
 
 INSERT INTO client (
     nom, prenom, date_naissance, email, telephone, id_categorie_client
 ) VALUES
-('Client','Anonyme',NULL,'anonyme@example.com',NULL,1),
-('Rajaonarivelo','Herintsalama','1995-04-12','herintsalama@example.com','0341234567',1),
-('Andrianarivo','Lala','2000-09-23','lala@example.com','0329876543',1),
-('Rakotondramanana','Hery','1998-12-15','hery@example.com','0331122334',1);
-
+('Client','Anonyme',NULL,'anonyme@example.com',NULL,1);
 -- =====================
 -- FILMS
 -- =====================
@@ -85,63 +48,3 @@ INSERT INTO film_version (id_film, id_langue, sous_titre) VALUES
 (1,1,FALSE),
 (2,1,FALSE),
 (3,1,FALSE);
-
--- -- =====================
--- -- SÉANCES
--- -- =====================
-
--- INSERT INTO seance (
---     id_film_version, id_salle, heure_debut,
---     avec_sous_titre, date_seance, tarif, id_status
--- ) VALUES
--- (1,1,'18:00',TRUE,CURRENT_DATE,5.00,4),
--- (2,2,'16:00',FALSE,CURRENT_DATE,4.50,4),
--- (3,3,'20:30',FALSE,CURRENT_DATE,6.00,4);
-
--- -- =====================
--- -- RÉSERVATIONS
--- -- =====================
-
--- INSERT INTO reservation (
---     id_client, id_seance, total, id_status
--- ) VALUES
--- (1,1,10.00,9),
--- (2,2,4.50,9);
-
--- INSERT INTO reservation_place (
---     id_reservation, id_place, id_categorie_client, prix
--- ) VALUES
--- (1,1,1,5.00),
--- (1,2,1,5.00),
--- (2,21,2,4.50);
-
--- -- =====================
--- -- TICKETS
--- -- =====================
-
--- INSERT INTO ticket (
---     id_reservation, id_client, id_seance, total
--- ) VALUES
--- (NULL,3,3,12.00);
-
--- INSERT INTO ticket_place (
---     id_ticket, id_place, id_categorie_client, prix
--- ) VALUES
--- (1,101,1,6.00),
--- (1,102,1,6.00);
-
--- -- =====================
--- -- PAIEMENTS
--- -- =====================
-
--- INSERT INTO paiement (
---     id_reservation, montant, id_status, date_paiement_prevu
--- ) VALUES
--- (2,4.50,12,CURRENT_DATE);
-
--- INSERT INTO paiement_detail (
---     id_paiement, id_methode_paiement, montant
--- ) VALUES
--- (1,2,4.50);
-
-

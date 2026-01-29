@@ -7,13 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/achat/form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>🎟️ Achat de Ticket</h2>
-        <div class="navbar-actions">
-            <a href="/dashboard">Accueil</a>
-            <a href="/seances">Séances</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container">
         <!-- Messages d'erreur/succès -->
@@ -507,3 +501,4 @@
     </script>
 </body>
 </html>
+

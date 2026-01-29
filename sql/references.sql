@@ -22,6 +22,11 @@ INSERT INTO methode_paiement (libelle) VALUES
 ('Chèque'),('Virement Bancaire'),
 ('Mobile Money');
 
+INSERT INTO type_place (libelle, description) VALUES
+('Standard', 'Place standard'),
+('Premium', 'Place premium'),
+('VIP', 'Place VIP');
+
 INSERT INTO type_statut (libelle) VALUES
 ('Film'),
 ('Séance'),

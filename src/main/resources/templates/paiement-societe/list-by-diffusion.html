@@ -7,14 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>💰 Paiements de la Diffusion</h2>
-        <div>
-            <a href="/diffusions">Retour Diffusions</a>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <!-- Info Diffusion -->
         <div th:if="${diffusion != null}" style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -87,3 +80,4 @@
     <script th:src="@{/js/format-numbers.js}"></script>
 </body>
 </html>
+

@@ -8,13 +8,7 @@
     
 </head>
 <body>
-    <div class="navbar">
-        <h2>🗣️ Ajouter/Modifier Langue</h2>
-        <div>
-            <a href="/langues">Langues</a>
-            <a href="/dashboard">Dashboard</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container">
         <div class="form-container">
@@ -45,3 +39,4 @@
 </body>
 </html>
 </head>
+

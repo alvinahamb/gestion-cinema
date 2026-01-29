@@ -7,13 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>⏰ Gestion des Séances</h2>
-        <div>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="form-container">
             <h1 th:if="${seance == null or seance.idSeance == null}">Ajouter une Séance</h1>
@@ -105,3 +99,4 @@
 </body>
 </html>
 </head>
+

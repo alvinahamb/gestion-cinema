@@ -7,13 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>💳 Détails Paiement</h2>
-        <div>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="header">
             <h1>Liste des Détails Paiement</h1>
@@ -57,3 +51,4 @@
     <script th:src="@{/js/format-numbers.js}"></script>
 </body>
 </html>
+

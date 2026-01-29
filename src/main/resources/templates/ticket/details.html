@@ -7,14 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>🎟️ Détails du Ticket</h2>
-        <div>
-            <a href="/ticket">← Retour à la liste</a>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div th:if="${ticket != null}" class="details-container">
             <div class="details-header">

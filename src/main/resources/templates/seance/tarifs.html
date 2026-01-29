@@ -7,14 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>🎫 Gestion des Tarifs de Séance</h2>
-        <div>
-            <a href="/seances">← Retour aux Séances</a>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container">
         <!-- Message d'erreur si aucun tarif -->

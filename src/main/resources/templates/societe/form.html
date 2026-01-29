@@ -7,13 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/shared-list-form.css}">
 </head>
 <body>
-    <div class="navbar">
-        <h2>🏢 Gestion des Sociétés</h2>
-        <div>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/">Accueil</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="form-container">
             <h1 th:if="${societe == null or societe.id == null}">Ajouter une Société</h1>
@@ -41,3 +35,4 @@
     </div>
 </body>
 </html>
+

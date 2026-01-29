@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div th:fragment="navbar" class="navbar">
+        <h2>Gestion Cinéma</h2>
+        <div class="navbar-actions">
+            <a href="/dashboard">Accueil</a>
+            <a href="/parametre">Paramètres</a>
+            <form th:action="@{/seances/search}" method="get" class="search-form">
+                <input type="text" name="filmTitre" placeholder="Rechercher par film..." th:value="${searchTerm}" class="search-input">
+                <button type="submit" class="search-btn">Rechercher</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

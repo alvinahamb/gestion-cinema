@@ -40,13 +40,7 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h2>🛍️ Détails de la Vente</h2>
-        <div>
-            <a href="/ventes-produits">Retour à la liste</a>
-            <a href="/dashboard">Dashboard</a>
-        </div>
-    </div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container">
         <div class="header">
             <h1>Vente #<span th:text="${vente.id}"></span></h1>
@@ -107,3 +101,4 @@
     </div>
 </body>
 </html>
+
